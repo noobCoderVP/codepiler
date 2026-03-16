@@ -2,7 +2,7 @@
 
 import MainLayout from "@/components/layout/MainLayout"
 import RepoExplorer from "@/components/repo/RepoExplorer"
-import PromptPreview from "@/components/prompt/PromptPreview"
+import PromptPreview from "@/components/viewer/OneFileViewer"
 import { motion } from "framer-motion"
 
 export default function HomePage() {

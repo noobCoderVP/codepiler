@@ -10,4 +10,5 @@ export type RepoNode = {
     path: string
     type: "file" | "folder"
     children?: RepoNode[]
+    filePaths: string[]
 }

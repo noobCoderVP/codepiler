@@ -20,7 +20,7 @@ export function buildRepoTree(paths: string[]): RepoNode[] {
                 const nodePath = parts.slice(0, index + 1).join("/")
 
                 current[part] = {
-                    id: nodePath, // ⭐ required for react-arborist
+                    id: nodePath,
                     name: part,
                     path: nodePath,
                     type: index === parts.length - 1 ? "file" : "folder",
@@ -33,13 +33,28 @@ export function buildRepoTree(paths: string[]): RepoNode[] {
     }
 
     function convert(obj: Record<string, TreeNode>): RepoNode[] {
-        return Object.values(obj).map((node) => ({
-            id: node.id,
-            name: node.name,
-            path: node.path,
-            type: node.type,
-            children: node.type === "folder" ? convert(node.children) : undefined
-        }))
+        return Object.values(obj).map((node) => {
+            const children = node.type === "folder" ? convert(node.children) : undefined
+
+            let filePaths: string[] = []
+
+            if (node.type === "file") {
+                filePaths = [node.path]
+            } else if (children) {
+                for (const child of children) {
+                    filePaths.push(...child.filePaths)
+                }
+            }
+
+            return {
+                id: node.id,
+                name: node.name,
+                path: node.path,
+                type: node.type,
+                children,
+                filePaths
+            }
+        })
     }
 
     return convert(root)

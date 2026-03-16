@@ -5,34 +5,16 @@ import { ChevronRight, ChevronDown, Folder } from "lucide-react"
 import { useSelectionStore } from "@/store/selection-store"
 import Checkbox from "@/components/ui/checkbox"
 import { getFileIcon } from "@/lib/file-icons"
+import { RepoNode } from "@/types/repo"
 
-type Node = {
-    name: string
-    path: string
-    type: "file" | "folder"
-    children?: Node[]
-}
-
-function collectFilePaths(node: Node): string[] {
-    if (node.type === "file") return [node.path]
-
-    const paths: string[] = []
-
-    node.children?.forEach((child) => {
-        paths.push(...collectFilePaths(child))
-    })
-
-    return paths
-}
-
-export default function TreeNode({ node, depth = 0 }: { node: Node; depth?: number }) {
+export default function TreeNode({ node, depth = 0 }: { node: RepoNode; depth?: number }) {
     const [open, setOpen] = useState(true)
 
     const selected = useSelectionStore((s) => s.selected)
     const toggle = useSelectionStore((s) => s.toggle)
     const toggleMany = useSelectionStore((s) => s.toggleMany)
 
-    const filePaths = node.type === "file" ? [node.path] : collectFilePaths(node)
+    const filePaths = node.filePaths
 
     const selectedCount = filePaths.filter((p) => selected.has(p)).length
 
@@ -46,21 +28,21 @@ export default function TreeNode({ node, depth = 0 }: { node: Node; depth?: numb
         <div>
             <div
                 className="
-        flex items-center gap-2
-        py-1.5 px-2
-        rounded-md
-        text-[14px] font-medium
-        transition-colors
-        cursor-pointer
-        hover:bg-[var(--surface-subtle)]
-      "
+                    flex items-center gap-2
+                    py-1.5 px-2
+                    rounded-md
+                    text-[14px] font-medium
+                    transition-colors
+                    cursor-pointer
+                    hover:bg-(--surface-subtle)
+                "
                 style={{ paddingLeft: depth * 16 }}
             >
                 {/* Expand Toggle */}
                 {node.type === "folder" ? (
                     <button
                         onClick={() => setOpen(!open)}
-                        className="w-4 flex items-center justify-center text-[var(--text-secondary)]"
+                        className="w-4 flex items-center justify-center text-(--text-secondary)"
                     >
                         {open ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                     </button>
@@ -89,7 +71,7 @@ export default function TreeNode({ node, depth = 0 }: { node: Node; depth?: numb
                 )}
 
                 {/* Name */}
-                <span className="truncate text-[var(--text-primary)]">{node.name}</span>
+                <span className="truncate text-(--text-primary)">{node.name}</span>
             </div>
 
             {/* Children */}

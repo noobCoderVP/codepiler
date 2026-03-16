@@ -13,17 +13,5 @@ export function collectPaths(node: RepoNode): string[] {
 }
 
 export function collectFilePaths(node: RepoNode): string[] {
-    const paths: string[] = []
-
-    if (node.type === "file") {
-        paths.push(node.path)
-    }
-
-    if (node.children) {
-        for (const child of node.children) {
-            paths.push(...collectFilePaths(child))
-        }
-    }
-
-    return paths
+    return node.filePaths
 }

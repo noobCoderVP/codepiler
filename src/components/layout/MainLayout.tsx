@@ -4,7 +4,7 @@ import Header from "./Header"
 import Footer from "./Footer"
 
 import RepoExplorer from "../repo/RepoExplorer"
-import PromptPreview from "../prompt/PromptPreview"
+import PromptPreview from "../viewer/OneFileViewer"
 
 import { Group, Panel, Separator } from "react-resizable-panels"
 
