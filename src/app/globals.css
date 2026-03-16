@@ -1,26 +1,112 @@
 @import "tailwindcss";
 
+/* -----------------------------
+   Light Theme
+------------------------------ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+    /* Page Background */
+    --background: #f6f8fc;
+
+    /* Panels / Cards */
+    --surface: #ffffff;
+    --surface-muted: #f4f7fb;
+    --surface-subtle: #eef2f7;
+
+    /* Borders */
+    --border: #e2e8f0;
+
+    /* Text */
+    --text-primary: #0f172a;
+    --text-secondary: #64748b;
+
+    /* Accent (Primary Action Color) */
+    --accent: #2563eb;
+    --accent-soft: #e8f0ff;
+
+    /* Status Colors */
+    --success: #16a34a;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+
+    /* Radius */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.12);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* -----------------------------
+   Dark Theme
+------------------------------ */
+.dark {
+    --background: #0b0f19; /* page background */
+    --surface: #111827; /* panels */
+    --surface-muted: #1f2937; /* gutters */
+    --surface-subtle: #2a3546; /* hover */
+
+    --border: #334155;
+
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+
+    --accent: #3b82f6;
+    --accent-soft: #1e40af;
+
+    --success: #22c55e;
+    --warning: #fbbf24;
+    --danger: #f87171;
+
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.45);
+    --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.55);
+    --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.65);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* -----------------------------
+   Base Styles
+------------------------------ */
+
+html,
+body {
+    height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+    background: var(--background);
+    color: var(--text-primary);
+    transition:
+        background 0.25s ease,
+        color 0.25s ease;
+}
+
+/* Scrollbars */
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 8px;
+}
+
+/* Utility Classes */
+
+.surface {
+    background: var(--surface);
+}
+
+.surface-muted {
+    background: var(--surface-muted);
+}
+
+.border-default {
+    border-color: var(--border);
+}
+
+.text-secondary {
+    color: var(--text-secondary);
 }
