@@ -1,36 +1,111 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Codepiler
 
-## Getting Started
+Convert any code repository into an **AI-ready prompt** in seconds.
 
-First, run the development server:
+Codepiler is a browser-based tool that allows developers to upload a repository, explore its structure, select relevant files, and generate structured prompts for LLMs like ChatGPT, Claude, Gemini, and others.
+
+---
+
+## Features
+
+- Upload repository ZIP files
+- Interactive repository explorer
+- File selection with checkbox controls
+- `.gitignore`-based file filtering
+- Drag-and-drop ordering of files
+- Multiple prompt output formats
+- Live prompt preview
+- Token estimation for LLM usage
+- Export prompts as Markdown, Text, JSON, or XML
+- Fully client-side (no backend)
+
+---
+
+## Why Codepiler?
+
+Developers often need to provide **context from multiple files** when interacting with AI models. Manually copying code from large repositories is inefficient and error-prone.
+
+Codepiler simplifies this by allowing you to:
+
+1. Upload a repository archive
+2. Select the relevant files
+3. Generate a structured prompt ready for AI tools
+
+This helps developers quickly analyze, debug, or refactor codebases with AI assistance.
+
+---
+
+## Tech Stack
+
+- Next.js (App Router)
+- React
+- TypeScript
+- TailwindCSS
+- Zustand (state management)
+- JSZip (ZIP processing)
+- dnd-kit (drag and drop)
+- tiktoken (token estimation)
+
+---
+
+## Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/<your-username>/codepiler.git
+cd codepiler
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```shell
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+src
+ ├─ app
+ ├─ components
+ ├─ store
+ ├─ features
+ ├─ hooks
+ ├─ types
+ ├─ constants
+ └─ lib
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Key architecture concepts:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Feature modules** handle business logic
+- **Zustand stores** manage global state
+- **UI components** remain presentation-focused
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Usage
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Download a repository as ZIP
+2. Upload the ZIP into Codepiler
+3. Explore the repository structure
+4. Select the files you want to include
+5. Generate a structured prompt
+6. Copy or export the prompt for use with AI tools
+
+---
