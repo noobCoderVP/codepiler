@@ -6,48 +6,66 @@ export const metadata: Metadata = {
     metadataBase: new URL("https://codepiler.in"),
 
     title: {
-        default: "CodePiler",
-        template: "%s | CodePiler"
+        default: "Codepiler – Convert Codebase to Single File for LLM Context",
+        template: "%s | Codepiler"
     },
 
     description:
-        "Combine repository files into a single structured output. Turn scattered code into clean, usable context.",
+        "Convert your entire repository into a single structured file for LLM context. Perfect for ChatGPT, Claude, and AI tools to understand full codebases without missing context.",
 
-    applicationName: "CodePiler",
+    applicationName: "Codepiler",
 
     keywords: [
-        "CodePiler",
-        "code merge tool",
-        "repository tools",
-        "developer tools",
-        "combine files",
-        "codebase viewer"
+        "codebase to single file",
+        "LLM context builder",
+        "combine repository files",
+        "codebase viewer for AI",
+        "ChatGPT code context",
+        "Claude code context",
+        "AI code understanding tool",
+        "merge codebase into one file",
+        "developer AI tools"
     ],
 
-    authors: [{ name: "CodePiler" }],
-    creator: "CodePiler",
+    authors: [{ name: "Codepiler" }],
+    creator: "Codepiler",
+
+    alternates: {
+        canonical: "https://codepiler.in"
+    },
+
+    robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+            index: true,
+            follow: true,
+            "max-image-preview": "large",
+            "max-snippet": -1
+        }
+    },
 
     openGraph: {
-        title: "CodePiler",
-        description: "Turn your codebase into one clean, structured output.",
-        url: "https://codepiler.dev",
-        siteName: "CodePiler",
+        title: "Codepiler – Single File Codebase for LLM Context",
+        description:
+            "Turn your repository into a clean, structured single file for AI tools like ChatGPT and Claude.",
+        url: "https://codepiler.in",
+        siteName: "Codepiler",
         images: [
             {
                 url: "/og-image.png",
                 width: 1200,
                 height: 630,
-                alt: "CodePiler - Combine your codebase into one output"
+                alt: "Codepiler – Codebase to single file for LLM context"
             }
         ],
-        locale: "en_US",
         type: "website"
     },
 
     twitter: {
         card: "summary_large_image",
-        title: "CodePiler",
-        description: "Combine repository files into a single structured output.",
+        title: "Codepiler – Codebase to Single File",
+        description: "Generate a structured single-file view of your repository for LLMs.",
         images: ["/og-image.png"]
     },
 
