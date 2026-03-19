@@ -1,96 +1,84 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
-import { Github, BookOpen, Bug, Sparkles } from "lucide-react";
+import { Github, Sparkles } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
 
 export default function Header() {
     return (
         <motion.header
-            initial={{ y: -10, opacity: 0 }}
+            initial={{ y: -8, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.18 }}
-            className="h-16 px-6 flex items-center justify-between"
-            style={{
-                background: "var(--surface)",
-                borderBottom: "1px solid var(--border)",
-                boxShadow: "var(--shadow-sm)"
-            }}
+            transition={{ duration: 0.2 }}
+            className="
+                sticky top-0 z-50
+                backdrop-blur-md
+                border-b border-[var(--border)]
+                bg-[var(--surface)]/80
+            "
         >
-            {/* LEFT — Branding */}
-            <div className="flex items-center gap-3">
-                <Sparkles size={20} style={{ color: "var(--accent)" }} />
+            <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+                {/* LEFT — Branding */}
+                <Link href="/" className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-[var(--accent-soft)]">
+                        <Sparkles size={18} className="text-[var(--accent)]" />
+                    </div>
 
-                <span
-                    className="text-lg font-semibold tracking-tight"
-                    style={{ color: "var(--text-primary)" }}
-                >
-                    Codepiler
-                </span>
+                    <div className="flex items-center gap-2">
+                        <span className="text-lg font-semibold tracking-tight">Codepiler</span>
 
-                <span
-                    className="text-xs px-2 py-0.5 rounded-md"
-                    style={{
-                        background: "var(--surface-muted)",
-                        color: "var(--text-secondary)"
-                    }}
-                >
-                    v0.1
-                </span>
-            </div>
+                        <span className="text-xs px-2 py-0.5 rounded-md bg-[var(--surface-muted)] text-[var(--text-secondary)]">
+                            v0.1
+                        </span>
+                    </div>
+                </Link>
 
-            {/* CENTER — Navigation */}
-            <nav
-                className="hidden md:flex items-center gap-6 text-sm"
-                style={{ color: "var(--text-secondary)" }}
-            >
-                <a
-                    href="#"
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-md transition"
-                    style={{ transition: "all 0.15s ease" }}
-                    onMouseEnter={(e) =>
-                        (e.currentTarget.style.background = "var(--surface-muted)")
-                    }
-                    onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-                >
-                    <BookOpen size={16} />
-                    Docs
-                </a>
+                {/* CENTER — Navigation */}
+                <nav className="hidden md:flex items-center gap-8 text-sm text-[var(--text-secondary)]">
+                    <Link href="#features" className="hover:text-[var(--text-primary)] transition">
+                        Features
+                    </Link>
+                    <Link href="#use-cases" className="hover:text-[var(--text-primary)] transition">
+                        Use Cases
+                    </Link>
+                    <Link href="/docs" className="hover:text-[var(--text-primary)] transition">
+                        Docs
+                    </Link>
+                </nav>
 
-                <a
-                    href="#"
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-md transition"
-                    onMouseEnter={(e) =>
-                        (e.currentTarget.style.background = "var(--surface-muted)")
-                    }
-                    onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-                >
-                    <Bug size={16} />
-                    Issues
-                </a>
-            </nav>
+                {/* RIGHT — Actions */}
+                <div className="flex items-center gap-3">
+                    <a
+                        href="https://github.com"
+                        target="_blank"
+                        className="
+                            hidden sm:flex items-center gap-2
+                            px-3 py-1.5 rounded-md text-sm
+                            border border-[var(--border)]
+                            hover:bg-[var(--surface-muted)]
+                            transition
+                        "
+                    >
+                        <Github size={16} />
+                        GitHub
+                    </a>
 
-            {/* RIGHT — Actions */}
-            <div className="flex items-center gap-3">
-                <a
-                    href="https://github.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition"
-                    style={{
-                        border: "1px solid var(--border)",
-                        background: "var(--surface)"
-                    }}
-                    onMouseEnter={(e) =>
-                        (e.currentTarget.style.background = "var(--surface-muted)")
-                    }
-                    onMouseLeave={(e) => (e.currentTarget.style.background = "var(--surface)")}
-                >
-                    <Github size={16} />
-                    GitHub
-                </a>
+                    <Link
+                        href="/app"
+                        className="
+                            px-4 py-2 rounded-md text-sm font-medium
+                            bg-[var(--accent)] text-white
+                            shadow-sm
+                            hover:opacity-90
+                            transition
+                        "
+                    >
+                        Launch App
+                    </Link>
 
-                <ThemeToggle />
+                    <ThemeToggle />
+                </div>
             </div>
         </motion.header>
     );

@@ -47,8 +47,6 @@ export default function MainLayout() {
                     </Group>
                 </div>
             </main>
-
-            <Footer />
         </div>
     );
 }

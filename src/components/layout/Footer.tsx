@@ -1,50 +1,96 @@
 "use client";
 
-import { Github, BookOpen, Bug, Heart } from "lucide-react";
+import Link from "next/link";
 
 export default function Footer() {
     return (
-        <footer
-            className="h-14 px-6 flex items-center justify-between text-sm"
-            style={{
-                background: "var(--surface)",
-                borderTop: "1px solid var(--border)"
-            }}
-        >
-            {/* LEFT — Navigation */}
-            <div className="flex items-center gap-6" style={{ color: "var(--text-secondary)" }}>
-                <a href="#" className="flex items-center gap-2 transition hover:opacity-80">
-                    <BookOpen size={16} />
-                    Docs
-                </a>
+        <footer className="border-t border-[var(--border)] bg-[var(--surface)]">
+            <div className="max-w-7xl mx-auto px-6 py-12 grid md:grid-cols-4 gap-10">
+                {/* BRAND */}
+                <div>
+                    <h3 className="font-semibold text-lg">Codepiler</h3>
+                    <p className="mt-3 text-sm text-[var(--text-secondary)] max-w-xs">
+                        Turn your codebase into structured, AI-ready context. Built for developers
+                        working with modern LLMs.
+                    </p>
+                </div>
 
-                <a href="#" className="flex items-center gap-2 transition hover:opacity-80">
-                    <Bug size={16} />
-                    Issues
-                </a>
+                {/* PRODUCT */}
+                <div>
+                    <h4 className="font-medium mb-3">Product</h4>
+                    <ul className="space-y-2 text-sm text-[var(--text-secondary)]">
+                        <li>
+                            <Link href="/app" className="hover:text-[var(--text-primary)]">
+                                Launch App
+                            </Link>
+                        </li>
+                        <li>
+                            <Link href="#features" className="hover:text-[var(--text-primary)]">
+                                Features
+                            </Link>
+                        </li>
+                        <li>
+                            <Link href="#use-cases" className="hover:text-[var(--text-primary)]">
+                                Use Cases
+                            </Link>
+                        </li>
+                    </ul>
+                </div>
 
-                <a
-                    href="https://github.com"
-                    target="_blank"
-                    className="flex items-center gap-2 transition hover:opacity-80"
-                >
-                    <Github size={16} />
-                    GitHub
-                </a>
+                {/* RESOURCES */}
+                <div>
+                    <h4 className="font-medium mb-3">Resources</h4>
+                    <ul className="space-y-2 text-sm text-[var(--text-secondary)]">
+                        <li>
+                            <Link href="/docs" className="hover:text-[var(--text-primary)]">
+                                Documentation
+                            </Link>
+                        </li>
+                        <li>
+                            <Link href="/blog" className="hover:text-[var(--text-primary)]">
+                                Blog
+                            </Link>
+                        </li>
+                        <li>
+                            <a
+                                href="https://github.com"
+                                target="_blank"
+                                className="hover:text-[var(--text-primary)]"
+                            >
+                                GitHub
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                {/* LEGAL */}
+                <div>
+                    <h4 className="font-medium mb-3">Company</h4>
+                    <ul className="space-y-2 text-sm text-[var(--text-secondary)]">
+                        <li>
+                            <Link href="/privacy" className="hover:text-[var(--text-primary)]">
+                                Privacy Policy
+                            </Link>
+                        </li>
+                        <li>
+                            <Link href="/terms" className="hover:text-[var(--text-primary)]">
+                                Terms of Service
+                            </Link>
+                        </li>
+                        <li>
+                            <Link href="/contact" className="hover:text-[var(--text-primary)]">
+                                Contact
+                            </Link>
+                        </li>
+                    </ul>
+                </div>
             </div>
 
-            {/* RIGHT — Metadata */}
-            <div className="flex items-center gap-4" style={{ color: "var(--text-secondary)" }}>
-                <span>MIT License</span>
+            {/* BOTTOM BAR */}
+            <div className="border-t border-[var(--border)] px-6 py-4 text-sm text-[var(--text-secondary)] flex flex-col md:flex-row items-center justify-between">
+                <span>© {new Date().getFullYear()} Codepiler. All rights reserved.</span>
 
-                <span>•</span>
-
-                <span>Codepiler v0.1</span>
-
-                <span className="flex items-center gap-1">
-                    Open Source
-                    <Heart size={14} style={{ color: "var(--accent)" }} />
-                </span>
+                <span className="mt-2 md:mt-0">Built for developers working with AI</span>
             </div>
         </footer>
     );
