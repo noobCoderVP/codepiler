@@ -1,7 +1,7 @@
 type Props = {
-    files: number
-    tokens: number
-}
+    files: number;
+    tokens: number;
+};
 
 export default function ViewerChips({ files, tokens }: Props) {
     return (
@@ -14,5 +14,5 @@ export default function ViewerChips({ files, tokens }: Props) {
                 {tokens.toLocaleString()} Tokens
             </div>
         </div>
-    )
+    );
 }

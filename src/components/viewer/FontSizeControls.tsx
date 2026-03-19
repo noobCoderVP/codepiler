@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
 type Props = {
-    fontSize: number
-    setFontSize: (size: number) => void
-}
+    fontSize: number;
+    setFontSize: (size: number) => void;
+};
 
 export default function FontSizeControls({ fontSize, setFontSize }: Props) {
     return (
@@ -22,5 +22,5 @@ export default function FontSizeControls({ fontSize, setFontSize }: Props) {
                 A+
             </button>
         </div>
-    )
+    );
 }

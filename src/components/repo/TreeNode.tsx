@@ -1,46 +1,44 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { ChevronRight, ChevronDown, Folder } from "lucide-react"
-import { useSelectionStore } from "@/store/selection-store"
-import Checkbox from "@/components/ui/checkbox"
-import { getFileIcon } from "@/lib/file-icons"
-import { RepoNode } from "@/types/repo"
+import { useState, useMemo } from "react";
+import { ChevronRight, ChevronDown, Folder } from "lucide-react";
+import { useSelectionStore } from "@/store/selection-store";
+import Checkbox from "@/components/ui/checkbox";
+import { getFileIcon } from "@/lib/file-icons";
+import { RepoNode } from "@/types/repo";
 
 export default function TreeNode({ node, depth = 0 }: { node: RepoNode; depth?: number }) {
-    const [open, setOpen] = useState(true)
+    const [open, setOpen] = useState(true);
 
-    const selected = useSelectionStore((s) => s.selected)
-    const toggle = useSelectionStore((s) => s.toggle)
-    const toggleMany = useSelectionStore((s) => s.toggleMany)
+    const selected = useSelectionStore((s) => s.selected);
+    const toggle = useSelectionStore((s) => s.toggle);
+    const toggleMany = useSelectionStore((s) => s.toggleMany);
 
-    const filePaths = node.filePaths
+    const filePaths = node.filePaths;
 
-    const selectedCount = filePaths.filter((p) => selected.has(p)).length
+    const selectedCount = useMemo(() => {
+        let count = 0;
+        for (const p of filePaths) {
+            if (selected.has(p)) count++;
+        }
+        return count;
+    }, [selected, filePaths]);
 
-    const checked = selectedCount === filePaths.length && filePaths.length > 0
+    const checked = selectedCount === filePaths.length && filePaths.length > 0;
+    const indeterminate = selectedCount > 0 && selectedCount < filePaths.length;
 
-    const indeterminate = selectedCount > 0 && selectedCount < filePaths.length
-
-    const Icon = node.type === "file" ? getFileIcon(node.name) : Folder
+    const Icon = node.type === "file" ? getFileIcon(node.name) : Folder;
 
     return (
         <div>
             <div
-                className="
-                    flex items-center gap-2
-                    py-1.5 px-2
-                    rounded-md
-                    text-[14px] font-medium
-                    transition-colors
-                    cursor-pointer
-                    hover:bg-(--surface-subtle)
-                "
+                className="flex items-center gap-2 py-1.5 px-2 rounded-md text-[14px] font-medium transition-colors cursor-pointer hover:bg-(--surface-subtle)"
                 style={{ paddingLeft: depth * 16 }}
             >
                 {/* Expand Toggle */}
                 {node.type === "folder" ? (
                     <button
+                        aria-label="Toggle folder"
                         onClick={() => setOpen(!open)}
                         className="w-4 flex items-center justify-center text-(--text-secondary)"
                     >
@@ -55,11 +53,8 @@ export default function TreeNode({ node, depth = 0 }: { node: RepoNode; depth?: 
                     checked={checked}
                     indeterminate={indeterminate}
                     onChange={() => {
-                        if (node.type === "file") {
-                            toggle(node.path)
-                        } else {
-                            toggleMany(filePaths)
-                        }
+                        if (node.type === "file") toggle(node.path);
+                        else toggleMany(filePaths);
                     }}
                 />
 
@@ -70,16 +65,14 @@ export default function TreeNode({ node, depth = 0 }: { node: RepoNode; depth?: 
                     <Icon size={18} color="#64748b" />
                 )}
 
-                {/* Name */}
                 <span className="truncate text-(--text-primary)">{node.name}</span>
             </div>
 
-            {/* Children */}
             {node.type === "folder" &&
                 open &&
                 node.children?.map((child) => (
                     <TreeNode key={child.path} node={child} depth={depth + 1} />
                 ))}
         </div>
-    )
+    );
 }

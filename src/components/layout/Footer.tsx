@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { Github, BookOpen, Bug, Heart } from "lucide-react"
+import { Github, BookOpen, Bug, Heart } from "lucide-react";
 
 export default function Footer() {
     return (
@@ -47,5 +47,5 @@ export default function Footer() {
                 </span>
             </div>
         </footer>
-    )
+    );
 }

@@ -1,19 +1,22 @@
-"use client"
+"use client";
 
-import { Check, Minus } from "lucide-react"
+import { Check, Minus } from "lucide-react";
 
 type Props = {
-    checked: boolean
-    indeterminate?: boolean
-    onChange: () => void
-}
+    checked: boolean;
+    indeterminate?: boolean;
+    onChange: () => void;
+};
 
 export default function Checkbox({ checked, indeterminate, onChange }: Props) {
     return (
         <button
+            role="checkbox"
+            aria-checked={indeterminate ? "mixed" : checked}
+            aria-label="Select item"
             onClick={(e) => {
-                e.stopPropagation()
-                onChange()
+                e.stopPropagation();
+                onChange();
             }}
             className={`
                 flex items-center justify-center
@@ -33,5 +36,5 @@ export default function Checkbox({ checked, indeterminate, onChange }: Props) {
 
             {!checked && indeterminate && <Minus size={12} color="white" strokeWidth={3} />}
         </button>
-    )
+    );
 }

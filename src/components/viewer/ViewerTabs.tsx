@@ -1,19 +1,19 @@
-"use client"
+"use client";
 
-import { ViewerFormat } from "@/lib/viewer-formatters"
-import ViewerChips from "./ViewerChips"
-import FontSizeControls from "./FontSizeControls"
+import { ViewerFormat } from "@/lib/viewer-formatters";
+import ViewerChips from "./ViewerChips";
+import FontSizeControls from "./FontSizeControls";
 
 type Props = {
-    value: ViewerFormat
-    onChange: (f: ViewerFormat) => void
-    files: number
-    tokens: number
-    fontSize: number
-    setFontSize: (n: number) => void
-}
+    value: ViewerFormat;
+    onChange: (f: ViewerFormat) => void;
+    files: number;
+    tokens: number;
+    fontSize: number;
+    setFontSize: (n: number) => void;
+};
 
-const tabs: ViewerFormat[] = ["text", "json", "xml", "markdown"]
+const tabs: ViewerFormat[] = ["text", "json", "xml", "markdown"];
 
 export default function ViewerTabs({
     value,
@@ -47,5 +47,5 @@ export default function ViewerTabs({
                 <FontSizeControls fontSize={fontSize} setFontSize={setFontSize} />
             </div>
         </div>
-    )
+    );
 }

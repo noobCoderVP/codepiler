@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import { useMemo, useState } from "react"
-import { useRepoStore } from "@/store/repo-store"
-import { useSelectionStore } from "@/store/selection-store"
+import { useMemo, useState } from "react";
+import { useRepoStore } from "@/store/repo-store";
+import { useSelectionStore } from "@/store/selection-store";
 
-import ViewerHeader from "./ViewerHeader"
-import ViewerTabs from "./ViewerTabs"
-import ViewerEditor from "./ViewerEditor"
-import ViewerActions from "./ViewerActions"
+import ViewerHeader from "./ViewerHeader";
+import ViewerTabs from "./ViewerTabs";
+import ViewerEditor from "./ViewerEditor";
+import ViewerActions from "./ViewerActions";
 
 import {
     ViewerFormat,
@@ -16,35 +16,35 @@ import {
     buildXML,
     buildMarkdown,
     countTokens
-} from "@/lib/viewer-formatters"
+} from "@/lib/viewer-formatters";
 
 export default function OneFileViewer() {
-    const files = useRepoStore((s) => s.files)
-    const selected = useSelectionStore((s) => s.selected)
+    const files = useRepoStore((s) => s.files);
+    const selected = useSelectionStore((s) => s.selected);
 
-    const [format, setFormat] = useState<ViewerFormat>("text")
-    const [fontSize, setFontSize] = useState(13)
+    const [format, setFormat] = useState<ViewerFormat>("text");
+    const [fontSize, setFontSize] = useState(13);
 
     const selectedFiles = useMemo(() => {
-        return files.filter((f) => selected.has(f.path))
-    }, [files, selected])
+        return files.filter((f) => selected.has(f.path));
+    }, [files, selected]);
 
     const output = useMemo(() => {
         switch (format) {
             case "json":
-                return buildJSON(selectedFiles)
+                return buildJSON(selectedFiles);
             case "xml":
-                return buildXML(selectedFiles)
+                return buildXML(selectedFiles);
             case "markdown":
-                return buildMarkdown(selectedFiles)
+                return buildMarkdown(selectedFiles);
             default:
-                return buildText(selectedFiles)
+                return buildText(selectedFiles);
         }
-    }, [selectedFiles, format])
+    }, [selectedFiles, format]);
 
-    const tokens = useMemo(() => countTokens(output), [output])
+    const tokens = useMemo(() => countTokens(output), [output]);
 
-    const repoName = files.length > 0 ? files[0].path.split("/")[0] : null
+    const repoName = files.length > 0 ? files[0].path.split("/")[0] : null;
 
     return (
         <div className="flex h-full flex-col">
@@ -65,5 +65,5 @@ export default function OneFileViewer() {
 
             <ViewerActions content={output} format={format} repoName={repoName} />
         </div>
-    )
+    );
 }

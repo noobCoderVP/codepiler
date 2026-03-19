@@ -1,17 +1,17 @@
 export async function readFiles(files: File[]) {
-    const result = []
+    const result = [];
 
     for (const file of files) {
         const path =
-            (file as File & { webkitRelativePath?: string }).webkitRelativePath || file.name
-        const content = await file.text()
+            (file as File & { webkitRelativePath?: string }).webkitRelativePath || file.name;
+        const content = await file.text();
 
         result.push({
             path,
             content,
             size: file.size
-        })
+        });
     }
 
-    return result
+    return result;
 }

@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import RepoUpload from "./RepoUpload"
-import RepoTree from "./RepoTree"
+import RepoUpload from "./RepoUpload";
+import RepoTree from "./RepoTree";
 
 export default function RepoExplorer() {
     return (
@@ -16,5 +16,5 @@ export default function RepoExplorer() {
                 <RepoTree />
             </div>
         </div>
-    )
+    );
 }

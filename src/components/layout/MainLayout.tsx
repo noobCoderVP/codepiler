@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import Header from "./Header"
-import Footer from "./Footer"
+import Header from "./Header";
+import Footer from "./Footer";
 
-import RepoExplorer from "../repo/RepoExplorer"
-import OneFileViewer from "../viewer/OneFileViewer"
+import RepoExplorer from "../repo/RepoExplorer";
+import OneFileViewer from "../viewer/OneFileViewer";
 
-import { Group, Panel, Separator } from "react-resizable-panels"
+import { Group, Panel, Separator } from "react-resizable-panels";
 
 export default function MainLayout() {
     return (
@@ -50,5 +50,5 @@ export default function MainLayout() {
 
             <Footer />
         </div>
-    )
+    );
 }

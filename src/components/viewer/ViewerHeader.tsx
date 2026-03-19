@@ -1,7 +1,7 @@
-"use client"
+"use client";
 type Props = {
-    repoName: string | null
-}
+    repoName: string | null;
+};
 
 export default function ViewerHeader({ repoName }: Props) {
     return (
@@ -14,5 +14,5 @@ export default function ViewerHeader({ repoName }: Props) {
                 <div className="text-sm text-(--text-secondary) mt-1">Repository: {repoName}</div>
             )}
         </div>
-    )
+    );
 }

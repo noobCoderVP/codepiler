@@ -1,4 +1,4 @@
-import { VscFile, VscJson, VscMarkdown, VscDatabase } from "react-icons/vsc"
+import { VscFile, VscJson, VscMarkdown, VscDatabase } from "react-icons/vsc";
 
 import {
     SiTypescript,
@@ -21,101 +21,101 @@ import {
     SiSass,
     SiDocker,
     SiYaml
-} from "react-icons/si"
+} from "react-icons/si";
 
 export function getFileIcon(path: string) {
-    const name = path.toLowerCase()
-    const ext = name.split(".").pop()
+    const name = path.toLowerCase();
+    const ext = name.split(".").pop();
 
     // special filenames first
-    if (name === "dockerfile") return SiDocker
-    if (name === "package.json") return SiJavascript
-    if (name === "tsconfig.json") return SiTypescript
-    if (name === "next.config.js") return SiNextdotjs
-    if (name === "next.config.mjs") return SiNextdotjs
-    if (name === "requirements.txt") return SiPython
-    if (name === "go.mod") return SiGo
+    if (name === "dockerfile") return SiDocker;
+    if (name === "package.json") return SiJavascript;
+    if (name === "tsconfig.json") return SiTypescript;
+    if (name === "next.config.js") return SiNextdotjs;
+    if (name === "next.config.mjs") return SiNextdotjs;
+    if (name === "requirements.txt") return SiPython;
+    if (name === "go.mod") return SiGo;
 
     switch (ext) {
         // Typescript
         case "ts":
-            return SiTypescript
+            return SiTypescript;
         case "tsx":
-            return SiReact
+            return SiReact;
 
         // Javascript
         case "js":
-            return SiJavascript
+            return SiJavascript;
         case "jsx":
-            return SiReact
+            return SiReact;
         case "mjs":
-            return SiJavascript
+            return SiJavascript;
         case "cjs":
-            return SiJavascript
+            return SiJavascript;
 
         // Python
         case "py":
-            return SiPython
+            return SiPython;
 
         // Web
         case "html":
-            return SiHtml5
+            return SiHtml5;
         case "css":
-            return SiCss
+            return SiCss;
         case "scss":
-            return SiSass
+            return SiSass;
         case "sass":
-            return SiSass
+            return SiSass;
 
         // JSON / configs
         case "json":
-            return VscJson
+            return VscJson;
         case "yaml":
         case "yml":
-            return SiYaml
+            return SiYaml;
 
         // Docs
         case "md":
         case "mdx":
-            return VscMarkdown
+            return VscMarkdown;
         case "txt":
-            return VscFile
+            return VscFile;
 
         // Backend languages
         case "go":
-            return SiGo
+            return SiGo;
         case "rs":
-            return SiRust
+            return SiRust;
         case "java":
-            return SiCplusplus
+            return SiCplusplus;
         case "kt":
-            return SiKotlin
+            return SiKotlin;
         case "php":
-            return SiPhp
+            return SiPhp;
         case "rb":
-            return SiRuby
+            return SiRuby;
         case "swift":
-            return SiSwift
+            return SiSwift;
         case "dart":
-            return SiDart
+            return SiDart;
 
         // C family
         case "c":
-            return SiC
+            return SiC;
         case "cpp":
         case "cc":
         case "cxx":
-            return SiCplusplus
+            return SiCplusplus;
         case "cs":
-            return SiSharp
+            return SiSharp;
 
         // SQL / DB
         case "sql":
-            return VscDatabase
+            return VscDatabase;
 
         // Docker
         case "dockerfile":
-            return SiDocker
+            return SiDocker;
 
         // Images
         case "png":
@@ -124,17 +124,17 @@ export function getFileIcon(path: string) {
         case "gif":
         case "svg":
         case "webp":
-            return VscFile
+            return VscFile;
 
         // Archives
         case "zip":
         case "tar":
         case "gz":
         case "rar":
-            return VscFile
+            return VscFile;
 
         // default
         default:
-            return VscFile
+            return VscFile;
     }
 }

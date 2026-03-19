@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { Github, BookOpen, Bug, Sparkles } from "lucide-react"
-import ThemeToggle from "./ThemeToggle"
+import { motion } from "framer-motion";
+import { Github, BookOpen, Bug, Sparkles } from "lucide-react";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Header() {
     return (
@@ -93,5 +93,5 @@ export default function Header() {
                 <ThemeToggle />
             </div>
         </motion.header>
-    )
+    );
 }

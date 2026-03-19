@@ -1,4 +1,4 @@
-import ignore from "ignore"
+import ignore from "ignore";
 
 const IGNORE_DIRS = [
     "node_modules",
@@ -10,7 +10,7 @@ const IGNORE_DIRS = [
     "vendor",
     ".turbo",
     ".cache"
-]
+];
 
 const IGNORE_EXT = [
     "png",
@@ -27,32 +27,32 @@ const IGNORE_EXT = [
     "gz",
     "rar",
     "pdf"
-]
+];
 
-const MAX_FILE_SIZE = 200_000 // 200kb
+const MAX_FILE_SIZE = 200_000; // 200kb
 
 export function preFilterFiles(files: File[]) {
-    const ig = ignore()
+    const ig = ignore();
 
-    ig.add(IGNORE_DIRS.map((d) => `${d}/`))
+    ig.add(IGNORE_DIRS.map((d) => `${d}/`));
 
     return files.filter((file) => {
         const path =
-            (file as File & { webkitRelativePath?: string }).webkitRelativePath || file.name
+            (file as File & { webkitRelativePath?: string }).webkitRelativePath || file.name;
 
-        const lower = path.toLowerCase()
+        const lower = path.toLowerCase();
 
         // ignore directories
-        if (IGNORE_DIRS.some((dir) => lower.includes(`/${dir}/`))) return false
+        if (IGNORE_DIRS.some((dir) => lower.includes(`/${dir}/`))) return false;
 
         // ignore binary extensions
-        const ext = lower.split(".").pop()
+        const ext = lower.split(".").pop();
 
-        if (ext && IGNORE_EXT.includes(ext)) return false
+        if (ext && IGNORE_EXT.includes(ext)) return false;
 
         // ignore large files
-        if (file.size > MAX_FILE_SIZE) return false
+        if (file.size > MAX_FILE_SIZE) return false;
 
-        return true
-    })
+        return true;
+    });
 }

@@ -1,30 +1,31 @@
-"use client"
+"use client";
 
-import Editor from "@monaco-editor/react"
-import { ViewerFormat } from "@/lib/viewer-formatters"
+import Editor from "@monaco-editor/react";
+import { ViewerFormat } from "@/lib/viewer-formatters";
 
 type Props = {
-    value: string
-    format: ViewerFormat
-    fontSize: number
-}
+    value: string;
+    format: ViewerFormat;
+    fontSize: number;
+};
 
 function getLanguage(format: ViewerFormat) {
     switch (format) {
         case "json":
-            return "json"
+            return "json";
         case "xml":
-            return "xml"
+            return "xml";
         case "markdown":
-            return "markdown"
+            return "markdown";
         default:
-            return "plaintext"
+            return "plaintext";
     }
 }
 
 export default function ViewerEditor({ value, format, fontSize }: Props) {
     return (
         <Editor
+            key={format}
             height="100%"
             language={getLanguage(format)}
             value={value}
@@ -50,5 +51,5 @@ export default function ViewerEditor({ value, format, fontSize }: Props) {
                 smoothScrolling: true
             }}
         />
-    )
+    );
 }

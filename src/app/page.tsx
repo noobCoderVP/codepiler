@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import MainLayout from "@/components/layout/MainLayout"
-import { motion } from "framer-motion"
+import MainLayout from "@/components/layout/MainLayout";
+import { motion } from "framer-motion";
 
 export default function HomePage() {
     return (
@@ -13,5 +13,5 @@ export default function HomePage() {
         >
             <MainLayout />
         </motion.div>
-    )
+    );
 }

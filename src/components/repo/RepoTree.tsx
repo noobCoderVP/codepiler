@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import { useRepoStore } from "@/store/repo-store"
-import TreeNode from "./TreeNode"
-import { FolderTree } from "lucide-react"
+import { useRepoStore } from "@/store/repo-store";
+import TreeNode from "./TreeNode";
+import { FolderTree } from "lucide-react";
 
 export default function RepoTree() {
-    const tree = useRepoStore((s) => s.tree)
-    const files = useRepoStore((s) => s.files)
+    const tree = useRepoStore((s) => s.tree);
+    const files = useRepoStore((s) => s.files);
 
     if (!tree.length) {
         return (
@@ -19,7 +19,7 @@ export default function RepoTree() {
                     Upload a repository to explore files and build prompts
                 </p>
             </div>
-        )
+        );
     }
 
     return (
@@ -38,5 +38,5 @@ export default function RepoTree() {
                 ))}
             </div>
         </div>
-    )
+    );
 }
