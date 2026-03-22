@@ -28,7 +28,7 @@ export default function Checkbox({ checked, indeterminate, onChange }: Props) {
                 ${
                     checked || indeterminate
                         ? "bg-[var(--accent)] border-[var(--accent)]"
-                        : "bg-white border-slate-400 hover:border-slate-500"
+                        : "border-[var(--border)] bg-[var(--surface)] hover:border-[var(--text-secondary)]"
                 }
             `}
         >

@@ -1,6 +1,7 @@
 "use client";
 
-import { Copy, Download } from "lucide-react";
+import { Check, Copy, Download } from "lucide-react";
+import { useState } from "react";
 
 type Props = {
     content: string;
@@ -9,8 +10,12 @@ type Props = {
 };
 
 export default function ViewerActions({ content, format, repoName }: Props) {
+    const [copied, setCopied] = useState(false);
+
     const copy = async () => {
         await navigator.clipboard.writeText(content);
+        setCopied(true);
+        window.setTimeout(() => setCopied(false), 1200);
     };
 
     const download = () => {
@@ -24,35 +29,33 @@ export default function ViewerActions({ content, format, repoName }: Props) {
                     : "txt";
 
         const ts = new Date().toISOString().replace(/T/, "_").replace(/:/g, "-").split(".")[0];
-
         const name = `${repoName ?? "repo"}_${ts}.${ext}`;
-
         const blob = new Blob([content], { type: "text/plain" });
         const url = URL.createObjectURL(blob);
 
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = name;
-        a.click();
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = name;
+        anchor.click();
 
         URL.revokeObjectURL(url);
     };
 
     return (
-        <div className="flex items-center gap-2 px-4 py-2 border-t border-border">
+        <div className="flex items-center gap-2">
             <button
                 onClick={copy}
                 aria-label="Copy content"
-                className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm hover:bg-[var(--surface-muted)]"
+                className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm font-medium text-[var(--text-primary)] transition hover:bg-[var(--surface-muted)]"
             >
-                <Copy size={16} />
-                Copy
+                {copied ? <Check size={16} /> : <Copy size={16} />}
+                {copied ? "Copied" : "Copy"}
             </button>
 
             <button
                 onClick={download}
                 aria-label="Download file"
-                className="flex items-center gap-2 px-3 py-1.5 rounded-md text-sm hover:bg-[var(--surface-muted)]"
+                className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm font-medium text-[var(--text-primary)] transition hover:bg-[var(--surface-muted)]"
             >
                 <Download size={16} />
                 Download

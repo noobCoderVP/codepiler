@@ -108,3 +108,11 @@ body {
 .text-secondary {
     color: var(--text-secondary);
 }
+
+.codepiler-active-line {
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.codepiler-active-gutter {
+    border-left: 3px solid var(--accent);
+}

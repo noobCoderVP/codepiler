@@ -21,6 +21,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
             lastModified: new Date(),
             changeFrequency: "monthly",
             priority: 0.7
+        },
+        {
+            url: `${baseUrl}/docs/uploading`,
+            lastModified: new Date(),
+            changeFrequency: "monthly",
+            priority: 0.65
+        },
+        {
+            url: `${baseUrl}/docs/viewer`,
+            lastModified: new Date(),
+            changeFrequency: "monthly",
+            priority: 0.65
+        },
+        {
+            url: `${baseUrl}/docs/examples`,
+            lastModified: new Date(),
+            changeFrequency: "monthly",
+            priority: 0.6
         }
     ];
 }

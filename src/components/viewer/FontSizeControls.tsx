@@ -10,14 +10,14 @@ export default function FontSizeControls({ fontSize, setFontSize }: Props) {
         <div className="flex items-center gap-1">
             <button
                 onClick={() => setFontSize(Math.max(11, fontSize - 1))}
-                className="px-2 py-1 text-sm rounded hover:bg-(--surface-muted)"
+                className="rounded px-2 py-1 text-sm text-[var(--text-primary)] transition hover:bg-[var(--surface-muted)]"
             >
                 A-
             </button>
 
             <button
                 onClick={() => setFontSize(Math.min(24, fontSize + 1))}
-                className="px-2 py-1 text-sm rounded hover:bg-(--surface-muted)"
+                className="rounded px-2 py-1 text-sm text-[var(--text-primary)] transition hover:bg-[var(--surface-muted)]"
             >
                 A+
             </button>

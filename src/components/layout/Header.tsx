@@ -1,81 +1,113 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { Github, Sparkles } from "lucide-react";
+import { BookOpenText, Home, LayoutTemplate, Sparkles } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
 
 export default function Header() {
+    const pathname = usePathname();
+    const isViewer = pathname.startsWith("/app");
+    const isHome = pathname === "/";
+    const startTutorial = () => {
+        window.dispatchEvent(new Event("codepiler:start-tutorial"));
+    };
+
     return (
         <motion.header
             initial={{ y: -8, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.2 }}
-            className="
-                sticky top-0 z-50
-                backdrop-blur-md
-                border-b border-[var(--border)]
-                bg-[var(--surface)]/80
-            "
+            className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--surface)]/80 backdrop-blur-md"
         >
-            <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-                {/* LEFT — Branding */}
+            <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
                 <Link href="/" className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-[var(--accent-soft)]">
-                        <Sparkles size={18} className="text-[var(--accent)]" />
+                    <div className="overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--surface)] p-1 shadow-sm">
+                        <Image src="/favicon.svg" alt="CodePiler icon" width={24} height={24} />
                     </div>
 
                     <div className="flex items-center gap-2">
-                        <span className="text-lg font-semibold tracking-tight">Codepiler</span>
-
-                        <span className="text-xs px-2 py-0.5 rounded-md bg-[var(--surface-muted)] text-[var(--text-secondary)]">
-                            v0.1
-                        </span>
+                        <span className="text-2xl font-semibold tracking-tight">CodePiler</span>
                     </div>
                 </Link>
 
-                {/* CENTER — Navigation */}
-                <nav className="hidden md:flex items-center gap-8 text-sm text-[var(--text-secondary)]">
-                    <Link href="#features" className="hover:text-[var(--text-primary)] transition">
-                        Features
-                    </Link>
-                    <Link href="#use-cases" className="hover:text-[var(--text-primary)] transition">
-                        Use Cases
-                    </Link>
-                    <Link href="/docs" className="hover:text-[var(--text-primary)] transition">
-                        Docs
-                    </Link>
-                </nav>
+                {isHome ? (
+                    <nav className="hidden items-center gap-8 text-sm text-[var(--text-secondary)] md:flex">
+                        <Link
+                            href="#features"
+                            className="flex items-center gap-2 transition hover:text-[var(--text-primary)]"
+                        >
+                            <Sparkles size={15} />
+                            Features
+                        </Link>
+                        <Link
+                            href="#workflow"
+                            className="flex items-center gap-2 transition hover:text-[var(--text-primary)]"
+                        >
+                            <LayoutTemplate size={15} />
+                            Workflow
+                        </Link>
+                        <Link
+                            href="#use-cases"
+                            className="flex items-center gap-2 transition hover:text-[var(--text-primary)]"
+                        >
+                            <Home size={15} />
+                            Use Cases
+                        </Link>
+                        <Link
+                            href="/docs"
+                            className="flex items-center gap-2 transition hover:text-[var(--text-primary)]"
+                        >
+                            <BookOpenText size={15} />
+                            Docs
+                        </Link>
+                    </nav>
+                ) : (
+                    <nav className="hidden items-center gap-6 text-sm text-[var(--text-secondary)] md:flex">
+                        <Link
+                            href="/"
+                            className="flex items-center gap-2 transition hover:text-[var(--text-primary)]"
+                        >
+                            <Home size={15} />
+                            Home
+                        </Link>
+                        <Link
+                            href="/docs"
+                            className="flex items-center gap-2 transition hover:text-[var(--text-primary)]"
+                        >
+                            <BookOpenText size={15} />
+                            Docs
+                        </Link>
+                        <Link
+                            href="/docs/viewer"
+                            className="flex items-center gap-2 transition hover:text-[var(--text-primary)]"
+                        >
+                            <LayoutTemplate size={15} />
+                            Viewer Guide
+                        </Link>
+                        {isViewer && (
+                            <button
+                                onClick={startTutorial}
+                                className="flex items-center gap-2 transition hover:text-[var(--text-primary)]"
+                            >
+                                <Sparkles size={15} />
+                                Tutorial
+                            </button>
+                        )}
+                    </nav>
+                )}
 
-                {/* RIGHT — Actions */}
                 <div className="flex items-center gap-3">
-                    <a
-                        href="https://github.com"
-                        target="_blank"
-                        className="
-                            hidden sm:flex items-center gap-2
-                            px-3 py-1.5 rounded-md text-sm
-                            border border-[var(--border)]
-                            hover:bg-[var(--surface-muted)]
-                            transition
-                        "
-                    >
-                        <Github size={16} />
-                        GitHub
-                    </a>
-
-                    <Link
-                        href="/app"
-                        className="
-                            px-4 py-2 rounded-md text-sm font-medium
-                            bg-[var(--accent)] text-white
-                            shadow-sm
-                            hover:opacity-90
-                            transition
-                        "
-                    >
-                        Launch App
-                    </Link>
+                    {!isViewer && (
+                        <Link
+                            href="/app"
+                            className="rounded-md bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:opacity-90"
+                        >
+                            Launch App
+                        </Link>
+                    )}
 
                     <ThemeToggle />
                 </div>
