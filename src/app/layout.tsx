@@ -7,13 +7,17 @@ const baseUrl = new URL("https://codepiler.in");
 
 export const metadata: Metadata = {
     metadataBase: baseUrl,
+
     title: {
         default: "CodePiler | Turn Repositories Into AI-Ready Prompt Context",
         template: "%s | CodePiler"
     },
+
     description:
         "CodePiler helps developers upload a repository, search the project tree, select the right files, and export clean prompt-ready context for ChatGPT, Claude, Gemini, and other AI tools.",
+
     applicationName: "CodePiler",
+
     keywords: [
         "repository to prompt",
         "codebase context builder",
@@ -25,12 +29,15 @@ export const metadata: Metadata = {
         "developer AI tooling",
         "repository prompt generator"
     ],
+
     authors: [{ name: "CodePiler" }],
     creator: "CodePiler",
     publisher: "CodePiler",
+
     alternates: {
-        canonical: "https://codepiler.in"
+        canonical: "/"
     },
+
     robots: {
         index: true,
         follow: true,
@@ -42,11 +49,12 @@ export const metadata: Metadata = {
             "max-video-preview": -1
         }
     },
+
     openGraph: {
         title: "CodePiler | Turn Repositories Into AI-Ready Prompt Context",
         description:
             "Upload a repository, search the tree, choose the files that matter, and export structured prompt context for AI tools.",
-        url: "https://codepiler.in",
+        url: "/",
         siteName: "CodePiler",
         images: [
             {
@@ -59,6 +67,7 @@ export const metadata: Metadata = {
         locale: "en_US",
         type: "website"
     },
+
     twitter: {
         card: "summary_large_image",
         title: "CodePiler | Repository To Prompt Context",
@@ -66,15 +75,19 @@ export const metadata: Metadata = {
             "Build cleaner prompt context from real repositories with file selection, format switching, and token awareness.",
         images: ["/og-image.png"]
     },
+
+    // ✅ FIXED ICONS
     icons: {
         icon: [
-            { url: "/favicon.ico", sizes: "any" },
-            { url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },
-            { url: "/favicon.svg", type: "image/svg+xml" }
+            { url: "/favicon.ico" }, // ✅ primary (must exist)
+            { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" }, // ✅ critical
+            { url: "/favicon-48x48.png", sizes: "48x48", type: "image/png" }, // ✅ Google preferred
+            { url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" }
         ],
         apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
         shortcut: ["/favicon.ico"]
     },
+
     manifest: "/site.webmanifest",
     category: "technology"
 };
