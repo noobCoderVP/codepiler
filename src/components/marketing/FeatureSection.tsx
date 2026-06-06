@@ -1,5 +1,14 @@
 import { motion } from "framer-motion";
-import { Files, FileJson2, ShieldCheck, Sparkles } from "lucide-react";
+import {
+    Files,
+    FileJson2,
+    ShieldCheck,
+    Sparkles,
+    Filter,
+    BarChart2,
+    BookOpen,
+    Hash
+} from "lucide-react";
 
 const features = [
     {
@@ -23,6 +32,30 @@ const features = [
         description:
             "Repository files stay in the browser workflow instead of being pushed to a backend.",
         icon: ShieldCheck
+    },
+    {
+        title: "Per-file token counts",
+        description:
+            "See token usage inline on every file and folder in the tree — no guesswork on what's big.",
+        icon: Hash
+    },
+    {
+        title: "File type filtering",
+        description:
+            "Filter the tree by extension in one click. Narrow to only .ts, .py, or any combination.",
+        icon: Filter
+    },
+    {
+        title: "Size manager",
+        description:
+            "View all files sorted by size or token count, then bulk-select or deselect the heavy ones.",
+        icon: BarChart2
+    },
+    {
+        title: "Saved sessions",
+        description:
+            "Save your repo and selection to localStorage and restore it later — no re-uploading needed.",
+        icon: BookOpen
     }
 ];
 

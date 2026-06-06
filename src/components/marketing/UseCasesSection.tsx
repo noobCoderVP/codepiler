@@ -1,10 +1,12 @@
 import { motion } from "framer-motion";
 
 const useCases = [
-    "Explain unfamiliar codebases to an LLM without ad hoc copy-paste.",
-    "Prepare focused prompt context for debugging multi-file issues.",
-    "Package selected source files for documentation or onboarding prompts.",
-    "Assemble cleaner context when refactoring older repositories."
+    "Explain an unfamiliar codebase to an LLM in one prompt — no ad hoc copy-paste, no missed files.",
+    "Prepare focused debugging context by selecting only the affected modules and their direct dependencies.",
+    "Feed an AI agent a precise context package so it skips repeated read_file calls and starts productive immediately.",
+    "Save your selection for recurring workflows — re-open the same context next session without re-uploading the repository.",
+    "Reduce API cost by 10–90× by sending only the files that matter instead of an entire repository.",
+    "Package source files for documentation, onboarding prompts, or code-review summaries with a single export."
 ];
 
 export default function UseCasesSection() {

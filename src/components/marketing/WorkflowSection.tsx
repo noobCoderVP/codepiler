@@ -5,19 +5,19 @@ const workflow = [
         step: "01",
         title: "Import repository files",
         description:
-            "Load a project folder directly in the browser and trim obvious noise up front."
+            "Upload a project folder or ZIP. Binary files, generated directories, and files over 200 KB are automatically excluded — no manual cleanup needed."
     },
     {
         step: "02",
-        title: "Inspect the tree",
+        title: "Filter, sort, and select",
         description:
-            "Use the explorer to navigate folders, expand structure, and quickly control scope."
+            "Use the file-type filter to narrow by extension, sort by token count or size to find the heavy hitters, and check exactly the files that matter. Token counts show inline on every file and folder."
     },
     {
         step: "03",
-        title: "Generate final output",
+        title: "Generate and export",
         description:
-            "Preview the assembled prompt, verify token count, and copy or download the result."
+            "Preview the assembled prompt in Text, JSON, XML, or Markdown. Verify the total token count, then copy or download. Save the selection to resume the same context later without re-uploading."
     }
 ];
 

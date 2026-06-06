@@ -6,15 +6,17 @@ import { useSelectionStore } from "@/store/selection-store";
 import { useViewerStore } from "@/store/viewer-store";
 import Checkbox from "@/components/ui/checkbox";
 import { getFileIcon } from "@/lib/file-icons";
+import { formatTokenCount } from "@/lib/token-utils";
 import { RepoNode } from "@/types/repo";
 
 type Props = {
     node: RepoNode;
     depth?: number;
     searchActive?: boolean;
+    tokenMap: Record<string, number>;
 };
 
-export default function TreeNode({ node, depth = 0, searchActive = false }: Props) {
+export default function TreeNode({ node, depth = 0, searchActive = false, tokenMap }: Props) {
     const [open, setOpen] = useState(true);
 
     const selected = useSelectionStore((s) => s.selected);
@@ -34,6 +36,11 @@ export default function TreeNode({ node, depth = 0, searchActive = false }: Prop
         return count;
     }, [selected, filePaths]);
 
+    const folderTokens = useMemo(() => {
+        if (node.type !== "folder") return 0;
+        return filePaths.reduce((sum, p) => sum + (tokenMap[p] ?? 0), 0);
+    }, [node.type, filePaths, tokenMap]);
+
     const checked = selectedCount === filePaths.length && filePaths.length > 0;
     const indeterminate = selectedCount > 0 && selectedCount < filePaths.length;
     const isOpen = searchActive ? true : open;
@@ -46,6 +53,9 @@ export default function TreeNode({ node, depth = 0, searchActive = false }: Prop
         select(node.path);
         setActivePath(node.path);
     };
+
+    const fileTokens = node.type === "file" ? (tokenMap[node.path] ?? 0) : 0;
+    const displayTokens = node.type === "file" ? fileTokens : folderTokens;
 
     return (
         <div>
@@ -82,21 +92,29 @@ export default function TreeNode({ node, depth = 0, searchActive = false }: Prop
                     <Icon size={18} color={isActiveFile ? "#2563eb" : "#64748b"} />
                 )}
 
-                {node.type === "file" ? (
-                    <button
-                        onClick={handleFileClick}
-                        className="truncate text-left text-[var(--text-primary)] transition hover:text-[var(--accent)]"
-                    >
-                        {node.name}
-                    </button>
-                ) : (
-                    <button
-                        onClick={() => setOpen((value) => !value)}
-                        className="truncate text-left text-[var(--text-primary)]"
-                    >
-                        {node.name}
-                    </button>
-                )}
+                <div className="flex min-w-0 flex-1 items-center justify-between gap-2">
+                    {node.type === "file" ? (
+                        <button
+                            onClick={handleFileClick}
+                            className="truncate text-left text-[var(--text-primary)] transition hover:text-[var(--accent)]"
+                        >
+                            {node.name}
+                        </button>
+                    ) : (
+                        <button
+                            onClick={() => setOpen((value) => !value)}
+                            className="truncate text-left text-[var(--text-primary)]"
+                        >
+                            {node.name}
+                        </button>
+                    )}
+
+                    {displayTokens > 0 && (
+                        <span className="shrink-0 rounded-full bg-[var(--surface-muted)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--text-secondary)]">
+                            {formatTokenCount(displayTokens)}
+                        </span>
+                    )}
+                </div>
             </div>
 
             {node.type === "folder" &&
@@ -107,6 +125,7 @@ export default function TreeNode({ node, depth = 0, searchActive = false }: Prop
                         node={child}
                         depth={depth + 1}
                         searchActive={searchActive}
+                        tokenMap={tokenMap}
                     />
                 ))}
         </div>

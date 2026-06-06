@@ -69,6 +69,8 @@ export default function OneFileViewer() {
                 content={document.content}
                 format={format}
                 activePath={activePath}
+                selectedFiles={selectedFiles}
+                selectedPaths={Array.from(selected)}
             />
 
             <ViewerTabs

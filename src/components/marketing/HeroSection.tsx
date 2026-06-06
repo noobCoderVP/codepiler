@@ -6,17 +6,19 @@ const highlights = [
     {
         title: "Readable context",
         description:
-            "Structure selected files into one prompt instead of pasting snippets manually.",
+            "Structure selected files into one prompt. Token counts show inline on every file so you always know your context size.",
         icon: Layers3
     },
     {
         title: "Noise reduction",
-        description: "Filter oversized and irrelevant files before they ever clutter the prompt.",
+        description:
+            "Filter by file type or sort by size. The size manager lets you bulk-deselect heavy files in seconds.",
         icon: ScanSearch
     },
     {
         title: "Ready to export",
-        description: "Switch output formats instantly and ship the result to any LLM workflow.",
+        description:
+            "Switch between Text, JSON, XML, and Markdown instantly. Save your selection and reload it later without re-uploading.",
         icon: WandSparkles
     }
 ];
@@ -81,8 +83,8 @@ export default function HeroSection() {
                     transition={{ duration: 0.5, delay: 0.08 }}
                     className="relative"
                 >
-                    <div className="rounded-[2rem] border border-[rgba(148,163,184,0.22)] bg-[linear-gradient(160deg,rgba(255,255,255,0.92),rgba(241,245,249,0.9))] p-5 shadow-[0_24px_80px_rgba(15,23,42,0.12)] dark:border-[var(--border)] dark:bg-[linear-gradient(160deg,rgba(17,24,39,0.94),rgba(15,23,42,0.94))]">
-                        <div className="rounded-[1.4rem] border border-[rgba(148,163,184,0.22)] bg-[var(--surface)] p-5 dark:border-[var(--border)]">
+                    <div className="rounded-[2rem] border border-[rgba(148,163,184,0.14)] bg-[linear-gradient(160deg,rgba(255,255,255,0.96),rgba(241,245,249,0.94))] p-5 shadow-[0_8px_32px_rgba(15,23,42,0.07)] dark:border-[var(--border)] dark:bg-[linear-gradient(160deg,rgba(17,24,39,0.94),rgba(15,23,42,0.94))] dark:shadow-[0_24px_80px_rgba(0,0,0,0.45)]">
+                        <div className="rounded-[1.4rem] border border-[rgba(148,163,184,0.12)] bg-[var(--surface)] p-5 dark:border-[var(--border)]">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-sm font-semibold text-[var(--text-primary)]">
@@ -100,10 +102,10 @@ export default function HeroSection() {
 
                             <div className="mt-5 grid gap-3">
                                 {[
-                                    "Upload project folder",
-                                    "Review generated repository tree",
-                                    "Select only relevant files",
-                                    "Export text, JSON, XML, or Markdown"
+                                    "Upload project folder or ZIP",
+                                    "Filter by file type or sort by size",
+                                    "Select files — tokens shown inline",
+                                    "Save selection, export & resume later"
                                 ].map((step, index) => (
                                     <motion.div
                                         key={step}
