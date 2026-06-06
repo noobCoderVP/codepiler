@@ -92,29 +92,35 @@ export default function TreeNode({ node, depth = 0, searchActive = false, tokenM
                     <Icon size={18} color={isActiveFile ? "#2563eb" : "#64748b"} />
                 )}
 
-                <div className="flex min-w-0 flex-1 items-center justify-between gap-2">
-                    {node.type === "file" ? (
-                        <button
-                            onClick={handleFileClick}
-                            className="truncate text-left text-[var(--text-primary)] transition hover:text-[var(--accent)]"
-                        >
+                {node.type === "file" ? (
+                    <button
+                        onClick={handleFileClick}
+                        className="flex min-w-0 flex-1 items-center justify-between gap-2 text-left transition hover:text-[var(--accent)]"
+                    >
+                        <span className="truncate text-[14px] font-medium text-[var(--text-primary)]">
                             {node.name}
-                        </button>
-                    ) : (
-                        <button
-                            onClick={() => setOpen((value) => !value)}
-                            className="truncate text-left text-[var(--text-primary)]"
-                        >
-                            {node.name}
-                        </button>
-                    )}
-
-                    {displayTokens > 0 && (
-                        <span className="shrink-0 rounded-full bg-[var(--surface-muted)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--text-secondary)]">
-                            {formatTokenCount(displayTokens)}
                         </span>
-                    )}
-                </div>
+                        {displayTokens > 0 && (
+                            <span className="shrink-0 rounded-full bg-[var(--surface-muted)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--text-secondary)]">
+                                {formatTokenCount(displayTokens)}
+                            </span>
+                        )}
+                    </button>
+                ) : (
+                    <button
+                        onClick={() => setOpen((value) => !value)}
+                        className="flex min-w-0 flex-1 items-center justify-between gap-2 text-left"
+                    >
+                        <span className="truncate text-[14px] font-medium text-[var(--text-primary)]">
+                            {node.name}
+                        </span>
+                        {displayTokens > 0 && (
+                            <span className="shrink-0 rounded-full bg-[var(--surface-muted)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--text-secondary)]">
+                                {formatTokenCount(displayTokens)}
+                            </span>
+                        )}
+                    </button>
+                )}
             </div>
 
             {node.type === "folder" &&
