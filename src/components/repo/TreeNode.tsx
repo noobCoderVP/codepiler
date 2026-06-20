@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ChevronRight, ChevronDown, Folder } from "lucide-react";
 import { useSelectionStore } from "@/store/selection-store";
 import { useViewerStore } from "@/store/viewer-store";
@@ -14,15 +14,25 @@ type Props = {
     depth?: number;
     searchActive?: boolean;
     tokenMap: Record<string, number>;
+    globalExpanded?: boolean | null;
 };
 
-export default function TreeNode({ node, depth = 0, searchActive = false, tokenMap }: Props) {
+export default function TreeNode({
+    node,
+    depth = 0,
+    searchActive = false,
+    tokenMap,
+    globalExpanded
+}: Props) {
     const [open, setOpen] = useState(true);
+
+    useEffect(() => {
+        if (globalExpanded !== null && globalExpanded !== undefined) setOpen(globalExpanded);
+    }, [globalExpanded]);
 
     const selected = useSelectionStore((s) => s.selected);
     const toggle = useSelectionStore((s) => s.toggle);
     const toggleMany = useSelectionStore((s) => s.toggleMany);
-    const select = useSelectionStore((s) => s.select);
     const activePath = useViewerStore((s) => s.activePath);
     const setActivePath = useViewerStore((s) => s.setActivePath);
 
@@ -50,7 +60,6 @@ export default function TreeNode({ node, depth = 0, searchActive = false, tokenM
 
     const handleFileClick = () => {
         if (node.type !== "file") return;
-        select(node.path);
         setActivePath(node.path);
     };
 
@@ -132,6 +141,7 @@ export default function TreeNode({ node, depth = 0, searchActive = false, tokenM
                         depth={depth + 1}
                         searchActive={searchActive}
                         tokenMap={tokenMap}
+                        globalExpanded={globalExpanded}
                     />
                 ))}
         </div>

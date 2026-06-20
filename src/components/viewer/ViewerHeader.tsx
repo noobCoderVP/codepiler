@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Save, BookOpen } from "lucide-react";
+import { Save, BookOpen, MessageSquarePlus } from "lucide-react";
 import ViewerChips from "./ViewerChips";
 import ViewerActions from "./ViewerActions";
 import SavedSessionsModal from "@/components/repo/SavedSessionsModal";
@@ -17,6 +17,9 @@ type Props = {
     activePath: string | null;
     selectedFiles: RepoFile[];
     selectedPaths: string[];
+    modelLimit: number | null;
+    onModelLimitChange: (limit: number | null) => void;
+    onTogglePromptEditor: () => void;
 };
 
 export default function ViewerHeader({
@@ -27,7 +30,10 @@ export default function ViewerHeader({
     format,
     activePath,
     selectedFiles,
-    selectedPaths
+    selectedPaths,
+    modelLimit,
+    onModelLimitChange,
+    onTogglePromptEditor
 }: Props) {
     const [modal, setModal] = useState<"sessions" | "save" | null>(null);
 
@@ -62,7 +68,22 @@ export default function ViewerHeader({
                     </div>
 
                     <div data-tour="viewer-actions" className="flex flex-wrap items-center gap-2">
-                        <ViewerChips files={files} tokens={tokens} />
+                        <ViewerChips
+                            files={files}
+                            tokens={tokens}
+                            modelLimit={modelLimit}
+                            onModelLimitChange={onModelLimitChange}
+                        />
+
+                        {/* Prompt editor toggle */}
+                        <button
+                            onClick={onTogglePromptEditor}
+                            title="Add system prompt or task"
+                            className="flex items-center gap-1.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text-secondary)] transition hover:bg-[var(--surface-muted)] hover:text-[var(--text-primary)]"
+                        >
+                            <MessageSquarePlus size={13} />
+                            Prompt
+                        </button>
 
                         {/* Session buttons */}
                         <button

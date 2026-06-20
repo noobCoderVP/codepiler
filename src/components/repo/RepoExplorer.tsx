@@ -2,6 +2,7 @@
 
 import RepoUpload from "./RepoUpload";
 import RepoTree from "./RepoTree";
+import SelectedFilesPanel from "./SelectedFilesPanel";
 
 export default function RepoExplorer() {
     return (
@@ -13,6 +14,8 @@ export default function RepoExplorer() {
             <div className="flex-1 overflow-auto p-3">
                 <RepoTree />
             </div>
+
+            <SelectedFilesPanel />
         </div>
     );
 }

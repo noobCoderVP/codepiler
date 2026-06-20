@@ -3,21 +3,27 @@ import { motion } from "framer-motion";
 const workflow = [
     {
         step: "01",
-        title: "Import repository files",
+        title: "Import your repository",
         description:
-            "Upload a project folder or ZIP. Binary files, generated directories, and files over 200 KB are automatically excluded — no manual cleanup needed."
+            "Drag and drop a project folder or a downloaded ZIP archive. CodePiler reads file contents directly in your browser — no upload, no server, no waiting. Binary files, generated directories (node_modules, .git, dist), and files over 200 KB are automatically filtered out so the tree stays clean."
     },
     {
         step: "02",
-        title: "Filter, sort, and select",
+        title: "Filter, search, and select the right files",
         description:
-            "Use the file-type filter to narrow by extension, sort by token count or size to find the heavy hitters, and check exactly the files that matter. Token counts show inline on every file and folder."
+            "Use the live file-type filter to narrow by extension. Search the tree by filename or folder. Sort by token count or file size to find the heaviest files quickly. Check the files that belong in the prompt — inline token counts on every file and folder make it easy to build toward a target budget. The selected-files panel at the bottom shows a running total and lets you remove individual files without scrolling the tree."
     },
     {
         step: "03",
-        title: "Generate and export",
+        title: "Wrap with a system prompt and task",
         description:
-            "Preview the assembled prompt in Text, JSON, XML, or Markdown. Verify the total token count, then copy or download. Save the selection to resume the same context later without re-uploading."
+            "Click the Prompt button to open the wrapper modal. Choose a language-specific system prompt from 12 expert presets (JavaScript, Python, Go, Rust, Java, C++, Swift, Kotlin, React/Next.js, and more) and a task from 10 action presets (code review, security audit, write tests, refactor for readability, find bugs, performance audit, and more). Each preset is hundreds of words of detailed, expert-level instruction — or write your own from scratch."
+    },
+    {
+        step: "04",
+        title: "Set a model budget, export, and save",
+        description:
+            "Pick a model from the token budget dropdown — Claude Opus 4, GPT-4o, Gemini 2.5 Pro, and 24 others — and a color-coded progress bar tracks your usage in real time. When the prompt looks right, copy it to clipboard or download it as Text, JSON, XML, or Markdown. Save the session to localStorage and restore it in one click next time — no re-uploading."
     }
 ];
 
@@ -33,14 +39,15 @@ export default function WorkflowSection() {
                         transition={{ duration: 0.4 }}
                     >
                         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--accent)]">
-                            Workflow
+                            How it works
                         </p>
                         <h2 className="mt-4 text-3xl font-semibold tracking-tight text-[var(--text-primary)] md:text-4xl">
-                            A simple pipeline for turning source code into LLM-ready context.
+                            From repository to AI-ready prompt context in four steps.
                         </h2>
                         <p className="mt-4 text-base leading-7 text-[var(--text-secondary)]">
-                            The UX should feel operational, not decorative. Each step strips away
-                            manual copying and keeps the context explicit.
+                            The entire workflow runs in your browser. No account. No backend. No
+                            files leave your machine. Import once, select deliberately, and export a
+                            structured prompt that gives your model exactly what it needs.
                         </p>
                     </motion.div>
 

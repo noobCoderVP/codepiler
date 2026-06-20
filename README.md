@@ -1,311 +1,201 @@
-# Codepiler
+# CodePiler
 
-**Turn any code repository into a precise, AI-ready prompt — entirely in your browser.**
+**Turn any repository into focused AI prompt context — in seconds, entirely in your browser.**
 
-[![Live Demo](https://img.shields.io/badge/Live-codepiler.in-blue)](https://codepiler.in)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
-[![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org)
-[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](./CONTRIBUTING.md)
+CodePiler is a free, open-source developer tool for building precise AI prompt context from real codebases. Upload a repository, select the exact files that matter, wrap them with an expert system prompt and task, set a model token budget, and export directly to ChatGPT, Claude, Gemini, or any other LLM.
 
----
+No backend. No file uploads. No account required. Everything runs client-side.
 
-## The Problem
-
-Working with AI coding tools on real codebases creates a hidden cost spiral:
-
-- **Manual copy-paste** from multiple files is slow, error-prone, and loses structure
-- **AI agents make repeated `read_file` calls** to understand a codebase — each one burns tokens and latency
-- **Sending full repositories** to LLM APIs is expensive: a 300-file TypeScript project can contain 500K+ tokens
-- **Re-uploading context** at the start of every session wastes minutes before any useful work happens
-
-Codepiler fixes all four. It gives developers a controlled workspace to import a repository, select exactly the files that matter, estimate token cost in real time, and export clean structured context — in under 60 seconds.
+**[codepiler.in](https://codepiler.in) · [Launch App](https://codepiler.in/app) · [Docs](https://codepiler.in/docs)**
 
 ---
 
-## Cost & Time Impact
+## Why CodePiler
 
-### Token cost reduction
+When you ask an AI to review, debug, or refactor your code, the quality of the output depends entirely on what context you give it. Most developers either:
 
-| Scenario                          | Tokens sent           | GPT-4o cost (est.)        |
-| --------------------------------- | --------------------- | ------------------------- |
-| Full 300-file repo                | ~500,000              | ~$2.50 per prompt         |
-| Codepiler selection (20–40 files) | ~40,000               | ~$0.20 per prompt         |
-| **Savings**                       | **~92% fewer tokens** | **~$2.30 saved per call** |
+- Paste a few files manually and hope they didn't miss anything important
+- Dump an entire repository into the prompt and pay 10× the API cost for noise
 
-> Pricing based on GPT-4o at $5 / 1M input tokens. Savings compound across every AI session and every developer on the team.
+CodePiler fixes this. It gives you a controlled workspace to select only the files relevant to the task, see token counts inline on every file, wrap the output with expert-level instructions, and export a structured prompt that gives your model exactly what it needs.
 
-### Time savings
-
-| Task                               | Without Codepiler                 | With Codepiler                               |
-| ---------------------------------- | --------------------------------- | -------------------------------------------- |
-| Assemble context for an AI session | 10–30 min manual copy-paste       | Under 60 seconds                             |
-| Resume a previous context          | Re-upload + re-filter + re-select | One click (Saved Sessions)                   |
-| Find the largest files to exclude  | Manual inspection                 | Instant — Size Manager sorts by tokens/bytes |
-| Narrow to specific file types      | Manually skip files               | One click — File Type Filter                 |
-
-### AI agent efficiency
-
-AI coding agents (Cursor, GitHub Copilot, custom MCP tools, Claude Code) make repeated `read_file` tool calls to understand a codebase before they can act. This is slow and token-expensive.
-
-With Codepiler:
-
-1. You package the exact files the agent needs into a single structured prompt
-2. The agent receives full context in one shot — no round-trip file reads
-3. The agent starts producing useful output immediately instead of exploring the repo
-
-This is especially valuable for agentic workflows, RAG pipelines, and any system that charges per LLM call.
+**A 300-file TypeScript project is ~500K tokens — roughly $2.50 per GPT-4o call.** A focused 20-file selection is ~40K tokens — $0.20 per call. That is a 12× cost reduction that compounds across every AI session.
 
 ---
 
 ## Features
 
-### Repository Input
+### File Selection and Tree Navigation
 
-- **ZIP Upload** — upload any `.zip` archive of a repository
-- **Folder Upload** — select a local directory directly from your file system
-- **Drag & Drop** — drop a ZIP file or folder anywhere on the page
-- **Smart auto-selection** — common entry points (`README`, `src/`, `package.json`, TypeScript files) are pre-selected on load
+- **Interactive repository tree** — browse folders, collapse and expand, search by filename
+- **Per-file and per-folder token counts** — inline on every node before you select anything
+- **Checkbox selection** — select individual files, use Select All / Clear All for the whole repo
+- **Expand All / Collapse All** — manage large repository trees with one click
+- **Preview without selecting** — click a filename to preview it in the editor; check the box to include it in the export. Separate actions, deliberate control
+- **Selected files panel** — a pinned panel at the bottom of the tree lists every selected file with its individual token cost and a one-click remove button
 
-### File Processing
+### Filtering and Scope Management
 
-- **Automatic filtering** — skips binary files, large files (>200 KB), and generated directories (`node_modules`, `.next`, `dist`, `build`, etc.)
-- **`.gitignore` awareness** — respects the repository's own `.gitignore` rules when filtering
-- **File size tracking** — shows uncompressed size for every file
+- **File type filter** — narrow the tree to specific extensions (.ts, .py, .go, or any combination) with one click
+- **Token and size manager** — view all files sorted by token count or byte size; bulk-select or deselect the heavy ones from one panel
+- **Automatic exclusions** — node_modules, .git, dist, build, binaries, and files over 200 KB are filtered out automatically
 
-### Repository Explorer
+### Prompt Wrapper
 
-- **Interactive file tree** — hierarchical view of every folder and file
-- **Expand/collapse folders** — navigate nested structures easily
-- **Real-time search** — filter the tree by filename or path as you type
-- **Checkbox selection** — select or deselect individual files or entire folders at once
-- **Language-specific icons** — visual indicators for TypeScript, Python, Go, React, JSON, and more
-- **Inline token counts** — every file and folder shows its token count (`1.2K`, `8.5K`) so you see what's expensive at a glance
+- **System prompt presets** — 12 expert language-specific system prompts, each hundreds of words long:
+    - JavaScript / TypeScript
+    - Python
+    - Java / Spring
+    - Go
+    - Rust
+    - C++
+    - PHP / Laravel
+    - Ruby / Rails
+    - Swift / iOS
+    - Kotlin / Android
+    - React / Next.js
+    - General / Polyglot
+- **Task presets** — 10 detailed task templates covering common AI-assisted development workflows:
+    - Modularize the codebase
+    - Apply OOP principles
+    - Write unit tests
+    - Performance audit
+    - Security review
+    - Refactor for readability
+    - Add TypeScript types
+    - Document the code
+    - Find and fix bugs
+    - Convert to functional style
+    - Optimize for scalability
+    - Code review
+- Use presets as a starting point and edit freely — the textarea is fully customizable
+- The selected preset name is shown in the dropdown so you always know what is active
 
-### File Type Filter
+### Token Budget
 
-- **Extension filter modal** — click the filter icon to open a picker showing every extension in the repo
-- **Multi-select extensions** — enable any combination of types (`.ts`, `.py`, `.md`) in one click
-- **Active filter chips** — selected extensions shown as removable badges below the search bar
-- **One-click clear** — remove the entire filter or individual extensions without reopening the modal
+- **27 model presets** with accurate context window sizes:
+    - **Anthropic** — Claude Opus 4, Sonnet 4, Haiku 4, Claude 3.7 Sonnet, 3.5 Sonnet, 3.5 Haiku, Claude 3 Opus (all 200K)
+    - **OpenAI** — o3 (200K), o3-mini (200K), o1 (200K), o1-mini (128K), GPT-4.1 (1M), GPT-4o (128K), GPT-4o mini (128K), GPT-4 Turbo (128K), GPT-3.5 Turbo (16K)
+    - **Google** — Gemini 2.5 Pro (1M), Gemini 2.5 Flash (1M), Gemini 2.0 Flash (1M), Gemini 1.5 Pro (2M), Gemini 1.5 Flash (1M)
+    - **Open Source** — Llama 3.1 405B (128K), Llama 3.1 70B (128K), Mistral Large (128K), DeepSeek V3 (64K), Qwen 2.5 72B (128K)
+- **Live color-coded progress bar** — green below 70%, amber at 70–90%, red above 90%
+- Token count covers the full export: selected code + system prompt + task
 
-### Size Manager
+### Export and Sessions
 
-- **Token & size sort** — open a modal listing every file sorted by token count or byte size (descending)
-- **Inline select/deselect** — toggle any file's selection directly in the list; the tree and prompt update instantly
-- **Bulk controls** — select all or deselect all visible files in one action
-- **Live token total** — shows total tokens across currently selected files as you adjust
+- **4 export formats** — Text (optimized for direct prompting), JSON (structured tooling), XML, Markdown
+- **Copy to clipboard** or **download** as a file with a timestamped filename
+- **Saved sessions** — save your repository and file selection to localStorage and restore it in one click in any future session. No re-uploading, no re-filtering
 
-### Prompt Building
+### Privacy and Performance
 
-- **Live prompt preview** — updates instantly as your selection changes
-- **Four output formats**:
-    - **Text** — `===== FILE: path =====` headers with raw content
-    - **JSON** — structured array of `{ path, content }` objects
-    - **XML** — `<file>` elements with CDATA-wrapped content
-    - **Markdown** — fenced code blocks with file path headers
-- **Monaco Editor** — professional code viewer with syntax highlighting and adjustable font size
+- **100% local-first** — repository files are processed entirely in your browser using the File System Access API. No files are sent to any server
+- **No account required** — open the app and start working immediately
+- **Works offline** after the initial page load
+- **Fast tokenization** — uses `gpt-tokenizer` (tiktoken cl100k_base) in the browser for instant, accurate token estimates
 
-### Token Estimation
+---
 
-- **GPT-compatible token counter** — uses `gpt-tokenizer` for accurate estimates against GPT-3.5/4/4o
-- **Live token display** — total tokens and selected file count update in real time
-- **Per-file token badges** — every node in the file tree shows its individual token cost
+## Use Cases
 
-### Saved Sessions
+| Use case           | How CodePiler helps                                                                                               |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| **AI code review** | Select changed files, apply a language system prompt + Code review task, export one focused prompt                |
+| **Security audit** | Select auth routes, middleware, and input handlers; apply Security review task with language-specific prompt      |
+| **Debugging**      | Isolate the failing module and its dependencies; apply Find and fix bugs task preset                              |
+| **Refactoring**    | Pick the feature folder; apply Modularize, OOP, or Refactor for readability task with matching language preset    |
+| **Writing tests**  | Select the module under test; apply Write unit tests task for table-driven tests, mocks, and edge cases           |
+| **Onboarding**     | Gather entrypoints, schema, and config; export a full architecture overview prompt for a new team member          |
+| **Cost reduction** | Stop sending 500K-token repos; select 30 relevant files for a 10–15× reduction in API cost per call               |
+| **AI agent prep**  | Pre-package structured context so agents like Cursor skip repeated `read_file` calls and start useful immediately |
+| **RAG pipeline**   | Export structured JSON or XML snapshots of selected repository slices for embedding and semantic search           |
+| **Documentation**  | Select a feature slice; apply the Document the code task to generate structured documentation drafts              |
 
-- **Save to localStorage** — snapshot your repository and file selection with a custom name
-- **Session table** — view all saved sessions with repo name, file count, token count, and timestamp
-- **One-click restore** — load any session instantly; the tree and viewer restore to the exact saved state
-- **Delete with confirmation** — remove sessions with a confirmation prompt to prevent accidents
-- **No re-uploading** — revisit any previous context without dragging in a ZIP again
+---
 
-### Export
+## Getting Started
 
-- **Copy to clipboard** — one click copies the entire prompt
-- **Download** — export as `.txt`, `.md`, `.json`, or `.xml`
-- **Timestamped filenames** — auto-generated as `repo_YYYY-MM-DD_HH-MM-SS.ext`
+### Use the hosted version
 
-### Developer Experience
+Visit **[codepiler.in/app](https://codepiler.in/app)** — no installation required.
 
-- **Fully client-side** — zero backend, zero data transmission, works offline after load
-- **Dark / Light mode** — follows system preference, switchable in one click
-- **Resizable panels** — drag the divider between the explorer and viewer
-- **Interactive tutorial** — step-by-step onboarding tour on first visit
-- **PWA-ready** — installable as a web app
+### Run locally
+
+```bash
+git clone https://github.com/noobcodervp/codepiler.git
+cd codepiler
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+### Build for production
+
+```bash
+npm run build
+npm start
+```
 
 ---
 
 ## Tech Stack
 
-| Layer                | Technology                                                                                              |
-| -------------------- | ------------------------------------------------------------------------------------------------------- |
-| Framework            | [Next.js 15](https://nextjs.org) (App Router)                                                           |
-| UI                   | [React 19](https://react.dev), [TailwindCSS 4](https://tailwindcss.com)                                 |
-| Language             | [TypeScript 5](https://www.typescriptlang.org)                                                          |
-| State                | [Zustand 5](https://zustand-demo.pmnd.rs)                                                               |
-| ZIP Parsing          | [JSZip](https://stuk.github.io/jszip)                                                                   |
-| Token Counting       | [gpt-tokenizer](https://github.com/niieani/gpt-tokenizer), [tiktoken](https://github.com/dqbd/tiktoken) |
-| Code Editor          | [@monaco-editor/react](https://github.com/suren-atoyan/monaco-react)                                    |
-| Drag & Drop          | [@dnd-kit](https://dndkit.com)                                                                          |
-| Animations           | [Framer Motion](https://www.framer.com/motion)                                                          |
-| `.gitignore` parsing | [ignore](https://github.com/kaelzhang/node-ignore)                                                      |
-| XML formatting       | [xml-formatter](https://github.com/chrisbottin/xml-formatter)                                           |
-| Theming              | [next-themes](https://github.com/pacocoursey/next-themes)                                               |
-| Linting              | ESLint 9 + Prettier 3 + Husky + lint-staged                                                             |
-
----
-
-## Quick Start
-
-**Prerequisites:** Node.js 18+
-
-```bash
-# Clone the repository
-git clone https://github.com/noobcodervp/codepiler.git
-cd codepiler
-
-# Install dependencies
-npm install
-
-# Start the development server
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
----
-
-## Available Scripts
-
-| Script                 | Description                              |
-| ---------------------- | ---------------------------------------- |
-| `npm run dev`          | Start dev server with Turbopack          |
-| `npm run build`        | Build for production                     |
-| `npm start`            | Serve the production build               |
-| `npm run lint`         | Run ESLint across the codebase           |
-| `npm run format`       | Format all files with Prettier           |
-| `npm run check-format` | Check formatting without writing changes |
+| Layer            | Technology                                       |
+| ---------------- | ------------------------------------------------ |
+| Framework        | Next.js 15 (App Router)                          |
+| Language         | TypeScript (strict)                              |
+| Styling          | Tailwind CSS 4 with CSS variable design tokens   |
+| UI primitives    | Radix UI (Select, DropdownMenu, Tooltip, Dialog) |
+| State management | Zustand                                          |
+| Animations       | Framer Motion                                    |
+| Code editor      | Monaco Editor (read-only viewer)                 |
+| Split layout     | react-resizable-panels                           |
+| Tokenization     | gpt-tokenizer (tiktoken cl100k_base)             |
+| ZIP extraction   | JSZip                                            |
+| Persistence      | localStorage (Zustand persist middleware)        |
 
 ---
 
 ## Project Structure
 
-```text
+```
 src/
-├── app/                      # Next.js App Router pages & layouts
-│   ├── page.tsx              # Landing page
-│   ├── app/page.tsx          # Main application (/app)
-│   └── docs/                 # Documentation pages
-│
+├── app/                    # Next.js App Router pages and layout
+│   ├── layout.tsx          # Root layout with metadata and JSON-LD
+│   ├── page.tsx            # Landing page
+│   ├── app/page.tsx        # Main application
+│   └── docs/               # Documentation pages
 ├── components/
-│   ├── layout/               # Header, Footer, MainLayout, ThemeToggle
-│   ├── repo/                 # RepoUpload, RepoExplorer, RepoTree, TreeNode
-│   │                         # FileTypeFilterModal, TokenManagerModal
-│   │                         # SavedSessionsModal
-│   ├── viewer/               # OneFileViewer, ViewerEditor, ViewerTabs, ViewerActions
-│   ├── marketing/            # HeroSection, FeatureSection, ImpactSection,
-│   │                         # WorkflowSection, UseCasesSection, CTASection
-│   └── ui/                   # Primitive UI components
-│
-├── store/
-│   ├── repo-store.ts         # Loaded files & tree structure
-│   ├── selection-store.ts    # Selected file paths
-│   ├── viewer-store.ts       # Active viewed file
-│   └── sessions-store.ts     # Saved sessions (localStorage-backed)
-│
-├── lib/
-│   ├── read-zip.ts           # ZIP extraction
-│   ├── read-files.ts         # Folder reading
-│   ├── build-tree.ts         # Flat paths → tree structure
-│   ├── gitignore-filter.ts   # .gitignore rule application
-│   ├── pre-filter.ts         # Binary & size filtering
-│   ├── viewer-formatters.ts  # Text / JSON / XML / Markdown builders + token count
-│   ├── filter-tree.ts        # Search + extension filtering
-│   ├── token-utils.ts        # formatTokenCount, formatBytes helpers
-│   └── file-icons.ts         # Language-specific icon mapping
-│
-└── types/
-    └── repo.ts               # RepoFile, RepoNode, ViewerFormat types
+│   ├── layout/             # Header, Footer, ThemeToggle
+│   ├── marketing/          # Landing page sections
+│   ├── repo/               # Repository tree, upload, session, filter modals
+│   ├── ui/                 # Radix UI primitives (Select, DropdownMenu, Tooltip, Dialog)
+│   └── viewer/             # Prompt viewer, tabs, header, chips, prompt editor
+├── lib/                    # Utilities, formatters, docs content, token utils
+├── store/                  # Zustand stores (repo, selection, viewer, sessions)
+└── types/                  # Shared TypeScript types
 ```
-
----
-
-## How It Works
-
-```text
-User uploads ZIP or Folder
-        │
-        ▼
-  Pre-filter (binary, large files, generated dirs)
-        │
-        ▼
-  Apply .gitignore rules
-        │
-        ▼
-  Build file tree (flat paths → nested structure)
-        │
-        ▼
-  Interactive explorer
-  ├── Search by name/path
-  ├── Filter by file extension
-  ├── Sort/select by token count or size
-  └── Inline token badge on every node
-        │
-        ▼
-  Formatter (Text | JSON | XML | Markdown)
-        │
-        ▼
-  Monaco Editor preview
-        │
-        ├── Copy to clipboard / Download
-        └── Save Session (localStorage) → restore later
-```
-
-All steps happen in the browser. No network requests. No server.
-
----
-
-## Deployment
-
-Codepiler is a standard Next.js application with no backend dependencies.
-
-**Vercel (recommended)**
-
-```bash
-npx vercel
-```
-
-**Netlify**
-
-- Build command: `npm run build`
-- Publish directory: `.next`
-
-**Cloudflare Pages**
-
-- Framework preset: Next.js
-- Build command: `npm run build`
 
 ---
 
 ## Contributing
 
-Contributions are welcome — bug fixes, new features, documentation improvements, and accessibility improvements.
+Contributions are welcome. Open an issue to discuss a feature or bug before submitting a pull request.
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for:
+1. Fork the repository
+2. Create a branch: `git checkout -b feature/your-feature-name`
+3. Make your changes and ensure `npm run build` passes with no TypeScript errors
+4. Open a pull request with a clear description of the change
 
-- Development setup and available scripts
-- Project architecture and data flow
-- State management patterns
-- Code style guide (ESLint + Prettier rules)
-- Commit message conventions (Conventional Commits)
-- Pull request process
-- Guide for adding a new output format
+Please keep pull requests focused on a single concern.
 
 ---
 
 ## License
 
-MIT — see [LICENSE](./LICENSE) for details.
+MIT — see [LICENSE](LICENSE) for details.
 
-Codepiler is free to use, modify, and distribute. Commercial use is permitted.
+---
+
+_CodePiler is built for developers who believe the quality of an AI response starts with the quality of the context you give it._

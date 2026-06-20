@@ -7,55 +7,85 @@ import {
     Filter,
     BarChart2,
     BookOpen,
-    Hash
+    Hash,
+    MessageSquarePlus,
+    Gauge,
+    ListChecks,
+    Eye
 } from "lucide-react";
 
 const features = [
     {
         title: "Selective file control",
-        description: "Browse the repository tree and include exactly the files the prompt needs.",
+        description:
+            "Browse the full repository tree and include exactly the files your prompt needs. Select All, Clear, Collapse, and Expand All controls let you manage even large repos in one click.",
         icon: Files
     },
     {
-        title: "Format switching",
-        description: "Move between plain text, JSON, XML, and Markdown without rebuilding context.",
+        title: "Expert prompt presets",
+        description:
+            "Choose from 12 language-specific system prompts (JavaScript, Python, Go, Rust, Java, C++, Swift, Kotlin, and more) and 10 task templates (code review, security audit, refactor, write tests, performance, and more). Each preset is hundreds of words of expert-level instruction.",
+        icon: MessageSquarePlus
+    },
+    {
+        title: "Model token budget",
+        description:
+            "Pick from 27 model presets — Claude Opus 4 (200K), GPT-4.1 (1M), Gemini 2.5 Pro (1M), Llama 3.1 (128K), and more — and watch a live color-coded bar fill as you add files. Stay green, hit amber, stop before red.",
+        icon: Gauge
+    },
+    {
+        title: "Selected files panel",
+        description:
+            "A pinned panel at the bottom of the file tree lists every selected file with its individual token cost and a one-click remove button. Audit your selection without scrolling through the full tree.",
+        icon: ListChecks
+    },
+    {
+        title: "Preview without selecting",
+        description:
+            "Click any filename to preview it in the editor. Use the checkbox to include it in the export. Previewing and selecting are separate actions — you can inspect a file before deciding whether it belongs in the prompt.",
+        icon: Eye
+    },
+    {
+        title: "4 export formats",
+        description:
+            "Switch between plain text, JSON, XML, and Markdown without rebuilding your context. Text is optimized for direct prompting, JSON and XML for tooling pipelines, Markdown for docs and sharing.",
         icon: FileJson2
-    },
-    {
-        title: "Token awareness",
-        description:
-            "Estimate prompt size before you send it to ChatGPT, Claude, or another model.",
-        icon: Sparkles
-    },
-    {
-        title: "Local-first handling",
-        description:
-            "Repository files stay in the browser workflow instead of being pushed to a backend.",
-        icon: ShieldCheck
     },
     {
         title: "Per-file token counts",
         description:
-            "See token usage inline on every file and folder in the tree — no guesswork on what's big.",
+            "See token usage inline on every file and folder in the tree — before you select anything. No guesswork on which files are eating your context budget.",
         icon: Hash
     },
     {
-        title: "File type filtering",
+        title: "File type filter",
         description:
-            "Filter the tree by extension in one click. Narrow to only .ts, .py, or any combination.",
+            "Narrow the tree to only .ts, .py, .go, or any combination of extensions in one click. Reduces noise when a repo contains a mix of source, config, documentation, and assets.",
         icon: Filter
     },
     {
-        title: "Size manager",
+        title: "Token & size manager",
         description:
-            "View all files sorted by size or token count, then bulk-select or deselect the heavy ones.",
+            "Open the size manager to see all files sorted by token count or byte size. Bulk-select or deselect heavy files in one panel without touching the tree.",
         icon: BarChart2
     },
     {
         title: "Saved sessions",
         description:
-            "Save your repo and selection to localStorage and restore it later — no re-uploading needed.",
+            "Save your repository and file selection to localStorage and restore it in one click — no re-uploading, no re-filtering. Resume exactly where you left off in any future session.",
         icon: BookOpen
+    },
+    {
+        title: "100% local-first",
+        description:
+            "Repository files are processed entirely inside your browser. No files are sent to any server, no account required. Works offline after the page loads. Your code stays private by design.",
+        icon: ShieldCheck
+    },
+    {
+        title: "Live token awareness",
+        description:
+            "The token count updates in real time as you select files, edit the system prompt, or change the task. The count includes the full export — code context, system prompt, and task — so what you see is exactly what the model receives.",
+        icon: Sparkles
     }
 ];
 
@@ -71,14 +101,15 @@ export default function FeatureSection() {
                     className="max-w-3xl"
                 >
                     <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--accent)]">
-                        Built for focused prompt prep
+                        12 core features
                     </p>
                     <h2 className="mt-4 text-3xl font-semibold tracking-tight text-[var(--text-primary)] md:text-4xl">
-                        The product is already a usable repository-to-prompt workspace.
+                        Every tool you need to build precise AI prompt context from real code.
                     </h2>
                     <p className="mt-4 text-base leading-7 text-[var(--text-secondary)]">
-                        The strongest part of CodePiler today is the core workflow: import code,
-                        inspect structure, control the selection set, and produce clean output fast.
+                        CodePiler is not a chat wrapper or a code editor. It is a purpose-built
+                        workspace for the one step that happens before you talk to any AI:
+                        assembling the right context from your codebase.
                     </p>
                 </motion.div>
 

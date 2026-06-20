@@ -8,6 +8,7 @@ import { useViewerStore } from "@/store/viewer-store";
 import ViewerHeader from "./ViewerHeader";
 import ViewerTabs from "./ViewerTabs";
 import ViewerEditor from "./ViewerEditor";
+import PromptEditor from "./PromptEditor";
 
 import {
     ViewerFormat,
@@ -26,6 +27,10 @@ export default function OneFileViewer() {
 
     const [format, setFormat] = useState<ViewerFormat>("text");
     const [fontSize, setFontSize] = useState(13);
+    const [modelLimit, setModelLimit] = useState<number | null>(null);
+    const [promptPrefix, setPromptPrefix] = useState("");
+    const [promptSuffix, setPromptSuffix] = useState("");
+    const [showPromptEditor, setShowPromptEditor] = useState(false);
 
     const selectedFiles = useMemo(() => {
         return files.filter((file) => selected.has(file.path));
@@ -55,7 +60,15 @@ export default function OneFileViewer() {
         }
     }, [selectedFiles, format]);
 
-    const tokens = useMemo(() => countTokens(document.content), [document.content]);
+    const finalContent = useMemo(() => {
+        const parts: string[] = [];
+        if (promptPrefix.trim()) parts.push(promptPrefix.trim());
+        parts.push(document.content);
+        if (promptSuffix.trim()) parts.push(promptSuffix.trim());
+        return parts.join("\n\n");
+    }, [document.content, promptPrefix, promptSuffix]);
+
+    const tokens = useMemo(() => countTokens(finalContent), [finalContent]);
 
     const repoName = files.length > 0 ? files[0].path.split("/")[0] : null;
     const activeLine = activePath ? (document.lineMap[activePath] ?? 1) : 1;
@@ -66,12 +79,25 @@ export default function OneFileViewer() {
                 repoName={repoName}
                 files={selectedFiles.length}
                 tokens={tokens}
-                content={document.content}
+                content={finalContent}
                 format={format}
                 activePath={activePath}
                 selectedFiles={selectedFiles}
                 selectedPaths={Array.from(selected)}
+                modelLimit={modelLimit}
+                onModelLimitChange={setModelLimit}
+                onTogglePromptEditor={() => setShowPromptEditor((v) => !v)}
             />
+
+            {showPromptEditor && (
+                <PromptEditor
+                    prefix={promptPrefix}
+                    suffix={promptSuffix}
+                    onPrefixChange={setPromptPrefix}
+                    onSuffixChange={setPromptSuffix}
+                    onClose={() => setShowPromptEditor(false)}
+                />
+            )}
 
             <ViewerTabs
                 value={format}
@@ -82,7 +108,7 @@ export default function OneFileViewer() {
 
             <div className="flex-1 overflow-hidden">
                 <ViewerEditor
-                    value={document.content}
+                    value={finalContent}
                     format={format}
                     fontSize={fontSize}
                     activeLine={activeLine}

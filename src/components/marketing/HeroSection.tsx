@@ -4,21 +4,21 @@ import { Layers3, ScanSearch, WandSparkles } from "lucide-react";
 
 const highlights = [
     {
-        title: "Readable context",
+        title: "Precise file selection",
         description:
-            "Structure selected files into one prompt. Token counts show inline on every file so you always know your context size.",
+            "Browse the full repository tree with inline token counts on every file and folder. Select exactly the files the task needs — nothing more. Compare your total against any model's context limit with a live progress bar.",
         icon: Layers3
     },
     {
-        title: "Noise reduction",
+        title: "Signal over noise",
         description:
-            "Filter by file type or sort by size. The size manager lets you bulk-deselect heavy files in seconds.",
+            "Filter by file type, search the tree by name, collapse folders, and use the size manager to bulk-deselect heavy files. A pinned panel shows every selected file with its individual token cost so you can audit and trim without hunting through the tree.",
         icon: ScanSearch
     },
     {
-        title: "Ready to export",
+        title: "Expert-level prompt presets",
         description:
-            "Switch between Text, JSON, XML, and Markdown instantly. Save your selection and reload it later without re-uploading.",
+            "Wrap your code with a system prompt and task from 22 expert presets — 12 language-specific system prompts (JS, Python, Go, Rust, Java, Swift, and more) and 10 task templates (code review, security audit, refactor, write tests). Export as Text, JSON, XML, or Markdown and save sessions for later.",
         icon: WandSparkles
     }
 ];
@@ -48,17 +48,18 @@ export default function HeroSection() {
                     className="relative"
                 >
                     <div className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)]/85 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--text-secondary)] shadow-sm">
-                        Codebase context builder
+                        Free &amp; open source · Runs 100% in your browser
                     </div>
 
                     <h1 className="mt-5 max-w-4xl text-4xl font-semibold tracking-[-0.04em] text-[var(--text-primary)] md:text-6xl">
-                        Turn large repositories into clean prompt context without losing structure.
+                        Build focused AI prompt context from any repository — in seconds.
                     </h1>
 
                     <p className="mt-5 max-w-2xl text-lg leading-8 text-[var(--text-secondary)]">
-                        CodePiler gives you a controlled workspace for importing a repository,
-                        choosing the exact files that matter, and exporting AI-ready output in the
-                        format your workflow already uses.
+                        CodePiler turns any codebase into a structured AI prompt. Select the exact
+                        files that matter, set a token budget for your model, wrap with an expert
+                        system prompt and task, and export directly to ChatGPT, Claude, Gemini, or
+                        any other LLM.
                     </p>
 
                     <div className="mt-7 flex flex-wrap items-center gap-4">
@@ -66,13 +67,13 @@ export default function HeroSection() {
                             href="/app"
                             className="rounded-xl bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:opacity-95"
                         >
-                            Launch App
+                            Launch App — It&apos;s Free
                         </Link>
                         <a
                             href="#workflow"
                             className="rounded-xl border border-[var(--border)] bg-[var(--surface)] px-6 py-3 text-sm font-semibold text-[var(--text-primary)] transition hover:bg-[var(--surface-muted)]"
                         >
-                            See Workflow
+                            See How It Works
                         </a>
                     </div>
                 </motion.div>
@@ -83,29 +84,29 @@ export default function HeroSection() {
                     transition={{ duration: 0.5, delay: 0.08 }}
                     className="relative"
                 >
-                    <div className="rounded-[2rem] border border-[rgba(148,163,184,0.14)] bg-[linear-gradient(160deg,rgba(255,255,255,0.96),rgba(241,245,249,0.94))] p-5 shadow-[0_8px_32px_rgba(15,23,42,0.07)] dark:border-[var(--border)] dark:bg-[linear-gradient(160deg,rgba(17,24,39,0.94),rgba(15,23,42,0.94))] dark:shadow-[0_24px_80px_rgba(0,0,0,0.45)]">
-                        <div className="rounded-[1.4rem] border border-[rgba(148,163,184,0.12)] bg-[var(--surface)] p-5 dark:border-[var(--border)]">
+                    <div className="rounded-[2rem] border-0 bg-[linear-gradient(160deg,rgba(255,255,255,0.96),rgba(241,245,249,0.94))] p-5 shadow-[0_8px_32px_rgba(15,23,42,0.07)] dark:border dark:border-[var(--border)] dark:bg-[linear-gradient(160deg,rgba(17,24,39,0.94),rgba(15,23,42,0.94))] dark:shadow-[0_24px_80px_rgba(0,0,0,0.45)]">
+                        <div className="rounded-[1.4rem] border-0 bg-[var(--surface)] p-5 shadow-[0_2px_8px_rgba(15,23,42,0.06)] dark:border dark:border-[var(--border)] dark:shadow-none">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-sm font-semibold text-[var(--text-primary)]">
-                                        Prompt workspace
+                                        Repository → AI Prompt
                                     </p>
                                     <p className="mt-1 text-sm text-[var(--text-secondary)]">
-                                        Import, filter, select, export
+                                        No backend · No upload · No cost
                                     </p>
                                 </div>
 
                                 <div className="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-xs font-semibold text-[var(--accent)]">
-                                    Client-side
+                                    Local-first
                                 </div>
                             </div>
 
                             <div className="mt-5 grid gap-3">
                                 {[
-                                    "Upload project folder or ZIP",
-                                    "Filter by file type or sort by size",
-                                    "Select files — tokens shown inline",
-                                    "Save selection, export & resume later"
+                                    "Upload folder or ZIP — processed in your browser",
+                                    "Select files — inline token counts on every file",
+                                    "Wrap with expert system prompt + task preset",
+                                    "Set model token budget, export & save session"
                                 ].map((step, index) => (
                                     <motion.div
                                         key={step}
