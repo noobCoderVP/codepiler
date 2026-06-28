@@ -78,39 +78,38 @@ export default function RepoTree() {
                             <p className="text-sm font-semibold text-[var(--text-primary)]">
                                 Repository Files
                             </p>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1.5">
                                 <span className="text-xs text-[var(--text-secondary)]">
                                     {files.length} files
                                 </span>
-                                <span className="text-xs text-[var(--border)]">·</span>
+                                <span className="h-3 w-px bg-[var(--border)]" />
                                 <button
                                     onClick={() => selectMany(allPaths)}
-                                    className="text-xs text-[var(--text-secondary)] hover:text-[var(--accent)] hover:underline transition-colors"
+                                    className="rounded-md border border-[var(--border)] bg-[var(--surface)] px-2 py-0.5 text-xs font-medium text-[var(--text-secondary)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
                                 >
                                     Select all
                                 </button>
-                                <span className="text-xs text-[var(--border)]">·</span>
                                 <button
                                     onClick={() => clear()}
-                                    className="text-xs text-[var(--text-secondary)] hover:text-[var(--accent)] hover:underline transition-colors"
+                                    className="rounded-md border border-[var(--border)] bg-[var(--surface)] px-2 py-0.5 text-xs font-medium text-[var(--text-secondary)] transition hover:border-red-400 hover:text-red-500"
                                 >
                                     Clear
                                 </button>
-                                <span className="text-xs text-[var(--border)]">·</span>
+                                <span className="h-3 w-px bg-[var(--border)]" />
                                 <Tooltip content="Expand all folders">
                                     <button
                                         onClick={() => setGlobalExpanded(true)}
-                                        className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                                        className="flex h-6 w-6 items-center justify-center rounded-md border border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
                                     >
-                                        <ChevronsUpDown size={13} />
+                                        <ChevronsUpDown size={12} />
                                     </button>
                                 </Tooltip>
                                 <Tooltip content="Collapse all folders">
                                     <button
                                         onClick={() => setGlobalExpanded(false)}
-                                        className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                                        className="flex h-6 w-6 items-center justify-center rounded-md border border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
                                     >
-                                        <ChevronsDownUp size={13} />
+                                        <ChevronsDownUp size={12} />
                                     </button>
                                 </Tooltip>
                             </div>

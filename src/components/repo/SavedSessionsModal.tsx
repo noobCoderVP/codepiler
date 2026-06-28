@@ -1,7 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { X, BookOpen, Trash2, FolderOpen, Save, AlertTriangle } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import {
+    X,
+    BookOpen,
+    Trash2,
+    FolderOpen,
+    Save,
+    AlertTriangle,
+    Search,
+    ArrowUpDown
+} from "lucide-react";
 import { useSessionsStore, SavedSession } from "@/store/sessions-store";
 import { useRepoStore } from "@/store/repo-store";
 import { useSelectionStore } from "@/store/selection-store";
@@ -94,6 +103,9 @@ export default function SavedSessionsModal({ onClose, pendingSave }: Props) {
     const [loadingId, setLoadingId] = useState<string | null>(null);
     const [savedFlash, setSavedFlash] = useState(false);
     const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [sortBy, setSortBy] = useState<"date" | "name" | "tokens">("date");
+    const [sortDir, setSortDir] = useState<"desc" | "asc">("desc");
 
     useEffect(() => {
         loadFromStorage();
@@ -150,6 +162,32 @@ export default function SavedSessionsModal({ onClose, pendingSave }: Props) {
             hour: "2-digit",
             minute: "2-digit"
         });
+
+    const toggleSort = (col: "date" | "name" | "tokens") => {
+        if (sortBy === col) {
+            setSortDir((d) => (d === "desc" ? "asc" : "desc"));
+        } else {
+            setSortBy(col);
+            setSortDir("desc");
+        }
+    };
+
+    const filteredSessions = useMemo(() => {
+        const q = searchQuery.trim().toLowerCase();
+        const filtered = q
+            ? sessions.filter(
+                  (s) => s.name.toLowerCase().includes(q) || s.repoName.toLowerCase().includes(q)
+              )
+            : sessions;
+
+        return [...filtered].sort((a, b) => {
+            let cmp = 0;
+            if (sortBy === "date") cmp = a.timestamp - b.timestamp;
+            else if (sortBy === "name") cmp = a.name.localeCompare(b.name);
+            else if (sortBy === "tokens") cmp = a.totalTokens - b.totalTokens;
+            return sortDir === "desc" ? -cmp : cmp;
+        });
+    }, [sessions, searchQuery, sortBy, sortDir]);
 
     const sessionToDelete = confirmDeleteId ? sessions.find((s) => s.id === confirmDeleteId) : null;
 
@@ -286,69 +324,139 @@ export default function SavedSessionsModal({ onClose, pendingSave }: Props) {
                                     )}
                                 </div>
                             ) : (
-                                <div className="flex-1 overflow-y-auto">
-                                    <table className="w-full">
-                                        <thead className="sticky top-0 bg-[var(--surface-muted)]">
-                                            <tr className="text-left text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)]">
-                                                <th className="px-6 py-3">Name</th>
-                                                <th className="px-3 py-3">Repo</th>
-                                                <th className="px-3 py-3 text-center">Files</th>
-                                                <th className="px-3 py-3 text-center">Tokens</th>
-                                                <th className="px-3 py-3">Saved</th>
-                                                <th className="px-3 py-3 text-center">Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="text-sm">
-                                            {sessions.map((session) => (
-                                                <tr
-                                                    key={session.id}
-                                                    className="border-t border-[var(--border)] hover:bg-[var(--surface-muted)]"
+                                <div className="flex flex-1 flex-col overflow-hidden">
+                                    {/* Search + sort toolbar */}
+                                    <div className="flex items-center gap-2 border-b border-[var(--border)] px-4 py-2.5">
+                                        <label className="flex flex-1 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface-muted)] px-3 py-1.5">
+                                            <Search
+                                                size={13}
+                                                className="shrink-0 text-[var(--text-secondary)]"
+                                            />
+                                            <input
+                                                value={searchQuery}
+                                                onChange={(e) => setSearchQuery(e.target.value)}
+                                                placeholder="Search by name or repo…"
+                                                className="w-full bg-transparent text-xs text-[var(--text-primary)] outline-none placeholder:text-[var(--text-secondary)]"
+                                            />
+                                            {searchQuery && (
+                                                <button
+                                                    onClick={() => setSearchQuery("")}
+                                                    className="shrink-0 text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                                                 >
-                                                    <td className="px-6 py-3.5 font-medium text-[var(--text-primary)]">
-                                                        {session.name}
-                                                    </td>
-                                                    <td className="max-w-[7rem] truncate px-3 py-3.5 text-[var(--text-secondary)]">
-                                                        {session.repoName}
-                                                    </td>
-                                                    <td className="px-3 py-3.5 text-center text-[var(--text-secondary)]">
-                                                        {session.selected.length}
-                                                    </td>
-                                                    <td className="px-3 py-3.5 text-center">
-                                                        <span className="rounded-full bg-[var(--accent-soft)] px-2.5 py-1 text-xs font-semibold text-[var(--accent)]">
-                                                            {formatTokenCount(session.totalTokens)}
-                                                        </span>
-                                                    </td>
-                                                    <td className="px-3 py-3.5 text-sm text-[var(--text-secondary)]">
-                                                        {formatDate(session.timestamp)}
-                                                    </td>
-                                                    <td className="px-3 py-3.5">
-                                                        <div className="flex items-center justify-center gap-2">
-                                                            <button
-                                                                onClick={() => handleLoad(session)}
-                                                                disabled={loadingId === session.id}
-                                                                title="Load this session into the workspace"
-                                                                className="flex items-center gap-1.5 rounded-lg border border-[var(--accent)] bg-[var(--accent)] px-3 py-1.5 text-xs font-semibold text-white transition hover:opacity-85 disabled:opacity-50"
-                                                            >
-                                                                <FolderOpen size={13} />
-                                                                {loadingId === session.id
-                                                                    ? "Loading…"
-                                                                    : "Load"}
-                                                            </button>
-                                                            <button
-                                                                onClick={() =>
-                                                                    setConfirmDeleteId(session.id)
-                                                                }
-                                                                title="Delete session"
-                                                                className="rounded-lg border border-[var(--border)] p-1.5 text-red-400 hover:border-red-300 hover:bg-red-50 dark:hover:bg-red-950/20"
-                                                            >
-                                                                <Trash2 size={13} />
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
+                                                    <X size={11} />
+                                                </button>
+                                            )}
+                                        </label>
+                                        <span className="text-xs text-[var(--text-secondary)]">
+                                            Sort:
+                                        </span>
+                                        {(["date", "name", "tokens"] as const).map((col) => (
+                                            <button
+                                                key={col}
+                                                onClick={() => toggleSort(col)}
+                                                className={`flex items-center gap-1 rounded-lg border px-2.5 py-1.5 text-xs font-medium transition ${
+                                                    sortBy === col
+                                                        ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent)]"
+                                                        : "border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                                                }`}
+                                            >
+                                                {col === "date"
+                                                    ? "Date"
+                                                    : col === "name"
+                                                      ? "Name"
+                                                      : "Tokens"}
+                                                {sortBy === col && (
+                                                    <ArrowUpDown size={10} className="opacity-70" />
+                                                )}
+                                            </button>
+                                        ))}
+                                    </div>
+
+                                    <div className="flex-1 overflow-y-auto">
+                                        {filteredSessions.length === 0 ? (
+                                            <div className="flex flex-col items-center justify-center gap-2 py-12 text-center text-sm text-[var(--text-secondary)]">
+                                                <Search size={20} className="opacity-40" />
+                                                No sessions match &quot;{searchQuery}&quot;
+                                            </div>
+                                        ) : (
+                                            <table className="w-full">
+                                                <thead className="sticky top-0 bg-[var(--surface-muted)]">
+                                                    <tr className="text-left text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)]">
+                                                        <th className="px-6 py-3">Name</th>
+                                                        <th className="px-3 py-3">Repo</th>
+                                                        <th className="px-3 py-3 text-center">
+                                                            Files
+                                                        </th>
+                                                        <th className="px-3 py-3 text-center">
+                                                            Tokens
+                                                        </th>
+                                                        <th className="px-3 py-3">Saved</th>
+                                                        <th className="px-3 py-3 text-center">
+                                                            Actions
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody className="text-sm">
+                                                    {filteredSessions.map((session) => (
+                                                        <tr
+                                                            key={session.id}
+                                                            className="border-t border-[var(--border)] hover:bg-[var(--surface-muted)]"
+                                                        >
+                                                            <td className="px-6 py-3.5 font-medium text-[var(--text-primary)]">
+                                                                {session.name}
+                                                            </td>
+                                                            <td className="max-w-[7rem] truncate px-3 py-3.5 text-[var(--text-secondary)]">
+                                                                {session.repoName}
+                                                            </td>
+                                                            <td className="px-3 py-3.5 text-center text-[var(--text-secondary)]">
+                                                                {session.selected.length}
+                                                            </td>
+                                                            <td className="px-3 py-3.5 text-center">
+                                                                <span className="rounded-full bg-[var(--accent-soft)] px-2.5 py-1 text-xs font-semibold text-[var(--accent)]">
+                                                                    {formatTokenCount(
+                                                                        session.totalTokens
+                                                                    )}
+                                                                </span>
+                                                            </td>
+                                                            <td className="px-3 py-3.5 text-sm text-[var(--text-secondary)]">
+                                                                {formatDate(session.timestamp)}
+                                                            </td>
+                                                            <td className="px-3 py-3.5">
+                                                                <div className="flex items-center justify-center gap-2">
+                                                                    <button
+                                                                        onClick={() =>
+                                                                            handleLoad(session)
+                                                                        }
+                                                                        disabled={
+                                                                            loadingId === session.id
+                                                                        }
+                                                                        title="Load this session into the workspace"
+                                                                        className="flex items-center gap-1.5 rounded-lg border border-[var(--accent)] bg-[var(--accent)] px-3 py-1.5 text-xs font-semibold text-white transition hover:opacity-85 disabled:opacity-50"
+                                                                    >
+                                                                        <FolderOpen size={13} />
+                                                                        {loadingId === session.id
+                                                                            ? "Loading…"
+                                                                            : "Load"}
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={() =>
+                                                                            setConfirmDeleteId(
+                                                                                session.id
+                                                                            )
+                                                                        }
+                                                                        title="Delete session"
+                                                                        className="rounded-lg border border-[var(--border)] p-1.5 text-red-400 hover:border-red-300 hover:bg-red-50 dark:hover:bg-red-950/20"
+                                                                    >
+                                                                        <Trash2 size={13} />
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        )}
+                                    </div>
                                 </div>
                             )}
                         </>

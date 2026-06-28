@@ -1461,6 +1461,288 @@ FOR EACH REFACTOR, PROVIDE:
    For each item: what specific scale problem does it solve? What's the implementation approach? What are the risks?`
     },
     {
+        label: "Add logging & observability",
+        prompt: `Audit this codebase for observability gaps and produce a concrete plan to add structured logging, metrics, and tracing so that engineers can diagnose production issues quickly without guesswork.
+
+1. CURRENT OBSERVABILITY AUDIT
+   - List every place where an error is caught but not logged (silent failures)
+   - Identify log calls that use unstructured strings instead of key-value pairs (e.g., console.log("user logged in: " + userId) vs logger.info({ event: "user.login", userId }))
+   - Find log lines that are missing critical context fields: request ID, user ID, session ID, operation name, duration
+   - Identify hot paths (request handlers, background jobs, queue consumers) that have zero instrumentation
+   - Find places where the only signal that something went wrong is an HTTP 500 or an unhandled exception
+   - Identify business-critical operations (payments, auth, data mutations) that have no audit trail
+
+2. STRUCTURED LOGGING PLAN
+   For each significant operation in the codebase, define what a complete log record should contain:
+   - At function entry: operation name, input parameters (with PII redacted), caller context
+   - At function exit: duration in ms, outcome (success/failure), key output identifiers
+   - On error: error class, message, stack trace, the input that triggered it, which retry attempt (if any)
+
+   Show the before/after for the 3 most important logging gaps:
+   - What the log currently emits (or the silence where a log should be)
+   - The structured log record it should emit
+   - Which log level is appropriate and why (DEBUG/INFO/WARN/ERROR)
+
+3. METRICS INSTRUMENTATION
+   Identify the top 10 metrics that would give the most operational visibility:
+   - Request/operation throughput (requests per second per endpoint)
+   - Latency percentiles (p50, p95, p99) for all external calls (database, cache, HTTP APIs)
+   - Error rates by operation and error type
+   - Queue depths and consumer lag (if applicable)
+   - Business metrics: orders placed, users created, payments processed per minute
+
+   For each metric: name, type (counter/gauge/histogram), labels/dimensions, and where in the code to instrument it.
+
+4. DISTRIBUTED TRACING
+   - Identify the entry points where a trace should be started (HTTP handler, queue consumer, scheduled job)
+   - List all downstream calls that should be child spans (database queries, cache operations, external API calls, internal service calls)
+   - Find places where trace context is not propagated across async boundaries or service calls
+   - Show how to add span attributes that make traces useful: HTTP status, DB query fingerprint, queue message ID
+
+5. ALERTING RECOMMENDATIONS
+   Based on the instrumentation plan above, define the 5 most important alerts:
+   - Alert name, condition (e.g., error_rate > 5% over 5 minutes), severity, and the runbook action
+   - Distinguish between symptoms (what the user experiences) vs causes (what broke internally)
+   - Identify which alerts should page on-call immediately vs create a ticket
+
+For each recommendation: the specific file and function, the exact log/metric/span to add, and a copy-paste-ready implementation.`
+    },
+    {
+        label: "Accessibility audit",
+        prompt: `Perform a comprehensive accessibility audit of this codebase against WCAG 2.1 AA standards. Identify every violation, explain its user impact, and provide a corrected implementation.
+
+Focus on users who rely on:
+- Screen readers (NVDA, JAWS, VoiceOver, TalkBack)
+- Keyboard-only navigation (no mouse/touchscreen)
+- High contrast modes and custom stylesheets
+- Zoom up to 200% without horizontal scrolling
+- Voice control software
+
+Evaluate each area:
+
+1. SEMANTIC HTML AND LANDMARK STRUCTURE
+   - Identify div/span elements used as buttons or links that should be <button> or <a> elements (missing keyboard access and role announcement)
+   - Find pages missing landmark regions: <header>, <main>, <nav>, <aside>, <footer>
+   - Find multiple <h1> tags on a page, or heading levels that skip (h1 → h3 with no h2)
+   - Identify lists rendered as plain divs that should be <ul>/<ol>/<li>
+   - Find tables missing <caption>, <th scope="col/row">, or <thead>/<tbody> structure
+   - Identify form fields not associated with a <label> (via for/id or wrapping label)
+
+2. KEYBOARD NAVIGATION
+   - Find interactive elements (buttons, links, inputs, modals, dropdowns) that cannot be reached by Tab key
+   - Identify focus traps: modals/drawers that open but don't trap focus inside (focus escapes to background content)
+   - Find modals/drawers that open but don't return focus to the trigger element when closed
+   - Identify custom dropdowns, date pickers, or sliders with no keyboard interaction (arrow keys, Enter, Escape)
+   - Find elements with tabIndex > 0 (breaks natural tab order — use 0 or -1 only)
+   - Identify carousels or sliders with no pause button (violates WCAG 2.2.2 Pause, Stop, Hide)
+
+3. SCREEN READER SUPPORT
+   - Find icon-only buttons with no accessible name (missing aria-label, aria-labelledby, or visible text)
+   - Find images missing alt text, or decorative images missing alt="" (empty alt, not missing)
+   - Find dynamic content that updates without notifying screen readers (missing aria-live regions)
+   - Identify state that is communicated visually only (color, icon) without an ARIA attribute (aria-expanded, aria-selected, aria-checked, aria-pressed, aria-current)
+   - Find custom components (tabs, accordions, modals, tooltips) missing required ARIA roles/properties per the ARIA Authoring Practices Guide (APG)
+   - Identify loading spinners/skeletons with no screen reader announcement of the loading state
+
+4. COLOR AND VISUAL
+   - Identify text with insufficient contrast ratio: body text needs 4.5:1, large text (18pt+ or 14pt bold) needs 3:1
+   - Find information conveyed by color alone (e.g., red = error, green = success) without a non-color indicator (icon, text, pattern)
+   - Find focus indicators that are invisible or have contrast ratio below 3:1 against adjacent colors
+   - Identify fixed-size text (px units) that doesn't scale with browser font size settings (use rem/em)
+   - Find CSS that disables text selection or overrides user stylesheets in ways that break accessibility
+
+5. FORMS AND ERROR HANDLING
+   - Find form submissions that show inline errors without associating them to their field (missing aria-describedby or aria-errormessage)
+   - Identify required fields not marked with aria-required="true" (not just a visual asterisk)
+   - Find error states communicated only by border color change (must add role="alert" or aria-live)
+   - Identify placeholder text used as the only label (placeholder disappears on focus — must have visible label)
+   - Find timeout-based sessions with no warning before expiry (WCAG 2.2.1)
+
+FOR EACH FINDING:
+- WCAG criterion violated (e.g., 1.1.1 Non-text Content, 2.1.1 Keyboard, 4.1.2 Name, Role, Value)
+- Impact: who is affected and how severely (Critical = blocks access completely, High = significant barrier, Medium = confusion/friction, Low = minor annoyance)
+- Current code
+- Fixed code with explanation of why each change is necessary
+- How to test the fix (specific screen reader command or keyboard sequence)`
+    },
+    {
+        label: "Dependency audit",
+        prompt: `Perform a thorough audit of this codebase's dependencies: identify outdated packages, security vulnerabilities, unused imports, and opportunities to reduce bundle size and supply chain risk.
+
+1. DEPENDENCY INVENTORY
+   - List all direct dependencies with their current version vs latest stable version
+   - Flag packages that are more than 2 major versions behind their latest release
+   - Identify packages that have been deprecated or abandoned (no releases in 2+ years, archived repo)
+   - Find packages where the project is pinned to a patch version with no documented reason
+   - Identify peer dependency mismatches that may cause silent runtime failures
+   - Flag packages that duplicate functionality already provided by another dependency or the runtime (e.g., lodash functions available in modern JS, moment.js when date-fns or Temporal API would suffice)
+
+2. SECURITY VULNERABILITIES
+   - Identify any packages with known CVEs in the current version range (check against the npm/PyPI/Maven advisory database)
+   - Flag transitive dependencies that have vulnerabilities even if the direct dependency is safe
+   - Identify packages that pull in native code (native Node addons, C extensions) — these require additional supply chain trust
+   - Find packages with unusually broad permission requirements (filesystem, network, exec) relative to their stated purpose
+   - Identify packages with a small maintainer team or single maintainer (higher takeover risk)
+   - Flag packages that were recently transferred to a new owner without explanation
+
+3. UNUSED AND REDUNDANT DEPENDENCIES
+   - Identify packages listed in dependencies that are only used in tests or build scripts (should be devDependencies)
+   - Find packages imported in only one or two files where the native API or a smaller alternative would be simpler
+   - Identify packages imported but never actually used in the codebase (zombie imports)
+   - Find multiple packages that solve the same problem (e.g., both axios and node-fetch, both moment and date-fns)
+   - Identify packages used for a single utility function that could be inlined in 5 lines of code
+
+4. BUNDLE SIZE ANALYSIS
+   - Identify the 5 largest packages by install size and evaluate whether they are worth their weight
+   - Find packages imported in their entirety when only a small subset is used (missing tree-shaking or named imports)
+   - Identify packages that have lighter alternatives delivering the same functionality (e.g., dayjs vs moment, nanoid vs uuid v4, zod vs yup)
+   - Find packages that are loaded synchronously but only used in rare code paths (candidates for dynamic import)
+   - Identify packages bundled for the frontend that could be replaced with a CDN-hosted version
+
+5. UPGRADE PLAN
+   Produce a prioritized upgrade roadmap:
+   - IMMEDIATE (security risk): packages with CVEs or critical issues — provide exact version to upgrade to and any breaking change notes
+   - SHORT TERM (within one sprint): packages that are significantly outdated with straightforward upgrade paths
+   - MEDIUM TERM (1–2 months): packages with major version bumps requiring API changes — outline the migration steps
+   - REMOVE: packages that should be eliminated entirely — list the replacement (built-in, alternative, or deletion)
+
+   For each item: current version → target version, breaking changes to handle, files that need updating, estimated effort (S/M/L).`
+    },
+    {
+        label: "Eliminate dead code",
+        prompt: `Systematically identify and safely remove all dead code from this codebase: unused exports, unreachable branches, commented-out code, deprecated feature flags, and any code that exists but is never executed in any code path.
+
+1. UNUSED EXPORTS AND DECLARATIONS
+   - Find every exported function, class, type, or constant that has zero import sites in the codebase
+   - Identify private/internal functions that are defined but never called within their module
+   - Find variables that are assigned but never read (write-only variables)
+   - Identify parameters that are declared but never used inside their function body
+   - Find TypeScript types and interfaces that are defined but referenced nowhere
+   - Identify re-exported symbols in barrel files (index.ts) that no downstream consumer imports
+
+2. UNREACHABLE CODE PATHS
+   - Find branches that can never be reached given the type constraints or invariants of the system:
+     - if (true) { ... } else { unreachable }
+     - switch cases that can never match because the discriminant is a narrower type than the case
+     - Early returns that make subsequent code in the function unreachable
+     - throw/return inside a loop with no way to reach subsequent loop iterations
+   - Find TypeScript code with return type \`never\` that callers treat as if it could return
+   - Identify catch blocks that catch exceptions that the try block can never throw
+   - Find guard clauses checking for null/undefined on values that are always non-null at that point
+
+3. COMMENTED-OUT CODE
+   - Find every block of commented-out code (not explanatory comments — actual code that was disabled)
+   - For each: is this truly dead (safe to delete) or is it a disabled feature (should be a feature flag)?
+   - Identify TODO comments that reference work that has already been done or was abandoned years ago
+   - Find FIXME/HACK comments that were left in but the hack is still present with no resolution plan
+
+4. DEPRECATED AND FEATURE-FLAGGED CODE
+   - Find feature flags that are permanently enabled (flag value is hardcoded true) — the dead branch is the disabled path
+   - Find feature flags that are permanently disabled (hardcoded false) — the enabled path is dead code
+   - Identify API endpoints or functions marked @deprecated with no removal date or migration path
+   - Find dual-mode compatibility code (old API + new API support) where the old API has no callers
+   - Identify migration helpers or one-time scripts that have already been run and should be deleted
+
+5. TEST AND BUILD ARTIFACTS
+   - Find test files that test functions or modules that no longer exist
+   - Identify \`.skip\` / \`xdescribe\` / \`@Ignore\` tests that have been skipped indefinitely with no explanation
+   - Find build scripts or CI steps that reference files or tasks that no longer exist
+   - Identify Storybook stories or documentation examples for removed components
+
+FOR EACH FINDING, PROVIDE:
+- File, line range, and the specific dead code
+- Confidence level: certain (provably unreachable) vs likely (no callers found, but may be dynamic) vs possible (needs manual verification)
+- Why it's dead (no callers, always-false condition, etc.)
+- Safe deletion: yes/no — and if no, what verification is needed first
+- Any callers or tests that must be updated before deletion
+
+Present findings ordered by confidence (certain first) then by impact (most code eliminated first). At the end, estimate the total lines that can be safely removed.`
+    },
+    {
+        label: "Generate API documentation",
+        prompt: `Generate comprehensive, developer-ready API documentation for this codebase. The goal is documentation precise enough that a developer who has never seen this code can integrate with the API correctly on their first try.
+
+1. API INVENTORY
+   - List every public API endpoint, function, or interface exposed by this codebase
+   - For each: HTTP method + path (for REST), function signature (for libraries), message schema (for queues/events)
+   - Group them by domain/resource (auth, users, orders, payments, etc.)
+   - Identify which endpoints/functions are stable vs experimental vs deprecated
+   - Map any versioning scheme in use (URL versioning /v1/, header versioning, semver for libraries)
+
+2. REQUEST/INPUT DOCUMENTATION
+   For each endpoint or public function, document:
+   - All parameters: name, type, required/optional, valid values or range, default value, description
+   - Request body schema with every field documented (type, required, format, example value)
+   - Authentication requirements: which auth scheme (Bearer token, API key, session cookie, OAuth scope), where to pass it
+   - Rate limiting: requests per second/minute/hour, how limits are communicated (headers, error codes)
+   - File upload requirements: max size, accepted MIME types, field name
+   - Special headers that affect behavior (Accept, Content-Type, Idempotency-Key, X-Request-ID)
+
+3. RESPONSE DOCUMENTATION
+   For each endpoint or function:
+   - Success response: status code, body schema with every field documented, example
+   - All possible error responses: status code, error code/type, message format, when this error occurs
+   - Pagination: structure (cursor vs offset), fields (next_cursor, total_count, has_more), how to request next page
+   - Partial success patterns: what happens when a batch operation partially fails
+   - Long-running operations: how to poll for status, webhook callbacks, progress fields
+
+4. INTEGRATION GUIDE
+   Write a getting-started guide covering:
+   - Authentication flow: step-by-step with example requests and responses
+   - The most common integration scenario: end-to-end example with real-looking sample data
+   - Idempotency: which operations are safe to retry, how to use idempotency keys
+   - Error handling best practices: which errors should be retried (with backoff), which indicate client bugs
+   - Webhook event catalog: event names, payload schemas, delivery guarantees, how to verify signatures
+
+5. CODE EXAMPLES
+   For each major operation, provide working code examples in 2–3 languages most relevant to this codebase's consumers:
+   - The minimal working example (just the essential fields)
+   - A production-quality example (with error handling, retries, logging)
+   - Common pitfall to avoid (with the wrong way shown vs the right way)
+
+Format the output as if it will be published to a developer portal. Use clear section headers, consistent terminology, and include a glossary of domain terms at the end.`
+    },
+    {
+        label: "Internationalization (i18n) audit",
+        prompt: `Audit this codebase for internationalization (i18n) and localization (l10n) readiness. Identify every hardcoded string, locale assumption, and formatting issue that would need to change before this product can be shipped to users in a different language or locale.
+
+1. HARDCODED USER-FACING STRINGS
+   - Find every string literal in the UI layer that a user will see: labels, button text, headings, error messages, success messages, tooltips, placeholders, empty state copy, notification text
+   - Identify strings in template literals that concatenate user-visible text (these are particularly hard to translate because word order varies by language)
+   - Find strings that are conditionally assembled: \`"You have " + count + " items"\` — these break in many languages (pluralization rules, grammatical gender)
+   - Identify strings in constants files, configuration, or utility functions that are user-visible (not just internal keys)
+   - Find alt text, aria-labels, and title attributes that contain natural language (these are read by screen readers)
+
+2. PLURALIZATION AND GRAMMATICAL ISSUES
+   - Find manual plural handling: \`count === 1 ? "item" : "items"\` — many languages have 2–6 plural forms (Arabic has 6, Russian has 3)
+   - Identify ordinal numbers (1st, 2nd, 3rd) that are language-specific
+   - Find gendered language hard-coded for one grammatical gender (languages like Spanish, French, German have grammatical gender)
+   - Identify strings that concatenate a count with a noun ("3 users") without using an i18n plural API
+
+3. DATE, TIME, AND NUMBER FORMATTING
+   - Find hardcoded date format strings (MM/DD/YYYY is US-only; most of the world uses DD/MM/YYYY or YYYY-MM-DD)
+   - Identify time formatting that assumes 12-hour clock (AM/PM) — many locales use 24-hour
+   - Find number formatting that assumes a specific decimal separator (. vs ,) or thousands separator (, vs . vs space)
+   - Identify currency values displayed without locale-aware formatting (some locales put the symbol after the amount)
+   - Find relative time strings hardcoded in English ("2 hours ago", "yesterday", "just now")
+   - Identify week start assumptions (Sunday-first vs Monday-first varies by locale)
+
+4. TEXT DIRECTION AND LAYOUT
+   - Identify CSS that uses left/right properties instead of logical properties (margin-left → margin-inline-start, padding-right → padding-inline-end) — these break for RTL languages (Arabic, Hebrew, Persian)
+   - Find flex/grid layouts that will mirror incorrectly in RTL without direction-aware CSS
+   - Identify icons that are directional (back arrow, forward arrow, list bullets) that need to flip in RTL
+   - Find text truncation (overflow: hidden; text-overflow: ellipsis) that truncates from the wrong end in RTL
+
+5. IMPLEMENTATION PLAN
+   - Recommend an i18n library appropriate for this stack (react-intl, i18next, next-intl, Fluent, etc.)
+   - Show the extraction pattern: how each hardcoded string should be replaced with a translation key
+   - Provide the namespace/key naming convention that would work for this codebase size
+   - Identify which strings are highest priority to extract (most user-visible, most languages affected)
+   - Estimate the total string count and the effort to achieve baseline i18n readiness
+
+FOR EACH FINDING: file, line range, the hardcoded string or assumption, why it breaks for non-English/non-Western locales, and the corrected i18n-ready implementation.`
+    },
+    {
         label: "Code review",
         prompt: `Perform a thorough, senior-engineer code review of this codebase. Be direct, specific, and prioritized — the same review you would give a teammate whose code you respect and want to make excellent.
 
