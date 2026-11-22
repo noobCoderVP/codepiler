@@ -60,7 +60,7 @@ export default function HeroSection() {
                         className={`flex flex-col items-center gap-4 rounded-[2rem] border-2 border-dashed px-6 py-12 text-center shadow-[var(--shadow-md)] transition ${
                             dragActive
                                 ? "border-[var(--accent)] bg-[var(--accent-soft)]"
-                                : "border-[var(--border)] bg-[var(--surface)]"
+                                : "border-[var(--border-strong)] bg-[var(--surface)]"
                         }`}
                     >
                         <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--accent-soft)] text-[var(--accent)]">
@@ -84,7 +84,7 @@ export default function HeroSection() {
                             <button
                                 onClick={openFolder}
                                 disabled={loading}
-                                className="flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:opacity-90 disabled:opacity-50"
+                                className="btn btn-primary btn-lg px-5 py-3"
                             >
                                 <FolderUp size={16} />
                                 Choose folder
@@ -92,7 +92,7 @@ export default function HeroSection() {
                             <button
                                 onClick={openZip}
                                 disabled={loading}
-                                className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-5 py-3 text-sm font-semibold text-[var(--text-primary)] transition hover:bg-[var(--surface-subtle)] disabled:opacity-50"
+                                className="btn btn-secondary btn-lg px-5 py-3"
                             >
                                 <UploadCloud size={16} />
                                 Choose .zip

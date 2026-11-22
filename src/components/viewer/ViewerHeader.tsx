@@ -25,8 +25,7 @@ type Props = {
     onTogglePromptEditor: () => void;
 };
 
-const secondaryButton =
-    "flex items-center gap-1.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text-secondary)] transition hover:bg-[var(--surface-muted)] hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-40";
+const secondaryButton = "btn btn-secondary";
 
 export default function ViewerHeader({
     repoName,
@@ -74,10 +73,9 @@ export default function ViewerHeader({
                         data-tour="instructions"
                         onClick={onTogglePromptEditor}
                         title="Add a system prompt and a task around your code"
+                        data-active={!!instructionsLabel}
                         className={
-                            instructionsLabel
-                                ? "flex max-w-[16rem] items-center gap-1.5 rounded-xl border border-[var(--accent)] bg-[var(--accent-soft)] px-3 py-2 text-xs font-semibold text-[var(--accent)] transition hover:opacity-90"
-                                : secondaryButton
+                            instructionsLabel ? "btn btn-secondary max-w-[16rem]" : secondaryButton
                         }
                     >
                         <MessageSquarePlus size={13} className="shrink-0" />

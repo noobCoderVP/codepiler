@@ -35,7 +35,7 @@ export default function ViewerTabs({ value, onChange, fontSize, setFontSize }: P
                             className={`flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition ${
                                 value === tab.value
                                     ? "bg-[var(--accent)] text-white shadow-sm"
-                                    : "border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--surface-muted)] hover:text-[var(--text-primary)]"
+                                    : "border border-[var(--border-strong)] bg-[var(--control)] text-[var(--text-secondary)] shadow-[var(--shadow-control)] hover:bg-[var(--control-hover)] hover:text-[var(--text-primary)]"
                             }`}
                         >
                             <Icon size={16} />

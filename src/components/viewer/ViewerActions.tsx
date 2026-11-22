@@ -56,7 +56,7 @@ export default function ViewerActions({ content, format, repoName, disabled, onE
                 onClick={download}
                 disabled={disabled}
                 title="Download the prompt as a file"
-                className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text-secondary)] transition hover:bg-[var(--surface-muted)] hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-40"
+                className="btn btn-secondary"
             >
                 <Download size={14} />
                 Download
@@ -66,12 +66,12 @@ export default function ViewerActions({ content, format, repoName, disabled, onE
                 onClick={copy}
                 disabled={disabled}
                 title="Copy the full prompt, then paste it into ChatGPT, Claude or Gemini"
-                className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-semibold text-white shadow-sm transition disabled:cursor-not-allowed disabled:opacity-40 ${
+                className={`btn btn-primary px-4 ${
                     copyState === "failed"
                         ? "bg-[var(--danger)]"
                         : copyState === "copied"
                           ? "bg-[var(--success)]"
-                          : "bg-[var(--accent)] hover:opacity-90"
+                          : ""
                 }`}
             >
                 {copyState === "copied" ? (

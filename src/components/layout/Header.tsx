@@ -81,10 +81,7 @@ export default function Header() {
                 {/* Right actions */}
                 <div className="flex items-center gap-3">
                     {!isApp && (
-                        <Link
-                            href="/app"
-                            className="rounded-md bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:opacity-90"
-                        >
+                        <Link href="/app" className="btn btn-primary px-4 text-sm">
                             Open app
                         </Link>
                     )}

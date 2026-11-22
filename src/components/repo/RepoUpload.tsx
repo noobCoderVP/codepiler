@@ -27,7 +27,7 @@ export default function RepoUpload() {
             className={`rounded-xl border px-3 py-2.5 transition-all duration-200 ${
                 dragActive
                     ? "border-[var(--accent)] bg-[var(--accent-soft)]/55 shadow-lg"
-                    : "border-[var(--border)] bg-[var(--surface-muted)]"
+                    : "border-[var(--border-strong)] bg-[var(--surface-muted)]"
             } ${loading ? "pointer-events-none opacity-80" : ""}`}
         >
             <div className="flex items-center gap-3">
@@ -62,7 +62,7 @@ export default function RepoUpload() {
                     <button
                         onClick={openFolder}
                         disabled={loading}
-                        className="flex items-center gap-1.5 rounded-lg bg-[var(--accent)] px-3 py-1.5 text-xs font-medium text-white shadow-sm transition hover:opacity-90 disabled:opacity-50"
+                        className="btn btn-primary btn-sm"
                     >
                         <FolderUp size={13} />
                         Folder
@@ -71,7 +71,7 @@ export default function RepoUpload() {
                     <button
                         onClick={openZip}
                         disabled={loading}
-                        className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-medium text-[var(--text-primary)] transition hover:bg-[var(--surface-subtle)] disabled:opacity-50"
+                        className="btn btn-secondary btn-sm"
                     >
                         <UploadCloud size={13} />
                         ZIP

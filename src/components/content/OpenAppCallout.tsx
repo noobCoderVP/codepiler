@@ -15,10 +15,7 @@ export default function OpenAppCallout({
             <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-[var(--text-secondary)]">
                 {text}
             </p>
-            <Link
-                href="/app"
-                className="mt-6 inline-block rounded-xl bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:opacity-95"
-            >
+            <Link href="/app" className="btn btn-primary btn-lg mt-6 px-6 py-3">
                 Open CodePiler
             </Link>
         </section>

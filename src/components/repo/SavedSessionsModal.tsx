@@ -70,15 +70,12 @@ function DeleteConfirmModal({
                 </div>
 
                 <div className="mt-5 flex justify-end gap-2">
-                    <button
-                        onClick={onCancel}
-                        className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--surface-muted)]"
-                    >
+                    <button onClick={onCancel} className="btn btn-secondary btn-lg">
                         Cancel
                     </button>
                     <button
                         onClick={onConfirm}
-                        className="rounded-xl bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600"
+                        className="btn btn-lg bg-red-500 text-white shadow-sm hover:bg-red-600"
                     >
                         Delete
                     </button>
@@ -283,14 +280,14 @@ export default function SavedSessionsModal({ onClose, pendingSave }: Props) {
                                     onChange={(e) => setSessionName(e.target.value)}
                                     onKeyDown={(e) => e.key === "Enter" && handleSave()}
                                     placeholder="e.g. Auth refactor context"
-                                    className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface-muted)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none focus:border-[var(--accent)] placeholder:text-[var(--text-secondary)]"
+                                    className="input px-4 py-3 text-sm"
                                 />
                             </div>
 
                             <button
                                 onClick={handleSave}
                                 disabled={!sessionName.trim() || savedFlash}
-                                className="flex items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                                className="btn btn-primary btn-lg py-3"
                             >
                                 <Save size={15} />
                                 {savedFlash ? "Saved!" : "Save Session"}
@@ -327,7 +324,7 @@ export default function SavedSessionsModal({ onClose, pendingSave }: Props) {
                                     {pendingSave && (
                                         <button
                                             onClick={() => setTab("save")}
-                                            className="mt-2 flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
+                                            className="btn btn-primary btn-lg mt-2"
                                         >
                                             <Save size={14} />
                                             Save current selection
@@ -338,7 +335,7 @@ export default function SavedSessionsModal({ onClose, pendingSave }: Props) {
                                 <div className="flex flex-1 flex-col overflow-hidden">
                                     {/* Search + sort toolbar */}
                                     <div className="flex items-center gap-2 border-b border-[var(--border)] px-4 py-2.5">
-                                        <label className="flex flex-1 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface-muted)] px-3 py-1.5">
+                                        <label className="input flex flex-1 items-center gap-2 px-3 py-1.5">
                                             <Search
                                                 size={13}
                                                 className="shrink-0 text-[var(--text-secondary)]"
@@ -365,10 +362,10 @@ export default function SavedSessionsModal({ onClose, pendingSave }: Props) {
                                             <button
                                                 key={col}
                                                 onClick={() => toggleSort(col)}
-                                                className={`flex items-center gap-1 rounded-lg border px-2.5 py-1.5 text-xs font-medium transition ${
+                                                className={`btn btn-secondary btn-sm ${
                                                     sortBy === col
                                                         ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent)]"
-                                                        : "border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                                                        : ""
                                                 }`}
                                             >
                                                 {col === "date"
@@ -442,7 +439,7 @@ export default function SavedSessionsModal({ onClose, pendingSave }: Props) {
                                                                             loadingId === session.id
                                                                         }
                                                                         title="Load this session into the workspace"
-                                                                        className="flex items-center gap-1.5 rounded-lg border border-[var(--accent)] bg-[var(--accent)] px-3 py-1.5 text-xs font-semibold text-white transition hover:opacity-85 disabled:opacity-50"
+                                                                        className="btn btn-primary btn-sm"
                                                                     >
                                                                         <FolderOpen size={13} />
                                                                         {loadingId === session.id
@@ -456,7 +453,7 @@ export default function SavedSessionsModal({ onClose, pendingSave }: Props) {
                                                                             )
                                                                         }
                                                                         title="Delete session"
-                                                                        className="rounded-lg border border-[var(--border)] p-1.5 text-red-400 hover:border-red-300 hover:bg-red-50 dark:hover:bg-red-950/20"
+                                                                        className="btn btn-secondary btn-sm px-1.5 text-red-500 hover:border-red-300 hover:bg-red-50 dark:hover:bg-red-950/30"
                                                                     >
                                                                         <Trash2 size={13} />
                                                                     </button>

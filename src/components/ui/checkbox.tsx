@@ -30,7 +30,7 @@ export default function Checkbox({ checked, indeterminate, onChange, label }: Pr
                 ${
                     checked || indeterminate
                         ? "bg-[var(--accent)] border-[var(--accent)]"
-                        : "border-[var(--border)] bg-[var(--surface)] hover:border-[var(--text-secondary)]"
+                        : "border-[var(--border-strong)] bg-[var(--control)] hover:border-[var(--accent)]"
                 }
             `}
         >

@@ -1,32 +1,38 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { FolderTree, Search, ChevronsUpDown, ChevronsDownUp, ListOrdered } from "lucide-react";
+import {
+    FolderTree,
+    Search,
+    ChevronsUpDown,
+    ChevronsDownUp,
+    ListOrdered,
+    X,
+    Undo2
+} from "lucide-react";
 import { useRepoStore } from "@/store/repo-store";
 import { useSelectionStore } from "@/store/selection-store";
 import { filterTreeByQuery, filterTreeByFile, getExtension } from "@/lib/filter-tree";
 import { Tooltip, TooltipProvider } from "@/components/ui/tooltip";
 import TreeNode, { ExpandSignal } from "./TreeNode";
 import FileListView, { FileRow } from "./FileListView";
+import TypeFilter from "./TypeFilter";
+import {
+    TokenRange,
+    TokenRangeInputs,
+    TokenRangeMenu,
+    inRange,
+    parseRange
+} from "./TokenRangeFilter";
 
 type View = "tree" | "list";
 
 /** Dispatched on window to switch the explorer to the "By size" list, e.g. when over budget. */
 export const SHOW_LARGEST_EVENT = "codepiler:show-largest";
 
-const VISIBLE_TYPES = 6;
-
-const chipClass = (active: boolean) =>
-    `rounded-full border px-2.5 py-1 text-xs font-medium transition ${
-        active
-            ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent)]"
-            : "border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)] hover:border-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-    }`;
-
-const actionClass =
-    "rounded-md border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs font-medium text-[var(--text-secondary)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]";
-
 const VIEW_STORAGE_KEY = "codepiler_explorer_view";
+
+const NO_RANGE: TokenRange = { min: "", max: "" };
 
 function readSavedView(): View {
     try {
@@ -36,11 +42,6 @@ function readSavedView(): View {
     }
 }
 
-function parseLimit(value: string) {
-    const n = Number(value);
-    return value.trim() === "" || Number.isNaN(n) ? null : n;
-}
-
 export default function RepoTree() {
     const tree = useRepoStore((s) => s.tree);
     const files = useRepoStore((s) => s.files);
@@ -48,9 +49,8 @@ export default function RepoTree() {
     const [view, setViewState] = useState<View>(readSavedView);
     const [query, setQuery] = useState("");
     const [types, setTypes] = useState<Set<string>>(new Set());
-    const [showAllTypes, setShowAllTypes] = useState(false);
-    const [minTokens, setMinTokens] = useState("");
-    const [maxTokens, setMaxTokens] = useState("");
+    const [range, setRange] = useState<TokenRange>(NO_RANGE);
+    const [customRange, setCustomRange] = useState(false);
     const [expandSignal, setExpandSignal] = useState<ExpandSignal>(null);
     // selection before the last bulk action, offered back as "Undo" for a few seconds
     const [undoSelection, setUndoSelection] = useState<string[] | null>(null);
@@ -91,8 +91,10 @@ export default function RepoTree() {
         return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
     }, [files]);
 
-    const min = view === "list" ? parseLimit(minTokens) : null;
-    const max = view === "list" ? parseLimit(maxTokens) : null;
+    // the token range is a size tool, so it only applies in the By size view
+    const parsed = parseRange(range);
+    const min = view === "list" ? parsed.min : null;
+    const max = view === "list" ? parsed.max : null;
     const q = query.trim().toLowerCase();
     const filtering = q !== "" || types.size > 0 || min !== null || max !== null;
 
@@ -100,10 +102,7 @@ export default function RepoTree() {
     const keep = useMemo(() => {
         return (path: string) => {
             if (types.size > 0 && !types.has(getExtension(path))) return false;
-            const tokens = tokenMap[path] ?? 0;
-            if (min !== null && tokens < min) return false;
-            if (max !== null && tokens > max) return false;
-            return true;
+            return inRange(tokenMap[path] ?? 0, { min, max });
         };
     }, [types, tokenMap, min, max]);
 
@@ -120,6 +119,19 @@ export default function RepoTree() {
         [files, q, keep, tokenMap]
     );
 
+    // token counts after search and type filters, so the size presets can show live counts
+    const rangeCandidates = useMemo(
+        () =>
+            files
+                .filter(
+                    (f) =>
+                        (!q || f.path.toLowerCase().includes(q)) &&
+                        (types.size === 0 || types.has(getExtension(f.path)))
+                )
+                .map((f) => tokenMap[f.path] ?? 0),
+        [files, q, types, tokenMap]
+    );
+
     const shownPaths = useMemo(
         () =>
             view === "list" ? rows.map((r) => r.path) : filteredTree.flatMap((n) => n.filePaths),
@@ -132,18 +144,16 @@ export default function RepoTree() {
         store[action](shownPaths);
     };
 
-    const toggleType = (ext: string) => {
-        const next = new Set(types);
-        if (next.has(ext)) next.delete(ext);
-        else next.add(ext);
-        setTypes(next);
+    const changeRange = (next: TokenRange) => {
+        setRange(next);
+        setCustomRange(false);
     };
 
     const resetFilters = () => {
         setQuery("");
         setTypes(new Set());
-        setMinTokens("");
-        setMaxTokens("");
+        setRange(NO_RANGE);
+        setCustomRange(false);
     };
 
     if (!tree.length) {
@@ -160,15 +170,13 @@ export default function RepoTree() {
         );
     }
 
-    const visibleTypes = showAllTypes ? typeCounts : typeCounts.slice(0, VISIBLE_TYPES);
-
     return (
         <TooltipProvider>
             <div data-tour="tree" className="flex h-full flex-col">
                 <div className="mb-2 space-y-2.5 border-b border-[var(--border)] pb-3">
                     {/* View switch */}
                     <div className="flex items-center gap-2">
-                        <div className="flex flex-1 rounded-xl border border-[var(--border)] bg-[var(--surface-muted)] p-1">
+                        <div className="flex flex-1 rounded-xl border border-[var(--border-strong)] bg-[var(--surface-subtle)] p-1 shadow-[inset_0_1px_2px_rgba(15,23,42,0.06)]">
                             {(
                                 [
                                     { key: "tree", label: "Tree", icon: FolderTree },
@@ -181,7 +189,7 @@ export default function RepoTree() {
                                     aria-pressed={view === key}
                                     className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-semibold transition ${
                                         view === key
-                                            ? "bg-[var(--surface)] text-[var(--text-primary)] shadow-sm"
+                                            ? "bg-[var(--control)] text-[var(--accent)] shadow-[var(--shadow-control)] ring-1 ring-[var(--border-strong)]"
                                             : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                                     }`}
                                 >
@@ -197,7 +205,7 @@ export default function RepoTree() {
                                     <button
                                         aria-label="Expand all folders"
                                         onClick={() => setExpandSignal({ open: true })}
-                                        className="flex h-8 w-8 items-center justify-center rounded-md border border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                                        className="btn btn-secondary btn-icon"
                                     >
                                         <ChevronsUpDown size={14} />
                                     </button>
@@ -206,7 +214,7 @@ export default function RepoTree() {
                                     <button
                                         aria-label="Collapse all folders"
                                         onClick={() => setExpandSignal({ open: false })}
-                                        className="flex h-8 w-8 items-center justify-center rounded-md border border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                                        className="btn btn-secondary btn-icon"
                                     >
                                         <ChevronsDownUp size={14} />
                                     </button>
@@ -216,87 +224,57 @@ export default function RepoTree() {
                     </div>
 
                     {/* Search */}
-                    <label className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2">
-                        <Search size={15} className="text-[var(--accent)]" />
+                    <label className="input flex items-center gap-2 px-3 py-2">
+                        <Search size={15} className="shrink-0 text-[var(--text-secondary)]" />
                         <input
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
                             placeholder="Search files or folders"
-                            className="w-full bg-transparent text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-secondary)]"
+                            className="w-full bg-transparent text-sm text-[var(--text-primary)] outline-none"
                         />
+                        {query && (
+                            <button
+                                onClick={() => setQuery("")}
+                                aria-label="Clear search"
+                                className="shrink-0 rounded p-0.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                            >
+                                <X size={14} />
+                            </button>
+                        )}
                     </label>
 
-                    {/* File types */}
-                    <div className="flex flex-wrap items-center gap-1.5">
-                        <span className="mr-1 text-xs font-semibold text-[var(--text-secondary)]">
-                            Type
-                        </span>
-                        <button
-                            onClick={() => setTypes(new Set())}
-                            className={chipClass(types.size === 0)}
-                        >
-                            All
-                        </button>
-                        {visibleTypes.map(([ext, count]) => (
-                            <button
-                                key={ext}
-                                onClick={() => toggleType(ext)}
-                                aria-pressed={types.has(ext)}
-                                className={chipClass(types.has(ext))}
-                            >
-                                {ext ? `.${ext}` : "no ext"}{" "}
-                                <span className="opacity-60">{count}</span>
-                            </button>
-                        ))}
-                        {typeCounts.length > VISIBLE_TYPES && (
-                            <button
-                                onClick={() => setShowAllTypes((v) => !v)}
-                                className="px-1 text-xs font-medium text-[var(--accent)] hover:underline"
-                            >
-                                {showAllTypes
-                                    ? "Less"
-                                    : `+${typeCounts.length - VISIBLE_TYPES} more`}
-                            </button>
+                    {/* Filters */}
+                    <div className="flex items-center gap-2">
+                        <TypeFilter typeCounts={typeCounts} selected={types} onChange={setTypes} />
+                        {view === "list" && (
+                            <TokenRangeMenu
+                                range={range}
+                                custom={customRange}
+                                tokens={rangeCandidates}
+                                onChange={changeRange}
+                                onCustom={() => setCustomRange(true)}
+                            />
                         )}
                     </div>
 
-                    {/* Token range: a size tool, so it lives (and applies) only in the By size view */}
-                    {view === "list" && (
-                        <div className="flex items-center gap-1.5 text-xs text-[var(--text-secondary)]">
-                            <span className="mr-1 font-semibold">Tokens</span>
-                            {(
-                                [
-                                    [minTokens, setMinTokens, "min"],
-                                    [maxTokens, setMaxTokens, "max"]
-                                ] as const
-                            ).map(([value, setValue, label], index) => (
-                                <span key={label} className="flex items-center gap-1.5">
-                                    {index === 1 && <span>–</span>}
-                                    <input
-                                        type="number"
-                                        min={0}
-                                        inputMode="numeric"
-                                        value={value}
-                                        onChange={(e) => setValue(e.target.value)}
-                                        placeholder={label}
-                                        aria-label={`${label === "min" ? "Minimum" : "Maximum"} tokens per file`}
-                                        className="w-20 rounded-md border border-[var(--border)] bg-[var(--surface)] px-2 py-1 text-xs text-[var(--text-primary)] outline-none focus:border-[var(--accent)] placeholder:text-[var(--text-secondary)]"
-                                    />
-                                </span>
-                            ))}
-                        </div>
+                    {view === "list" && customRange && (
+                        <TokenRangeInputs
+                            range={range}
+                            onChange={setRange}
+                            onClose={() => changeRange(NO_RANGE)}
+                        />
                     )}
 
                     {/* Bulk actions act on exactly what is shown */}
                     <div className="flex flex-wrap items-center gap-1.5">
-                        <span className="mr-auto text-xs text-[var(--text-secondary)]">
+                        <span className="mr-auto flex items-center gap-2 text-xs text-[var(--text-secondary)]">
                             {filtering
                                 ? `Showing ${shownPaths.length} of ${files.length}`
                                 : `${files.length} files`}
                             {filtering && (
                                 <button
                                     onClick={resetFilters}
-                                    className="ml-2 font-medium text-[var(--accent)] hover:underline"
+                                    className="font-semibold text-[var(--accent)] hover:underline"
                                 >
                                     Reset
                                 </button>
@@ -304,33 +282,44 @@ export default function RepoTree() {
                             {undoSelection && (
                                 <button
                                     onClick={undo}
-                                    className="ml-2 font-medium text-[var(--accent)] hover:underline"
+                                    className="flex items-center gap-1 font-semibold text-[var(--accent)] hover:underline"
                                 >
+                                    <Undo2 size={12} />
                                     Undo
                                 </button>
                             )}
                         </span>
-                        <button onClick={() => bulkChange("selectMany")} className={actionClass}>
+                        <button
+                            onClick={() => bulkChange("selectMany")}
+                            className="btn btn-secondary btn-sm"
+                        >
                             {filtering ? "Select shown" : "Select all"}
                         </button>
-                        <button onClick={() => bulkChange("deselectMany")} className={actionClass}>
+                        <button
+                            onClick={() => bulkChange("deselectMany")}
+                            className="btn btn-secondary btn-sm"
+                        >
                             {filtering ? "Deselect shown" : "Clear"}
                         </button>
                     </div>
                 </div>
 
                 {shownPaths.length === 0 ? (
-                    <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--surface-muted)] px-4 py-6 text-center text-sm text-[var(--text-secondary)]">
+                    <div className="rounded-2xl border border-dashed border-[var(--border-strong)] bg-[var(--surface-muted)] px-4 py-6 text-center text-sm text-[var(--text-secondary)]">
                         No files match these filters.{" "}
                         <button
                             onClick={resetFilters}
-                            className="font-medium text-[var(--accent)] hover:underline"
+                            className="font-semibold text-[var(--accent)] hover:underline"
                         >
                             Reset filters
                         </button>
                     </div>
                 ) : view === "list" ? (
-                    <FileListView rows={rows} />
+                    <FileListView
+                        rows={rows}
+                        onSelectShown={() => bulkChange("selectMany")}
+                        onDeselectShown={() => bulkChange("deselectMany")}
+                    />
                 ) : (
                     <div className="flex-1 space-y-1 overflow-auto pr-1">
                         {filteredTree.map((node) => (

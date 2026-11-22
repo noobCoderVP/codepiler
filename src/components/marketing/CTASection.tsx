@@ -21,16 +21,10 @@ export default function CTASection() {
                     a minute.
                 </p>
                 <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-                    <Link
-                        href="/app"
-                        className="rounded-xl bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:opacity-95"
-                    >
+                    <Link href="/app" className="btn btn-primary btn-lg px-6 py-3">
                         Open CodePiler
                     </Link>
-                    <Link
-                        href="/docs"
-                        className="rounded-xl border border-[var(--border)] bg-[var(--surface)] px-6 py-3 text-sm font-semibold text-[var(--text-primary)] transition hover:bg-[var(--surface-muted)]"
-                    >
+                    <Link href="/docs" className="btn btn-secondary btn-lg px-6 py-3">
                         Read the docs
                     </Link>
                 </div>

@@ -19,7 +19,7 @@ export function SelectTrigger({
     return (
         <SelectPrimitive.Trigger
             title={title}
-            className={`flex items-center justify-between gap-1.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] outline-none transition hover:bg-[var(--surface-muted)] hover:text-[var(--text-primary)] data-[state=open]:border-[var(--accent)] data-[state=open]:text-[var(--text-primary)] ${className}`}
+            className={`btn btn-secondary justify-between font-medium data-[state=open]:border-[var(--accent)] ${className}`}
         >
             {children}
             <SelectPrimitive.Icon asChild>
@@ -35,7 +35,7 @@ export function SelectContent({ children }: { children: React.ReactNode }) {
             <SelectPrimitive.Content
                 position="popper"
                 sideOffset={6}
-                className="z-50 min-w-[10rem] overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)] shadow-[0_8px_32px_rgba(15,23,42,0.14)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
+                className="z-50 min-w-[10rem] overflow-hidden rounded-xl border border-[var(--border-strong)] bg-[var(--surface)] shadow-[0_8px_32px_rgba(15,23,42,0.16)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
             >
                 <SelectPrimitive.ScrollUpButton className="flex cursor-default items-center justify-center py-1 text-[var(--text-secondary)]">
                     <ChevronUp size={12} />

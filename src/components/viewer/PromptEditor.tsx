@@ -40,7 +40,7 @@ function PresetPicker({
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] px-2.5 py-1.5 text-xs font-medium text-[var(--text-secondary)] transition hover:bg-[var(--surface)] hover:text-[var(--text-primary)] data-[state=open]:border-[var(--accent)] data-[state=open]:text-[var(--accent)]">
+                <button className="btn btn-secondary btn-sm">
                     <span className="max-w-[14rem] truncate">{selectedLabel ?? triggerLabel}</span>
                     <ChevronDown size={11} className="shrink-0 opacity-60" />
                 </button>
@@ -155,7 +155,7 @@ export default function PromptEditor({
                                 if (!e.target.value.trim()) setSelectedSystem(null);
                             }}
                             placeholder="You are an expert software engineer reviewing this codebase. Analyze it carefully and provide precise, actionable feedback…"
-                            className="flex-1 resize-none rounded-xl border border-[var(--border)] bg-[var(--surface-muted)] px-4 py-3 font-mono text-xs leading-relaxed text-[var(--text-primary)] outline-none placeholder:text-[var(--text-secondary)] focus:border-[var(--accent)] transition"
+                            className="input flex-1 resize-none px-4 py-3 font-mono text-xs leading-relaxed"
                             style={{ minHeight: "320px" }}
                         />
                         {prefix && (
@@ -204,7 +204,7 @@ export default function PromptEditor({
                                 if (!e.target.value.trim()) setSelectedTask(null);
                             }}
                             placeholder="Now analyze the codebase above and help me with the following task…"
-                            className="flex-1 resize-none rounded-xl border border-[var(--border)] bg-[var(--surface-muted)] px-4 py-3 font-mono text-xs leading-relaxed text-[var(--text-primary)] outline-none placeholder:text-[var(--text-secondary)] focus:border-[var(--accent)] transition"
+                            className="input flex-1 resize-none px-4 py-3 font-mono text-xs leading-relaxed"
                             style={{ minHeight: "320px" }}
                         />
                         {suffix && (
@@ -234,10 +234,7 @@ export default function PromptEditor({
                     <p className="text-[11px] text-[var(--text-secondary)]">
                         {statusLine || "No instructions yet, so only the code will be exported"}
                     </p>
-                    <button
-                        onClick={onClose}
-                        className="rounded-xl bg-[var(--accent)] px-4 py-2 text-xs font-semibold text-white transition hover:opacity-90"
-                    >
+                    <button onClick={onClose} className="btn btn-primary px-4">
                         Done
                     </button>
                 </div>

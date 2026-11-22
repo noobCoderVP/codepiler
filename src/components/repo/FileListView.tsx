@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import { useRepoStore } from "@/store/repo-store";
 import { useSelectionStore } from "@/store/selection-store";
 import { showFile, useViewerStore } from "@/store/viewer-store";
@@ -17,13 +17,21 @@ export type FileRow = {
 type SortKey = "name" | "size" | "tokens";
 
 const COLUMNS: { key: SortKey; label: string; className: string }[] = [
-    { key: "name", label: "File", className: "flex-1 text-left" },
-    { key: "size", label: "Size", className: "w-16 text-right" },
-    { key: "tokens", label: "Tokens", className: "w-24 text-right" }
+    { key: "name", label: "File", className: "flex-1 justify-start" },
+    { key: "size", label: "Size", className: "w-16 justify-end" },
+    { key: "tokens", label: "Tokens", className: "w-24 justify-end" }
 ];
 
 /** Flat, sortable list of files: the quickest way to spot and drop the heavy ones. */
-export default function FileListView({ rows }: { rows: FileRow[] }) {
+export default function FileListView({
+    rows,
+    onSelectShown,
+    onDeselectShown
+}: {
+    rows: FileRow[];
+    onSelectShown: () => void;
+    onDeselectShown: () => void;
+}) {
     const selected = useSelectionStore((s) => s.selected);
     const toggle = useSelectionStore((s) => s.toggle);
     const activePath = useViewerStore((s) => s.activePath);
@@ -44,8 +52,24 @@ export default function FileListView({ rows }: { rows: FileRow[] }) {
         );
     }, [rows, sort]);
 
-    // bars are relative to the heaviest file shown, so the biggest ones stand out
-    const maxTokens = useMemo(() => Math.max(1, ...rows.map((r) => r.tokens)), [rows]);
+    const stats = useMemo(() => {
+        let total = 0;
+        let max = 1;
+        let selectedCount = 0;
+        let selectedTokens = 0;
+        for (const row of rows) {
+            total += row.tokens;
+            max = Math.max(max, row.tokens);
+            if (selected.has(row.path)) {
+                selectedCount++;
+                selectedTokens += row.tokens;
+            }
+        }
+        return { total, max, selectedCount, selectedTokens };
+    }, [rows, selected]);
+
+    const allSelected = rows.length > 0 && stats.selectedCount === rows.length;
+    const someSelected = stats.selectedCount > 0 && !allSelected;
 
     const changeSort = (key: SortKey) =>
         setSort((prev) =>
@@ -54,27 +78,58 @@ export default function FileListView({ rows }: { rows: FileRow[] }) {
 
     return (
         <div className="flex min-h-0 flex-1 flex-col">
-            <div className="flex items-center gap-3 border-b border-[var(--border)] px-2 pb-2 text-xs font-semibold text-[var(--text-secondary)]">
-                <span className="w-4" />
-                {COLUMNS.map((col) => (
-                    <button
-                        key={col.key}
-                        onClick={() => changeSort(col.key)}
-                        className={`${col.className} flex items-center gap-1 hover:text-[var(--text-primary)] ${
-                            col.key === "name" ? "" : "justify-end"
-                        } ${sort.key === col.key ? "text-[var(--text-primary)]" : ""}`}
-                    >
-                        {col.label}
-                        {sort.key === col.key &&
-                            (sort.desc ? <ArrowDown size={12} /> : <ArrowUp size={12} />)}
-                    </button>
-                ))}
+            {/* Summary of what is shown */}
+            <p className="mb-2 px-1 text-xs text-[var(--text-secondary)]">
+                <span className="font-semibold text-[var(--text-primary)]">
+                    {formatTokenCount(stats.total)}
+                </span>{" "}
+                tokens in {rows.length} {rows.length === 1 ? "file" : "files"} ·{" "}
+                <span className="font-semibold text-[var(--accent)]">
+                    {stats.selectedCount} selected
+                </span>{" "}
+                ({formatTokenCount(stats.selectedTokens)})
+            </p>
+
+            {/* Column header */}
+            <div className="flex items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] px-2 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-[var(--text-secondary)]">
+                <Checkbox
+                    checked={allSelected}
+                    indeterminate={someSelected}
+                    label={allSelected ? "Deselect all shown files" : "Select all shown files"}
+                    onChange={allSelected ? onDeselectShown : onSelectShown}
+                />
+                {COLUMNS.map((col) => {
+                    const active = sort.key === col.key;
+
+                    return (
+                        <button
+                            key={col.key}
+                            onClick={() => changeSort(col.key)}
+                            title={`Sort by ${col.label.toLowerCase()}`}
+                            className={`${col.className} flex items-center gap-1 uppercase transition hover:text-[var(--text-primary)] ${
+                                active ? "text-[var(--accent)]" : ""
+                            }`}
+                        >
+                            {col.label}
+                            {active ? (
+                                sort.desc ? (
+                                    <ArrowDown size={12} />
+                                ) : (
+                                    <ArrowUp size={12} />
+                                )
+                            ) : (
+                                <ArrowUpDown size={11} className="opacity-50" />
+                            )}
+                        </button>
+                    );
+                })}
             </div>
 
-            <div className="flex-1 overflow-auto">
+            <div className="mt-1 flex-1 space-y-0.5 overflow-auto">
                 {sorted.map((row) => {
                     const isSelected = selected.has(row.path);
                     const isActive = row.path === (previewPath ?? activePath);
+                    const share = stats.total ? (row.tokens / stats.total) * 100 : 0;
                     // every path starts with the project folder, so leave it out of the label
                     const shown =
                         repoName && row.path.startsWith(`${repoName}/`)
@@ -87,10 +142,12 @@ export default function FileListView({ rows }: { rows: FileRow[] }) {
                     return (
                         <div
                             key={row.path}
-                            className={`flex items-center gap-3 rounded-md px-2 py-1.5 ${
+                            className={`flex items-center gap-3 rounded-lg border px-2 py-1.5 transition-colors ${
                                 isActive
-                                    ? "bg-[var(--accent-soft)]"
-                                    : "hover:bg-[var(--surface-subtle)]"
+                                    ? "border-[var(--accent)] bg-[var(--accent-soft)]"
+                                    : isSelected
+                                      ? "border-transparent bg-[color-mix(in_srgb,var(--accent)_6%,transparent)] hover:bg-[var(--accent-soft)]"
+                                      : "border-transparent hover:bg-[var(--surface-subtle)]"
                             }`}
                         >
                             <Checkbox
@@ -103,8 +160,8 @@ export default function FileListView({ rows }: { rows: FileRow[] }) {
                                 onClick={() => showFile(row.path, isSelected)}
                                 title={
                                     isSelected
-                                        ? "Jump to this file in the prompt"
-                                        : "Preview this file"
+                                        ? `${shown}: jump to this file in the prompt`
+                                        : `${shown}: preview this file`
                                 }
                                 className="min-w-0 flex-1 text-left"
                             >
@@ -124,18 +181,31 @@ export default function FileListView({ rows }: { rows: FileRow[] }) {
                                 )}
                             </button>
 
-                            <span className="w-16 shrink-0 text-right text-xs text-[var(--text-secondary)]">
+                            <span className="w-16 shrink-0 text-right text-xs tabular-nums text-[var(--text-secondary)]">
                                 {formatBytes(row.size)}
                             </span>
 
-                            <span className="w-24 shrink-0">
-                                <span className="block text-right text-xs font-semibold text-[var(--text-primary)]">
+                            <span
+                                className="w-24 shrink-0"
+                                title={`${row.tokens.toLocaleString()} tokens · ${share.toFixed(1)}% of shown`}
+                            >
+                                <span
+                                    className={`block text-right text-xs font-semibold tabular-nums ${
+                                        isSelected
+                                            ? "text-[var(--text-primary)]"
+                                            : "text-[var(--text-secondary)]"
+                                    }`}
+                                >
                                     {formatTokenCount(row.tokens)}
                                 </span>
-                                <span className="mt-1 block h-1 rounded-full bg-[var(--surface-subtle)]">
+                                <span className="mt-1 block h-1.5 overflow-hidden rounded-full bg-[var(--surface-subtle)]">
                                     <span
-                                        className="block h-1 rounded-full bg-[var(--accent)]"
-                                        style={{ width: `${(row.tokens / maxTokens) * 100}%` }}
+                                        className={`block h-full rounded-full ${
+                                            isSelected
+                                                ? "bg-[var(--accent)]"
+                                                : "bg-[var(--text-secondary)] opacity-40"
+                                        }`}
+                                        style={{ width: `${(row.tokens / stats.max) * 100}%` }}
                                     />
                                 </span>
                             </span>

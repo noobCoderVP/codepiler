@@ -69,7 +69,7 @@ export default function WorkspaceEmptyState() {
                     className={`mt-8 flex flex-col items-center gap-4 rounded-2xl border-2 border-dashed px-6 py-10 text-center transition ${
                         dragActive
                             ? "border-[var(--accent)] bg-[var(--accent-soft)]"
-                            : "border-[var(--border)] bg-[var(--surface-muted)]"
+                            : "border-[var(--border-strong)] bg-[var(--surface-muted)]"
                     }`}
                 >
                     <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--surface)] text-[var(--accent)] shadow-sm">
@@ -94,7 +94,7 @@ export default function WorkspaceEmptyState() {
                         <button
                             onClick={openFolder}
                             disabled={loading}
-                            className="flex items-center gap-2 rounded-xl bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:opacity-90 disabled:opacity-50"
+                            className="btn btn-primary btn-lg"
                         >
                             <FolderUp size={16} />
                             Choose folder
@@ -102,7 +102,7 @@ export default function WorkspaceEmptyState() {
                         <button
                             onClick={openZip}
                             disabled={loading}
-                            className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-2.5 text-sm font-semibold text-[var(--text-primary)] transition hover:bg-[var(--surface-subtle)] disabled:opacity-50"
+                            className="btn btn-secondary btn-lg"
                         >
                             <UploadCloud size={16} />
                             Choose .zip
@@ -110,7 +110,7 @@ export default function WorkspaceEmptyState() {
                         <button
                             onClick={() => void loadSample()}
                             disabled={loading}
-                            className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-2.5 text-sm font-semibold text-[var(--text-primary)] transition hover:bg-[var(--surface-subtle)] disabled:opacity-50"
+                            className="btn btn-secondary btn-lg"
                         >
                             <Sparkles size={16} className="text-[var(--accent)]" />
                             Try a sample project
