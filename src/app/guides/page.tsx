@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Breadcrumbs from "@/components/seo/Breadcrumbs";
+import Breadcrumbs from "@/components/content/Breadcrumbs";
 import LinkCard from "@/components/content/LinkCard";
 import OpenAppCallout from "@/components/content/OpenAppCallout";
 import { guides } from "@/lib/guides-content";

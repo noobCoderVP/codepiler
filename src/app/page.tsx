@@ -6,7 +6,7 @@ import WorkflowSection from "@/components/marketing/WorkflowSection";
 import FeatureSection from "@/components/marketing/FeatureSection";
 import FAQSection, { faqs } from "@/components/marketing/FAQSection";
 import CTASection from "@/components/marketing/CTASection";
-import JsonLd from "@/components/seo/JsonLd";
+import JsonLd from "@/components/content/JsonLd";
 import { GITHUB_URL, SITE_NAME, SITE_URL, pageMetadata } from "@/lib/seo";
 
 const title = "CodePiler: Ask AI About Your Code With Only the Files That Matter";

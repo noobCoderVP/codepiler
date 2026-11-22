@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Breadcrumbs from "@/components/seo/Breadcrumbs";
+import Breadcrumbs from "@/components/content/Breadcrumbs";
 import LinkCard from "@/components/content/LinkCard";
 import OpenAppCallout from "@/components/content/OpenAppCallout";
 import { SYSTEM_PRESETS, TASK_PRESETS } from "@/lib/prompt-presets";

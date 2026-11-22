@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import DocsArticle from "@/components/docs/DocsArticle";
-import Breadcrumbs from "@/components/seo/Breadcrumbs";
-import JsonLd from "@/components/seo/JsonLd";
+import Breadcrumbs from "@/components/content/Breadcrumbs";
+import JsonLd from "@/components/content/JsonLd";
 import LinkCard from "@/components/content/LinkCard";
 import OpenAppCallout from "@/components/content/OpenAppCallout";
 import { getGuide, guides } from "@/lib/guides-content";

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import DocsArticle from "@/components/docs/DocsArticle";
-import Breadcrumbs from "@/components/seo/Breadcrumbs";
+import Breadcrumbs from "@/components/content/Breadcrumbs";
 import { docsPages, getDocPage } from "@/lib/docs-content";
 import { pageMetadata } from "@/lib/seo";
 

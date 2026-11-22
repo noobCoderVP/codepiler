@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
-import JsonLd from "@/components/seo/JsonLd";
+import JsonLd from "@/components/content/JsonLd";
 import { GITHUB_URL, OG_IMAGE, SITE_NAME, SITE_URL } from "@/lib/seo";
 
 const defaultTitle = "CodePiler: Ask AI About Your Code With Only the Files That Matter";

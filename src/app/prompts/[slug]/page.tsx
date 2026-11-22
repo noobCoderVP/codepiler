@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import Breadcrumbs from "@/components/seo/Breadcrumbs";
+import Breadcrumbs from "@/components/content/Breadcrumbs";
 import LinkCard from "@/components/content/LinkCard";
 import OpenAppCallout from "@/components/content/OpenAppCallout";
 import CopyPromptButton from "@/components/content/CopyPromptButton";
