@@ -55,7 +55,7 @@ CodePiler fixes this. It gives you a controlled workspace to select only the fil
     - Kotlin / Android
     - React / Next.js
     - General / Polyglot
-- **Task presets** — 10 detailed task templates covering common AI-assisted development workflows:
+- **Task presets** — 18 detailed task templates covering common AI-assisted development workflows:
     - Modularize the codebase
     - Apply OOP principles
     - Write unit tests
@@ -67,17 +67,23 @@ CodePiler fixes this. It gives you a controlled workspace to select only the fil
     - Find and fix bugs
     - Convert to functional style
     - Optimize for scalability
+    - Add logging & observability
+    - Accessibility audit
+    - Dependency audit
+    - Eliminate dead code
+    - Generate API documentation
+    - Internationalization (i18n) audit
     - Code review
 - Use presets as a starting point and edit freely — the textarea is fully customizable
 - The selected preset name is shown in the dropdown so you always know what is active
 
 ### Token Budget
 
-- **27 model presets** with accurate context window sizes:
-    - **Anthropic** — Claude Opus 4, Sonnet 4, Haiku 4, Claude 3.7 Sonnet, 3.5 Sonnet, 3.5 Haiku, Claude 3 Opus (all 200K)
-    - **OpenAI** — o3 (200K), o3-mini (200K), o1 (200K), o1-mini (128K), GPT-4.1 (1M), GPT-4o (128K), GPT-4o mini (128K), GPT-4 Turbo (128K), GPT-3.5 Turbo (16K)
-    - **Google** — Gemini 2.5 Pro (1M), Gemini 2.5 Flash (1M), Gemini 2.0 Flash (1M), Gemini 1.5 Pro (2M), Gemini 1.5 Flash (1M)
-    - **Open Source** — Llama 3.1 405B (128K), Llama 3.1 70B (128K), Mistral Large (128K), DeepSeek V3 (64K), Qwen 2.5 72B (128K)
+- **18 model presets** with current context window sizes (checked November 2026):
+    - **Anthropic** — Claude Fable 5.2, Opus 5.5, Sonnet 5.5, Haiku 5.5 (all 1M)
+    - **OpenAI** — GPT-6.2 Astra, GPT-6.2 Sol, GPT-6.1 Terra, GPT-6 Luna (all 1.05M)
+    - **Google** — Gemini 4 Neon, Hydrogen, Carbon, Argon (all 1M)
+    - **Open weights** — DeepSeek V4 Pro (1M), DeepSeek V4.1 Flash (1M), GLM 5.3 (1M), Llama 4 Scout (10M), Llama 4 Maverick (1M), Qwen 3.5 (262K)
 - **Live color-coded progress bar** — green below 70%, amber at 70–90%, red above 90%
 - Token count covers the full export: selected code + system prompt + task
 
@@ -85,11 +91,11 @@ CodePiler fixes this. It gives you a controlled workspace to select only the fil
 
 - **4 export formats** — Text (optimized for direct prompting), JSON (structured tooling), XML, Markdown
 - **Copy to clipboard** or **download** as a file with a timestamped filename
-- **Saved sessions** — save your repository and file selection to localStorage and restore it in one click in any future session. No re-uploading, no re-filtering
+- **Saved sessions** — save your selected files to localStorage and restore them in one click in any future session. No re-uploading, no re-filtering
 
 ### Privacy and Performance
 
-- **100% local-first** — repository files are processed entirely in your browser using the File System Access API. No files are sent to any server
+- **100% local-first** — repository files are processed entirely in your browser using standard file input and drag-and-drop APIs. No files are sent to any server
 - **No account required** — open the app and start working immediately
 - **Works offline** after the initial page load
 - **Fast tokenization** — uses `gpt-tokenizer` (tiktoken cl100k_base) in the browser for instant, accurate token estimates
@@ -117,7 +123,7 @@ CodePiler fixes this. It gives you a controlled workspace to select only the fil
 
 ### Use the hosted version
 
-Visit **[codepiler.in/app](https://codepiler.in/app)** — no installation required.
+Visit **[codepiler.in/app](https://codepiler.in/app)** — no installation required. No repo handy? Click **Try a sample project**.
 
 ### Run locally
 
@@ -143,7 +149,7 @@ npm start
 
 | Layer            | Technology                                       |
 | ---------------- | ------------------------------------------------ |
-| Framework        | Next.js 15 (App Router)                          |
+| Framework        | Next.js 16 (App Router, Turbopack)               |
 | Language         | TypeScript (strict)                              |
 | Styling          | Tailwind CSS 4 with CSS variable design tokens   |
 | UI primitives    | Radix UI (Select, DropdownMenu, Tooltip, Dialog) |
@@ -153,7 +159,7 @@ npm start
 | Split layout     | react-resizable-panels                           |
 | Tokenization     | gpt-tokenizer (tiktoken cl100k_base)             |
 | ZIP extraction   | JSZip                                            |
-| Persistence      | localStorage (Zustand persist middleware)        |
+| Persistence      | localStorage                                     |
 
 ---
 

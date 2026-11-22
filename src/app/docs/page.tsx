@@ -7,7 +7,7 @@ const page = getDocPage();
 export const metadata: Metadata = {
     title: "Docs",
     description:
-        "Documentation for CodePiler, the repository-to-prompt tool for building cleaner AI context from real project files."
+        "Learn how to use CodePiler: import a project, pick only the files your question is about, and copy one clean prompt into any AI."
 };
 
 export default function DocsIndexPage() {

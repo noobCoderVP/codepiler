@@ -9,12 +9,12 @@ export const metadata: Metadata = {
     metadataBase: baseUrl,
 
     title: {
-        default: "CodePiler — Build AI Prompt Context from Any Repository",
+        default: "CodePiler — Ask AI About Your Code With Only the Files That Matter",
         template: "%s | CodePiler"
     },
 
     description:
-        "CodePiler turns any Git repository into focused AI prompt context. Select the exact files that matter, set a model token budget, wrap with a system prompt and task, then export to ChatGPT, Claude, or Gemini — in seconds, 100% in your browser.",
+        "Drop in your project, pick only the files your question is about, and copy one clean prompt into ChatGPT, Claude, or Gemini. Free, open source, and 100% in your browser.",
 
     applicationName: "CodePiler",
 
@@ -62,7 +62,7 @@ export const metadata: Metadata = {
     },
 
     openGraph: {
-        title: "CodePiler — Build AI Prompt Context from Any Repository",
+        title: "CodePiler — Ask AI About Your Code With Only the Files That Matter",
         description:
             "Select the exact files that matter, set a model token budget, wrap with a system prompt and task, then export to ChatGPT, Claude, or Gemini. Free, open source, runs entirely in your browser.",
         url: "/",
@@ -81,7 +81,7 @@ export const metadata: Metadata = {
 
     twitter: {
         card: "summary_large_image",
-        title: "CodePiler — Build AI Prompt Context from Any Repository",
+        title: "CodePiler — Ask AI About Your Code With Only the Files That Matter",
         description:
             "Select files, set a token budget, add a system prompt and task, then export to Claude, ChatGPT, or Gemini. Free, open source, 100% in-browser.",
         images: ["/og-image.png"]
@@ -141,10 +141,10 @@ const structuredData = {
                 "Select All / Clear All tree controls",
                 "Expand All / Collapse All folder controls",
                 "File preview without auto-selection",
-                "Token budget with 27 model presets (Claude 200K, GPT-4o 128K, Gemini 1M, and more)",
+                "Token budget with 18 model presets (Claude Opus 5.5, GPT-6.2, Gemini 4, Llama 4, and more)",
                 "Prompt wrapper with system prompt and task",
                 "12 language-specific system prompt presets (JS, Python, Go, Rust, Java, Swift, Kotlin, and more)",
-                "10 task presets (code review, security audit, refactor, tests, performance, and more)",
+                "18 task presets (code review, security audit, refactor, tests, performance, and more)",
                 "File type filter by extension",
                 "Token and size manager for bulk selection",
                 "Selected files panel with per-file token cost",
@@ -177,7 +177,7 @@ const structuredData = {
                     name: "Does CodePiler send my code to a server?",
                     acceptedAnswer: {
                         "@type": "Answer",
-                        text: "No. CodePiler is 100% client-side. Your repository files are processed entirely in your browser using the File System Access API and Web Workers. Nothing is uploaded to any server."
+                        text: "No. CodePiler is 100% client-side. Your repository files are processed entirely in your browser using standard browser file APIs. Nothing is uploaded to any server."
                     }
                 },
                 {
@@ -193,7 +193,7 @@ const structuredData = {
                     name: "Which AI models does CodePiler support?",
                     acceptedAnswer: {
                         "@type": "Answer",
-                        text: "CodePiler exports plain text, JSON, XML, and Markdown that work with any AI model. It includes token budget presets for 27 models including Claude Opus 4 (200K), Claude Sonnet 4 (200K), GPT-4.1 (1M), GPT-4o (128K), Gemini 2.5 Pro (1M), Gemini 1.5 Pro (2M), Llama 3.1, Mistral, DeepSeek, Qwen, and more."
+                        text: "CodePiler exports plain text, JSON, XML, and Markdown that work with any AI model. It includes token budget presets for 18 current models including Claude Opus 5.5 (1M), Claude Sonnet 5.5 (1M), GPT-6.2 Astra (1.05M), Gemini 4 Neon (1M), Llama 4 Scout (10M), DeepSeek V4, Qwen 3.5, and more."
                     }
                 },
                 {
@@ -201,7 +201,7 @@ const structuredData = {
                     name: "What is the prompt wrapper feature?",
                     acceptedAnswer: {
                         "@type": "Answer",
-                        text: "The prompt wrapper lets you prepend a system prompt and append a task to your exported code context. CodePiler ships with 12 expert language presets (JavaScript, Python, Go, Rust, Java, Swift, and more) and 10 task presets (code review, security audit, write tests, refactor, performance audit, and more), each hundreds of words long with detailed technical instructions."
+                        text: "The prompt wrapper lets you prepend a system prompt and append a task to your exported code context. CodePiler ships with 12 expert language presets (JavaScript, Python, Go, Rust, Java, Swift, and more) and 18 task presets (code review, security audit, write tests, refactor, performance audit, and more), each hundreds of words long with detailed technical instructions."
                     }
                 }
             ]

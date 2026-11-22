@@ -1,159 +1,122 @@
-import Link from "next/link";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Layers3, ScanSearch, WandSparkles } from "lucide-react";
-
-const highlights = [
-    {
-        title: "Precise file selection",
-        description:
-            "Browse the full repository tree with inline token counts on every file and folder. Select exactly the files the task needs — nothing more. Compare your total against any model's context limit with a live progress bar.",
-        icon: Layers3
-    },
-    {
-        title: "Signal over noise",
-        description:
-            "Filter by file type, search the tree by name, collapse folders, and use the size manager to bulk-deselect heavy files. A pinned panel shows every selected file with its individual token cost so you can audit and trim without hunting through the tree.",
-        icon: ScanSearch
-    },
-    {
-        title: "Expert-level prompt presets",
-        description:
-            "Wrap your code with a system prompt and task from 22 expert presets — 12 language-specific system prompts (JS, Python, Go, Rust, Java, Swift, and more) and 10 task templates (code review, security audit, refactor, write tests). Export as Text, JSON, XML, or Markdown and save sessions for later.",
-        icon: WandSparkles
-    }
-];
-
-const riseIn = {
-    hidden: { opacity: 0, y: 24 },
-    visible: {
-        opacity: 1,
-        y: 0,
-        transition: {
-            duration: 0.45
-        }
-    }
-};
+import { FolderUp, Loader2, ShieldCheck, Sparkles, UploadCloud } from "lucide-react";
+import { loadSample } from "@/lib/repo-loader";
+import { useRepoStore } from "@/store/repo-store";
+import { useRepoImport } from "@/components/repo/useRepoImport";
 
 export default function HeroSection() {
+    const router = useRouter();
+    const { loading, dragActive, dropHandlers, inputs, openFolder, openZip } = useRepoImport();
+
+    // the repo store outlives client navigation, so open the workspace as soon as an import starts
+    useEffect(
+        () =>
+            useRepoStore.subscribe((state, prev) => {
+                if (state.loading && !prev.loading) router.push("/app");
+            }),
+        [router]
+    );
+
     return (
         <section className="relative overflow-hidden px-6 pb-12 pt-14 md:pb-16 md:pt-18">
             <div className="absolute inset-x-0 top-0 -z-10 h-[34rem] bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.2),_transparent_58%)]" />
-            <div className="absolute inset-x-0 top-24 -z-10 mx-auto h-64 max-w-5xl rounded-full bg-[radial-gradient(circle,_rgba(15,23,42,0.08),_transparent_70%)] dark:bg-[radial-gradient(circle,_rgba(148,163,184,0.12),_transparent_70%)]" />
 
-            <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+            <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
                 <motion.div
-                    variants={riseIn}
-                    initial="hidden"
-                    animate="visible"
-                    className="relative"
+                    initial={{ opacity: 0, y: 24 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.45 }}
                 >
                     <div className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)]/85 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--text-secondary)] shadow-sm">
-                        Free &amp; open source · Runs 100% in your browser
+                        Free &amp; open source · Runs in your browser
                     </div>
 
-                    <h1 className="mt-5 max-w-4xl text-4xl font-semibold tracking-[-0.04em] text-[var(--text-primary)] md:text-6xl">
-                        Build focused AI prompt context from any repository — in seconds.
+                    <h1 className="mt-5 text-4xl font-semibold tracking-[-0.04em] text-[var(--text-primary)] md:text-6xl">
+                        Ask AI about your code with only the files that matter.
                     </h1>
 
-                    <p className="mt-5 max-w-2xl text-lg leading-8 text-[var(--text-secondary)]">
-                        CodePiler turns any codebase into a structured AI prompt. Select the exact
-                        files that matter, set a token budget for your model, wrap with an expert
-                        system prompt and task, and export directly to ChatGPT, Claude, Gemini, or
-                        any other LLM.
+                    <p className="mt-5 max-w-xl text-lg leading-8 text-[var(--text-secondary)]">
+                        Drop in your project, tick the files your question is about, write the
+                        question, and copy one clean prompt into ChatGPT, Claude or Gemini. The
+                        model sees the right code, and you don&apos;t pay for the rest.
                     </p>
 
-                    <div className="mt-7 flex flex-wrap items-center gap-4">
-                        <Link
-                            href="/app"
-                            className="rounded-xl bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:opacity-95"
-                        >
-                            Launch App — It&apos;s Free
-                        </Link>
-                        <a
-                            href="#workflow"
-                            className="rounded-xl border border-[var(--border)] bg-[var(--surface)] px-6 py-3 text-sm font-semibold text-[var(--text-primary)] transition hover:bg-[var(--surface-muted)]"
-                        >
-                            See How It Works
-                        </a>
-                    </div>
+                    <a
+                        href="#how-it-works"
+                        className="mt-7 inline-block text-sm font-semibold text-[var(--accent)] hover:underline"
+                    >
+                        See how it works ↓
+                    </a>
                 </motion.div>
 
                 <motion.div
                     initial={{ opacity: 0, x: 36 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5, delay: 0.08 }}
-                    className="relative"
                 >
-                    <div className="rounded-[2rem] border-0 bg-[linear-gradient(160deg,rgba(255,255,255,0.96),rgba(241,245,249,0.94))] p-5 shadow-[0_8px_32px_rgba(15,23,42,0.07)] dark:border dark:border-[var(--border)] dark:bg-[linear-gradient(160deg,rgba(17,24,39,0.94),rgba(15,23,42,0.94))] dark:shadow-[0_24px_80px_rgba(0,0,0,0.45)]">
-                        <div className="rounded-[1.4rem] border-0 bg-[var(--surface)] p-5 shadow-[0_2px_8px_rgba(15,23,42,0.06)] dark:border dark:border-[var(--border)] dark:shadow-none">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-sm font-semibold text-[var(--text-primary)]">
-                                        Repository → AI Prompt
-                                    </p>
-                                    <p className="mt-1 text-sm text-[var(--text-secondary)]">
-                                        No backend · No upload · No cost
-                                    </p>
-                                </div>
-
-                                <div className="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-xs font-semibold text-[var(--accent)]">
-                                    Local-first
-                                </div>
-                            </div>
-
-                            <div className="mt-5 grid gap-3">
-                                {[
-                                    "Upload folder or ZIP — processed in your browser",
-                                    "Select files — inline token counts on every file",
-                                    "Wrap with expert system prompt + task preset",
-                                    "Set model token budget, export & save session"
-                                ].map((step, index) => (
-                                    <motion.div
-                                        key={step}
-                                        initial={{ opacity: 0, x: 18 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: 0.18 + index * 0.08, duration: 0.3 }}
-                                        className="flex items-center gap-3 rounded-2xl border border-[rgba(148,163,184,0.18)] bg-[var(--surface-muted)] px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.32)] dark:border-[var(--border)]"
-                                    >
-                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-semibold text-white">
-                                            0{index + 1}
-                                        </div>
-                                        <span className="text-sm font-medium text-[var(--text-primary)]">
-                                            {step}
-                                        </span>
-                                    </motion.div>
-                                ))}
-                            </div>
+                    <div
+                        {...dropHandlers}
+                        className={`flex flex-col items-center gap-4 rounded-[2rem] border-2 border-dashed px-6 py-12 text-center shadow-[var(--shadow-md)] transition ${
+                            dragActive
+                                ? "border-[var(--accent)] bg-[var(--accent-soft)]"
+                                : "border-[var(--border)] bg-[var(--surface)]"
+                        }`}
+                    >
+                        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--accent-soft)] text-[var(--accent)]">
+                            {loading ? (
+                                <Loader2 className="h-7 w-7 animate-spin" />
+                            ) : (
+                                <UploadCloud className="h-7 w-7" />
+                            )}
                         </div>
+
+                        <div>
+                            <p className="text-lg font-semibold text-[var(--text-primary)]">
+                                {dragActive ? "Drop to open" : "Drop a project folder or .zip"}
+                            </p>
+                            <p className="mt-1 text-sm text-[var(--text-secondary)]">
+                                node_modules, build output and binaries are skipped automatically
+                            </p>
+                        </div>
+
+                        <div className="flex flex-wrap justify-center gap-2">
+                            <button
+                                onClick={openFolder}
+                                disabled={loading}
+                                className="flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:opacity-90 disabled:opacity-50"
+                            >
+                                <FolderUp size={16} />
+                                Choose folder
+                            </button>
+                            <button
+                                onClick={openZip}
+                                disabled={loading}
+                                className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-5 py-3 text-sm font-semibold text-[var(--text-primary)] transition hover:bg-[var(--surface-subtle)] disabled:opacity-50"
+                            >
+                                <UploadCloud size={16} />
+                                Choose .zip
+                            </button>
+                        </div>
+
+                        <button
+                            onClick={() => void loadSample()}
+                            disabled={loading}
+                            className="flex items-center gap-1.5 text-sm font-medium text-[var(--accent)] hover:underline disabled:opacity-50"
+                        >
+                            <Sparkles size={14} />
+                            No project handy? Try a sample
+                        </button>
+
+                        <p className="flex items-center gap-1.5 text-xs text-[var(--text-secondary)]">
+                            <ShieldCheck size={14} className="text-[var(--success)]" />
+                            Files are read by your browser and never uploaded.
+                        </p>
+
+                        {inputs}
                     </div>
                 </motion.div>
-            </div>
-
-            <div className="mx-auto mt-10 grid max-w-6xl gap-4 md:grid-cols-3">
-                {highlights.map((item, index) => {
-                    const Icon = item.icon;
-
-                    return (
-                        <motion.div
-                            key={item.title}
-                            initial={{ opacity: 0, y: 18 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, amount: 0.3 }}
-                            transition={{ delay: index * 0.08, duration: 0.35 }}
-                            className="rounded-2xl border border-[var(--border)] bg-[var(--surface)]/90 p-5 shadow-sm"
-                        >
-                            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--accent-soft)] text-[var(--accent)]">
-                                <Icon size={20} />
-                            </div>
-                            <h3 className="mt-4 text-lg font-semibold text-[var(--text-primary)]">
-                                {item.title}
-                            </h3>
-                            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-                                {item.description}
-                            </p>
-                        </motion.div>
-                    );
-                })}
             </div>
         </section>
     );

@@ -1,196 +1,64 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { CheckCircle, FolderUp, Loader2, UploadCloud } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AlertCircle, CheckCircle, FolderUp, Loader2, UploadCloud } from "lucide-react";
+import { motion } from "framer-motion";
 
 import { useRepoStore } from "@/store/repo-store";
-import { readFiles } from "@/lib/read-files";
-import { readZipFile } from "@/lib/read-zip";
-import { preFilterFiles } from "@/lib/pre-filter";
-import { useSelectionStore } from "@/store/selection-store";
-import { useViewerStore } from "@/store/viewer-store";
-import { RepoFile } from "@/types/repo";
-
-const INITIAL_FILE_LIMIT = 140;
-const INITIAL_CHAR_BUDGET = 220_000;
-
-function scoreInitialSelection(path: string) {
-    const lower = path.toLowerCase();
-
-    if (lower.endsWith("readme.md")) return 120;
-    if (lower.includes("/src/")) return 100;
-    if (lower.includes("/app/")) return 95;
-    if (lower.includes("/components/")) return 92;
-    if (lower.endsWith("package.json")) return 90;
-    if (lower.endsWith("tsconfig.json") || lower.endsWith("next.config.ts")) return 88;
-    if (lower.endsWith(".ts") || lower.endsWith(".tsx")) return 80;
-    if (lower.endsWith(".js") || lower.endsWith(".jsx")) return 72;
-    if (lower.endsWith(".md")) return 60;
-    return 40;
-}
-
-function getInitialSelection(files: RepoFile[]) {
-    const ranked = [...files].sort((left, right) => {
-        const scoreDiff = scoreInitialSelection(right.path) - scoreInitialSelection(left.path);
-
-        if (scoreDiff !== 0) return scoreDiff;
-        return left.path.localeCompare(right.path);
-    });
-
-    const selectedPaths: string[] = [];
-    let totalChars = 0;
-
-    for (const file of ranked) {
-        if (selectedPaths.length >= INITIAL_FILE_LIMIT) break;
-        if (totalChars + file.content.length > INITIAL_CHAR_BUDGET && selectedPaths.length > 0) {
-            continue;
-        }
-
-        selectedPaths.push(file.path);
-        totalChars += file.content.length;
-    }
-
-    return selectedPaths;
-}
+import { useRepoImport } from "./useRepoImport";
 
 export default function RepoUpload() {
-    const folderInputRef = useRef<HTMLInputElement | null>(null);
-    const zipInputRef = useRef<HTMLInputElement | null>(null);
+    const files = useRepoStore((s) => s.files);
+    const repoName = useRepoStore((s) => s.repoName);
+    const summary = useRepoStore((s) => s.summary);
+    const error = useRepoStore((s) => s.error);
+    const { loading, dragActive, dropHandlers, inputs, openFolder, openZip } = useRepoImport();
 
-    const setFiles = useRepoStore((s) => s.setFiles);
-    const setInitialSelection = useSelectionStore((s) => s.setInitialSelection);
-    const setActivePath = useViewerStore((s) => s.setActivePath);
-
-    const [dragActive, setDragActive] = useState(false);
-    const [fileCount, setFileCount] = useState<number | null>(null);
-    const [repoName, setRepoName] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
-
-    const applyRepoFiles = (repoFiles: RepoFile[]) => {
-        const finalFiles = setFiles(repoFiles);
-        const initialSelection = getInitialSelection(finalFiles);
-
-        setInitialSelection(initialSelection);
-        setActivePath(initialSelection[0] ?? finalFiles[0]?.path ?? null);
-        setFileCount(finalFiles.length);
-        setRepoName(finalFiles[0]?.path.split("/")[0] ?? null);
-    };
-
-    const processDirectoryFiles = async (files: FileList | null) => {
-        if (!files || files.length === 0) return;
-
-        setIsLoading(true);
-
-        try {
-            const filtered = preFilterFiles(files);
-            const repoFiles = await readFiles(filtered);
-            applyRepoFiles(repoFiles);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const processZip = async (file: File | null) => {
-        if (!file) return;
-
-        setIsLoading(true);
-
-        try {
-            const repoFiles = await readZipFile(file);
-            applyRepoFiles(repoFiles);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
-        event.preventDefault();
-        if (isLoading) return;
-
-        setDragActive(false);
-
-        const droppedFiles = Array.from(event.dataTransfer.files);
-        const zipFile = droppedFiles.find((file) => file.name.toLowerCase().endsWith(".zip"));
-
-        if (zipFile && droppedFiles.length === 1) {
-            await processZip(zipFile);
-            return;
-        }
-
-        await processDirectoryFiles(event.dataTransfer.files);
-    };
+    const loaded = files.length > 0;
 
     return (
         <motion.div
             data-tour="upload"
-            onDragOver={(event) => {
-                event.preventDefault();
-                if (!isLoading) setDragActive(true);
-            }}
-            onDragLeave={() => setDragActive(false)}
-            onDrop={handleDrop}
+            {...dropHandlers}
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             className={`rounded-xl border px-3 py-2.5 transition-all duration-200 ${
-                dragActive && !isLoading
+                dragActive
                     ? "border-[var(--accent)] bg-[var(--accent-soft)]/55 shadow-lg"
                     : "border-[var(--border)] bg-[var(--surface-muted)]"
-            } ${isLoading ? "pointer-events-none opacity-80" : ""}`}
+            } ${loading ? "pointer-events-none opacity-80" : ""}`}
         >
             <div className="flex items-center gap-3">
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--surface)] text-[var(--accent)] shadow-sm">
-                    <AnimatePresence mode="wait">
-                        {isLoading ? (
-                            <motion.div
-                                key="loader"
-                                initial={{ opacity: 0, scale: 0.85 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0 }}
-                            >
-                                <Loader2 className="h-4 w-4 animate-spin" />
-                            </motion.div>
-                        ) : fileCount ? (
-                            <motion.div
-                                key="success"
-                                initial={{ opacity: 0, scale: 0.85 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0 }}
-                            >
-                                <CheckCircle className="h-4 w-4 text-[var(--success)]" />
-                            </motion.div>
-                        ) : (
-                            <motion.div
-                                key="idle"
-                                initial={{ opacity: 0, scale: 0.85 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0 }}
-                            >
-                                <UploadCloud className="h-4 w-4" />
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+                    {loading ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : loaded ? (
+                        <CheckCircle className="h-4 w-4 text-[var(--success)]" />
+                    ) : (
+                        <UploadCloud className="h-4 w-4" />
+                    )}
                 </div>
 
                 <div className="min-w-0 flex-1">
-                    <p className="text-xs font-semibold text-[var(--text-primary)]">
-                        {isLoading
-                            ? "Processing..."
-                            : fileCount && repoName
-                              ? `${repoName} • ${fileCount} files`
-                              : "Import repository"}
+                    <p className="truncate text-xs font-semibold text-[var(--text-primary)]">
+                        {loading
+                            ? "Reading files…"
+                            : dragActive
+                              ? "Drop to import"
+                              : loaded
+                                ? `${repoName} · ${files.length} files`
+                                : "Import a project"}
                     </p>
-                    {!fileCount && (
-                        <p className="text-[11px] text-[var(--text-secondary)]">
-                            Drop a folder or ZIP archive
-                        </p>
-                    )}
+                    <p className="truncate text-[11px] text-[var(--text-secondary)]">
+                        {loaded
+                            ? "Drop another folder or ZIP to replace"
+                            : "Drop a folder or ZIP here"}
+                    </p>
                 </div>
 
                 <div className="flex shrink-0 gap-1.5">
                     <button
-                        onClick={() => folderInputRef.current?.click()}
-                        disabled={isLoading}
+                        onClick={openFolder}
+                        disabled={loading}
                         className="flex items-center gap-1.5 rounded-lg bg-[var(--accent)] px-3 py-1.5 text-xs font-medium text-white shadow-sm transition hover:opacity-90 disabled:opacity-50"
                     >
                         <FolderUp size={13} />
@@ -198,8 +66,8 @@ export default function RepoUpload() {
                     </button>
 
                     <button
-                        onClick={() => zipInputRef.current?.click()}
-                        disabled={isLoading}
+                        onClick={openZip}
+                        disabled={loading}
                         className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-medium text-[var(--text-primary)] transition hover:bg-[var(--surface-subtle)] disabled:opacity-50"
                     >
                         <UploadCloud size={13} />
@@ -208,22 +76,28 @@ export default function RepoUpload() {
                 </div>
             </div>
 
-            <input
-                ref={folderInputRef}
-                type="file"
-                multiple
-                {...{ webkitdirectory: "true" }}
-                className="hidden"
-                onChange={(event) => processDirectoryFiles(event.currentTarget.files)}
-            />
+            {loaded && summary && !error && (
+                <p className="mt-2 text-[11px] leading-4 text-[var(--text-secondary)]">
+                    <span className="font-semibold text-[var(--text-primary)]">
+                        {summary.preselected} key files pre-selected.
+                    </span>{" "}
+                    {summary.skipped > 0 &&
+                        `${summary.skipped} skipped (dependencies, binaries, build output, .gitignore, >200 KB). `}
+                    Adjust the selection in the tree below.
+                </p>
+            )}
 
-            <input
-                ref={zipInputRef}
-                type="file"
-                accept=".zip,application/zip"
-                className="hidden"
-                onChange={(event) => processZip(event.currentTarget.files?.[0] ?? null)}
-            />
+            {error && (
+                <p
+                    role="alert"
+                    className="mt-2 flex items-start gap-1.5 text-[11px] leading-4 text-[var(--danger)]"
+                >
+                    <AlertCircle size={12} className="mt-0.5 shrink-0" />
+                    {error}
+                </p>
+            )}
+
+            {inputs}
         </motion.div>
     );
 }

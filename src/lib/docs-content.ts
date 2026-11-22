@@ -6,6 +6,8 @@ export type DocPage = {
         id: string;
         heading: string;
         body: string[];
+        /** Optional bullet list rendered after the paragraphs. */
+        list?: string[];
     }[];
     faq?: {
         question: string;
@@ -20,222 +22,273 @@ export type DocPage = {
 export const docsPages: DocPage[] = [
     {
         slug: "",
-        title: "CodePiler docs",
+        title: "Getting started",
         description:
-            "Learn how CodePiler imports repositories, filters noisy files, builds prompt-ready output, and helps developers prepare better AI context from real codebases.",
+            "CodePiler helps you ask AI about your code with only the files that matter. Pick the files your question is about, add the question, and copy one clean prompt into ChatGPT, Claude, Gemini or any other model.",
         sections: [
             {
-                id: "overview",
-                heading: "What CodePiler does",
+                id: "what-it-is",
+                heading: "What CodePiler is for",
                 body: [
-                    "CodePiler converts a repository into structured prompt context. You import a folder or ZIP, inspect the repository tree, select the files that matter, wrap the output with a system prompt and task, and export in the format your workflow needs.",
-                    "The application is optimized for repository understanding, debugging prompts, onboarding context, and AI-assisted documentation and refactoring work. Everything runs client-side — no files leave your browser."
+                    "When you ask an AI about code, the answer is only as good as the context you give it. Paste too little and the model guesses; paste the whole repository and your question gets buried in unrelated code, hits context limits, and costs more.",
+                    "CodePiler is the step in between. You import a project, tick the files that are relevant to your question, write the question, and CodePiler combines it all into one prompt with every file labelled by its path. You then paste that prompt into the AI tool you already use."
                 ]
             },
             {
-                id: "workflow",
-                heading: "Core workflow",
-                body: [
-                    "The typical flow is: import → search and filter → select files → set a token budget → add a prompt wrapper → export. The file tree and prompt viewer sit side by side so scope stays visible throughout.",
-                    "This is the main advantage over manual copy-paste: the output stays grounded in the repository structure, the token count is always visible, and the full prompt — system instruction, code context, and task — is assembled in one place before you send it."
+                id: "quickstart",
+                heading: "Your first prompt in two minutes",
+                body: ["You don't need an account or any setup."],
+                list: [
+                    "Open the app and drop a project folder or .zip onto the import area. No project handy? Click “Try a sample project”.",
+                    "CodePiler skips dependencies, build output and binaries, and pre-selects key files so you start from a sensible selection.",
+                    "In the file tree, untick what isn't relevant and tick what is. Click a file name to read it before deciding. The token count updates as you go.",
+                    "Click “Add instructions” and write your question in the Task box, or pick a task preset such as “Find and fix bugs”.",
+                    "Click “Copy prompt” and paste it into ChatGPT, Claude, Gemini or any other AI chat."
                 ]
             },
             {
-                id: "new-features",
-                heading: "What's new",
+                id: "privacy",
+                heading: "Where your code goes",
                 body: [
-                    "Prompt wrapper: click the Prompt button in the viewer header to open a modal where you can add a system prompt (prepended) and a task (appended). Both sections ship with presets — 12 language-specific system prompts (JavaScript/TypeScript, Python, Go, Rust, Java, and more) and 12 common task templates (modularize, OOP refactor, write tests, security review, and more).",
-                    "Token budget: select a model context limit from the dropdown next to the token chip — Claude 200K, GPT-4o 128K, Gemini 1M, GPT-3.5 16K — and a color-coded progress bar tracks your usage toward that limit in real time.",
-                    "Selected files panel: a collapsible panel pinned to the bottom of the file tree lists every selected file with its individual token cost and a one-click remove button, so you can audit your selection without scrolling through the tree.",
-                    "Separate preview and select: clicking a filename in the tree now previews it in the editor without automatically selecting it. Use the checkbox to include a file in the export. This makes it easy to inspect a file before deciding whether it belongs in the prompt.",
-                    "Tree controls: Select All and Clear buttons let you include or exclude the entire repository with one click. Expand All and Collapse All buttons manage folder state across the full tree."
+                    "Nowhere. CodePiler has no backend. Folders and ZIP files are read by your browser, and the prompt is built on your machine. Your code only leaves your computer when you paste the prompt into an AI tool yourself.",
+                    "Saved sessions are stored in your browser's local storage on this device. Clearing site data removes them."
                 ]
-            }
-        ],
-        examples: [
-            {
-                title: "Debugging a multi-file bug",
-                summary:
-                    "Select the failing route, service layer, and supporting types. Add a debugging task preset, check the token budget fits your model, then export one focused prompt."
             },
             {
-                title: "Understanding an unfamiliar codebase",
-                summary:
-                    "Use tree search to gather entrypoints, config, and key modules. Apply a General system prompt preset and export — the model gets full structural context in a single message."
+                id: "next",
+                heading: "Where to go next",
+                body: [
+                    "Importing a project explains what gets skipped and why. The workspace guide covers every control in the file tree and the prompt viewer. Asking good questions shows how to choose files and write prompts that get useful answers."
+                ]
             }
         ]
     },
     {
         slug: "uploading",
-        title: "Uploading repositories",
+        title: "Importing a project",
         description:
-            "Import repositories into CodePiler with folder upload or ZIP upload, understand filtering behavior, and prepare clean source context for prompt generation.",
+            "Import a folder or ZIP, see exactly which files CodePiler skips, and understand how the starting selection is chosen.",
         sections: [
             {
-                id: "folder-upload",
-                heading: "Folder upload",
+                id: "ways-to-import",
+                heading: "Ways to import",
                 body: [
-                    "Folder upload is ideal when the repository already exists locally. CodePiler reads file contents directly in the browser and preserves the directory structure for the tree explorer.",
-                    "This mode is the fastest option during active development because there is no archive extraction step. After loading, CodePiler automatically pre-selects a focused set of source files to keep the initial token count manageable."
+                    "On the home page or in the empty workspace, drop a folder or a single .zip file onto the import area, or use the buttons:"
+                ],
+                list: [
+                    "Choose folder: best for a project already on your machine. Nothing needs to be extracted.",
+                    "Choose .zip: best for an archive, for example one downloaded from GitHub with Code → Download ZIP. It is unpacked in your browser.",
+                    "Try a sample project: loads a small Express + TypeScript todo API so you can try the full workflow without your own code."
                 ]
             },
             {
-                id: "zip-upload",
-                heading: "ZIP upload",
+                id: "skipped-files",
+                heading: "What gets skipped",
                 body: [
-                    "ZIP upload works well for repositories downloaded from GitHub or shared as archives. CodePiler extracts the archive client-side and keeps the project grouped under a stable root path.",
-                    "Common build artifacts, binary assets, caches, and oversized files are filtered automatically before they reach the viewer."
+                    "To keep the tree focused on source code, CodePiler leaves these out while importing. After an import, a summary shows how many files were loaded and how many were skipped."
+                ],
+                list: [
+                    "Dependency, build and cache folders: node_modules, .git, .next, dist, build, out, target, coverage, vendor, venv / .venv, __pycache__, .gradle, .idea, .vscode and similar.",
+                    "Binary and media files: images, video, audio, fonts, archives, PDFs, compiled files (.class, .pyc, .dll, .so, .exe, .jar) and databases.",
+                    "Anything matched by the .gitignore file at the project root.",
+                    "Any single file larger than 200 KB.",
+                    "OS clutter such as .DS_Store and Thumbs.db."
+                ]
+            },
+            {
+                id: "starting-selection",
+                heading: "The starting selection",
+                body: [
+                    "Right after import, CodePiler pre-selects key files so you aren't starting from nothing. It prefers the README, files under src/, app/ and components/, package.json and config files, then other source files. It stops at about 140 files or roughly 220,000 characters of code.",
+                    "Treat this as a starting point, not a recommendation for your question. For a focused prompt, click Clear in the file tree and tick only the files you need."
                 ]
             }
         ],
         faq: [
             {
-                question: "Should I use folder upload or ZIP upload?",
-                answer: "Use folder upload when you have the repository locally and want the simplest path. Use ZIP upload when the project arrives as an archive or when you want to share a self-contained snapshot."
+                question: "A file I need is missing from the tree. Why?",
+                answer: "It was probably skipped by one of the rules above: it's in a build or dependency folder, matched by your .gitignore, a binary type, or over 200 KB. Very large source files are usually generated or minified, so they rarely help in a prompt anyway."
             },
             {
-                question: "Why are some files missing after upload?",
-                answer: "CodePiler filters out common generated folders (node_modules, .git, dist, build), large files over 200 KB, binary assets, and non-source files to keep the workspace focused and prompt sizes manageable."
+                question: "Are .gitignore files in subfolders respected?",
+                answer: "No. Only the .gitignore at the root of the imported folder or ZIP is applied. Files ignored only by a nested .gitignore will show up in the tree, where you can leave them unticked."
             },
             {
-                question: "Can I upload multiple repositories?",
-                answer: "Uploading a new repository replaces the current one. Save your session first if you want to come back to the current selection later."
+                question: "Can I work with two projects at once?",
+                answer: "No. Importing a new project replaces the current one. Click Save first if you want to come back to your current selection."
+            },
+            {
+                question: "Dropping a folder doesn't work in my browser. What can I do?",
+                answer: "Use the Choose folder button instead, or zip the folder and use Choose .zip. Folder drag-and-drop support varies between browsers."
             }
         ]
     },
     {
         slug: "viewer",
-        title: "One File Viewer",
+        title: "Workspace guide",
         description:
-            "Explore the One File Viewer, switch formats, set a token budget, add a prompt wrapper, and navigate directly from the repository tree to matching content in the assembled output.",
+            "Every control in the CodePiler workspace: the file tree on the left, the combined prompt on the right, instructions, token budget, export and saved sessions.",
         sections: [
             {
-                id: "navigation",
-                heading: "File preview vs. selection",
+                id: "file-tree",
+                heading: "File tree",
                 body: [
-                    "Clicking a filename in the repository tree previews it in the editor — the viewer scrolls to that file's section in the assembled output. This is a preview-only action and does not change your selection.",
-                    "To include a file in the export, check its checkbox. This separation makes it easy to inspect a file before deciding whether it belongs in the prompt."
+                    "The left panel lists every imported file, with a token count on each file and folder so you can see what something costs before you include it."
+                ],
+                list: [
+                    "Tick a checkbox to include a file (or a whole folder) in the prompt.",
+                    "Click a file name to read it. If the file is selected, the prompt scrolls to it. If not, it opens on its own as a preview, and your selection doesn't change.",
+                    "Search folders or files: type part of a name or path to narrow the tree.",
+                    "Filter by file type (funnel icon): show only certain extensions, such as .ts and .py. Active filters appear as chips. Remove them one at a time or with Clear all.",
+                    "Manage files by token size (chart icon): list files by token count or size and select or deselect the heaviest ones in one place.",
+                    "Select all, Clear, Expand all folders and Collapse all folders work on the whole tree."
+                ]
+            },
+            {
+                id: "selected-files",
+                heading: "Selected files panel",
+                body: [
+                    "The panel at the bottom of the tree lists everything you've selected, with each file's token cost. Click a file to jump to it in the prompt, or click × to deselect it. Click the panel header to collapse it. It's the quickest way to check your selection before you copy."
+                ]
+            },
+            {
+                id: "instructions",
+                heading: "Instructions: system prompt and task",
+                body: [
+                    "Click “Add instructions” in the viewer header. The System prompt box is placed before your code and sets the AI's role. The Task box is placed after your code and is where your question goes. Both are optional and both count toward the token total.",
+                    "Each box has presets you can use as-is or edit. The 12 system prompt presets cover JavaScript / TypeScript, Python, Java / Spring, Go, Rust, C++, PHP / Laravel, Ruby / Rails, Swift / iOS, Kotlin / Android, React / Next.js and a general option. The 18 task presets include Find and fix bugs, Code review, Write unit tests, Security review, Performance audit, Refactor for readability, Document the code, Generate API documentation and more.",
+                    "Once instructions are set, the button shows which presets are in use."
                 ]
             },
             {
                 id: "formats",
-                heading: "Available formats",
+                heading: "Output formats",
                 body: [
-                    "Text format is optimized for direct prompting, JSON and XML are useful for structured tooling, and Markdown is a readable option for notes, docs, and shareable prompt context.",
-                    "Switch formats at any time — the selection and prompt wrapper are preserved across format changes."
+                    "Switch the format with the tabs above the prompt. Changing format keeps your selection and instructions."
+                ],
+                list: [
+                    "Text: each file starts with a “===== FILE: path =====” header. The best default for pasting into a chat.",
+                    "Markdown: each file under a heading in a fenced code block. Easy to read and share.",
+                    'XML: each file in a <file path="…"> element. Some models, Claude especially, follow XML-tagged context well.',
+                    "JSON: an array of { path, content } objects, for scripts and tooling."
                 ]
             },
             {
                 id: "token-budget",
-                heading: "Token budget",
+                heading: "Token count and model budget",
                 body: [
-                    "The token chip in the viewer header shows the total token count for your current output, including any system prompt and task text from the prompt wrapper.",
-                    "Use the model dropdown next to the chip to set a context limit: Claude 200K, GPT-4o 128K, Gemini 1M, or GPT-3.5 16K. A color-coded bar fills green → amber → red as you approach the limit, so you know when to trim before copying."
+                    "The token chip in the viewer header shows the size of the whole prompt: system prompt, code and task. Pick a model from the dropdown next to it and a bar shows how much of that model's context window you're using, moving from green to amber to red as you approach the limit.",
+                    "Counts come from the o200k_base tokenizer used by recent OpenAI models. Other providers tokenize differently, so for Claude, Gemini and open-weight models treat the number as a close estimate."
                 ]
             },
             {
-                id: "prompt-wrapper",
-                heading: "Prompt wrapper",
+                id: "export",
+                heading: "Copy and download",
                 body: [
-                    "Click the Prompt button in the header to open the prompt wrapper modal. The left panel is for a system prompt (prepended before all code) and the right panel is for a task (appended after all code).",
-                    "Each panel has a preset dropdown. System prompt presets cover 12 languages and stacks — JavaScript/TypeScript, Python, Go, Rust, Java, C++, PHP, Ruby, Swift, Kotlin, React/Next.js, and a general polyglot option. Task presets cover 12 common operations: modularize, apply OOP, write tests, performance audit, security review, refactor for readability, add TypeScript types, document the code, find bugs, functional style, scalability, and code review.",
-                    "Selecting a preset fills the textarea, which you can edit freely before exporting. Both sections contribute to the token count in real time."
+                    "Copy prompt puts the full prompt on your clipboard. If your browser blocks clipboard access, the button says so. Use Download instead, which saves the prompt as a file in the current format."
                 ]
-            }
-        ],
-        examples: [
-            {
-                title: "Prepare a refactor brief",
-                summary:
-                    "Filter to a service cluster, apply the Refactor for readability task preset, switch to Markdown, and export a readable prompt bundle."
             },
             {
-                title: "Security audit",
-                summary:
-                    "Select auth routes, middleware, and config files. Apply the Security review task preset with a language-specific system prompt, then paste the output into your model."
+                id: "sessions",
+                heading: "Saved sessions",
+                body: [
+                    "Click Save to store the imported files and your current selection under a name. Open Sessions to restore one later without importing again, or to delete old ones.",
+                    "Sessions are kept in your browser's local storage, which has a limited size (often around 5 MB). If a project is too large to save, CodePiler tells you instead of failing silently. Instructions are not saved with a session, so keep custom prompts you want to reuse somewhere else."
+                ]
+            },
+            {
+                id: "tutorial",
+                heading: "Guided tour",
+                body: [
+                    "Click Tutorial in the header of the app at any time for a short walkthrough of the workspace."
+                ]
             }
         ],
         faq: [
             {
-                question: "Why use One File Viewer instead of opening the source files directly?",
-                answer: "The viewer shows the exact prompt output — system instruction, code, and task — not just the underlying files. That makes it easy to validate scope, token usage, and final wording before you export."
+                question: "Does the order of files in the prompt matter?",
+                answer: "Files are added in the order they were imported. Most models handle any order well. What matters more is that the files are relevant and that your question comes after the code, which is where the Task box puts it."
             },
             {
-                question: "Does the prompt wrapper affect the file format output?",
-                answer: "Yes. The system prompt is placed before the formatted code block and the task is placed after it, separated by blank lines. The combined result is what gets copied or downloaded."
-            },
-            {
-                question: "Are token counts accurate for Claude models?",
-                answer: "CodePiler uses a GPT-compatible tokenizer (tiktoken cl100k_base). Claude uses a similar but slightly different tokenizer, so counts may differ by a few percent. Treat the budget bar as a close estimate, not an exact limit."
+                question: "How much of the context window should I use?",
+                answer: "Leave headroom for the answer and for follow-up questions. Even with a 1M-token model, a focused prompt of a few thousand to a few tens of thousands of tokens usually gets a sharper answer than a huge one."
             }
         ]
     },
     {
         slug: "examples",
-        title: "Examples and FAQ",
+        title: "Asking good questions",
         description:
-            "See practical CodePiler use cases and common questions about filtering, prompt scope, the prompt wrapper, and how to build better repository context for AI tools.",
+            "How to choose the right files and write a question that gets a useful answer, with recipes for debugging, reviews, tests and learning a codebase.",
         sections: [
             {
-                id: "examples",
-                heading: "Practical use cases",
+                id: "choosing-files",
+                heading: "Choosing the right files",
                 body: [
-                    "A common use case is isolating only the modules involved in an error, applying the Find and fix bugs task preset, and sending one focused prompt to the model instead of pasting files one by one.",
-                    "Another pattern is onboarding: gather entrypoints, routing, schema files, and configuration, apply a General system prompt preset, and ask the model for an architecture walkthrough.",
-                    "For refactoring sessions, pick the relevant feature folder, apply a language-specific system prompt and the Refactor for readability or Apply OOP principles task, and use the token budget to confirm the prompt fits inside your chosen model's context window."
+                    "Start from the code your question is about and add only what the AI needs to understand it. A good selection usually includes:"
+                ],
+                list: [
+                    "The file where the behavior lives, such as the function or component in question.",
+                    "Its contracts: the types, interfaces or schema it uses.",
+                    "One level of callers or callees, such as the route that calls the service.",
+                    "The related test, if there is one. It shows the AI what “correct” means.",
+                    "Config only when it affects the behavior, for example a build or framework setting."
                 ]
             },
             {
-                id: "scope",
-                heading: "Choosing the right prompt scope",
+                id: "writing-the-question",
+                heading: "Writing the question",
                 body: [
-                    "Large prompts are not automatically better. In most sessions, the best result comes from selecting the files closest to the behavior, interface, or subsystem under discussion.",
-                    "Use the selected files panel at the bottom of the tree to audit exactly what is included and remove anything that adds noise. Use the token budget bar to confirm the selection fits comfortably inside the model's context window before exporting."
-                ]
-            },
-            {
-                id: "prompt-tips",
-                heading: "Getting the most from the prompt wrapper",
-                body: [
-                    "System prompt presets are a starting point, not a final answer. After selecting a language preset, customize it to match the specific framework, patterns, or constraints visible in the codebase.",
-                    "Task presets work best when combined with a focused file selection. A security review prompt sent with 80 files is less effective than one sent with the 8 files that handle authentication and input validation.",
-                    "If you are using a model with a large context window (Gemini 1M, Claude 200K), you can afford a broader selection. For smaller windows, use the token budget bar to stay under 70% to leave room for the model's response."
+                    "Put your question in the Task box so it comes after the code. Be specific. Compare “Fix my todo app” with “Calling deleteTodo with an id that doesn't exist removed a different todo. Why, and how do I fix it?”. The second gets a precise answer on the first try.",
+                    "For bugs, include what you did, what you expected and what actually happened, plus any error message or stack trace. For changes, say what must not change, such as the public API, the existing tests or the style of the codebase.",
+                    "Presets are a good starting point. Pick one, then add a line about your specific situation."
                 ]
             }
         ],
         examples: [
             {
-                title: "Trace an auth flow",
+                title: "Debug a multi-file bug",
                 summary:
-                    "Search for auth-related files, select the route, middleware, and service layer. Apply the Security review task preset with a language-specific system prompt, then export."
+                    "Select the failing route, the service it calls and the shared types. Paste the error into the Task box with what you expected to happen, or start from the Find and fix bugs preset."
             },
             {
-                title: "Document a feature slice",
+                title: "Review a change before you merge",
                 summary:
-                    "Select one feature folder, supporting types, and relevant config. Apply the Document the code task preset and export a structured snapshot for documentation drafting."
+                    "Select only the files you changed plus the interfaces they touch. Use the Code review preset and add one line on what the change is meant to do."
             },
             {
-                title: "Onboard a new team member",
+                title: "Write tests for existing code",
                 summary:
-                    "Use Select All on the src/ folder, trim heavy files with the size manager, apply a General system prompt, and export a full architecture overview prompt."
+                    "Select the module and one existing test file so the AI copies your test style and framework. Use the Write unit tests preset."
+            },
+            {
+                title: "Understand an unfamiliar codebase",
+                summary:
+                    "Select the README, entry points, routing and main config. Ask for an architecture walkthrough and which files to read first, then ask follow-ups with narrower selections."
+            },
+            {
+                title: "Security pass on auth",
+                summary:
+                    "Search for auth, session and middleware files and select them with any input validation code. Use the Security review preset with the system prompt for your language."
+            },
+            {
+                title: "Plan a refactor",
+                summary:
+                    "Select one feature folder and its types. Use Refactor for readability or Modularize the codebase, and ask for a step-by-step plan before asking for code."
             }
         ],
         faq: [
             {
-                question: "Should I include every dependency file in the prompt?",
-                answer: "Usually no. Include the files that define the behavior, contracts, or data flow you want the model to reason about. Too much unrelated code dilutes the result and wastes context."
+                question: "Should I include every file the code depends on?",
+                answer: "Usually not. Include what defines the behavior, contracts and data flow you're asking about. If the answer shows the AI is missing something, add that file and ask again."
             },
             {
-                question: "Can I reuse the same repository export across models?",
-                answer: "Yes. Keep the same selection set and change the export format or adjust the system prompt preset based on the tool you plan to use."
+                question: "Can I reuse the same selection for several questions?",
+                answer: "Yes. Keep the selection, change the Task text, and copy again. Save the session if you'll come back to it on another day."
             },
             {
-                question: "How do I quickly switch between different task prompts?",
-                answer: "Open the prompt wrapper modal, click the Task presets dropdown, and select a new preset. It overwrites the current task text. You can then edit the result before closing the modal."
-            },
-            {
-                question: "Can I save a session that includes my prompt wrapper?",
-                answer: "Currently saved sessions store the file selection and repository. The prompt wrapper text is session-level state and resets on page reload. Copy your custom prompts to a text file if you want to reuse them."
+                question: "Which format should I use?",
+                answer: "Text works well everywhere. Try XML with Claude, and Markdown if you'll also read the prompt yourself or share it."
             }
         ]
     }

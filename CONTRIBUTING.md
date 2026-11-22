@@ -21,7 +21,7 @@ Thank you for your interest in contributing. This document covers everything you
 
 ## Getting Started
 
-**Prerequisites:** Node.js 18+, npm
+**Prerequisites:** Node.js 20.9+, npm
 
 ```bash
 # Fork the repo on GitHub, then clone your fork

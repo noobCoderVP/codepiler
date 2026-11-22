@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { createElement, useMemo, useState } from "react";
 import { ChevronRight, ChevronDown, Folder } from "lucide-react";
 import { useSelectionStore } from "@/store/selection-store";
 import { useViewerStore } from "@/store/viewer-store";
@@ -9,12 +9,15 @@ import { getFileIcon } from "@/lib/file-icons";
 import { formatTokenCount } from "@/lib/token-utils";
 import { RepoNode } from "@/types/repo";
 
+/** A new object every time "expand all" / "collapse all" is clicked, so repeated clicks still apply. */
+export type ExpandSignal = { open: boolean } | null;
+
 type Props = {
     node: RepoNode;
     depth?: number;
     searchActive?: boolean;
     tokenMap: Record<string, number>;
-    globalExpanded?: boolean | null;
+    expandSignal: ExpandSignal;
 };
 
 export default function TreeNode({
@@ -22,19 +25,21 @@ export default function TreeNode({
     depth = 0,
     searchActive = false,
     tokenMap,
-    globalExpanded
+    expandSignal
 }: Props) {
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(expandSignal ? expandSignal.open : true);
+    const [seenSignal, setSeenSignal] = useState(expandSignal);
 
-    useEffect(() => {
-        if (globalExpanded !== null && globalExpanded !== undefined) setOpen(globalExpanded);
-    }, [globalExpanded]);
+    if (expandSignal !== seenSignal) {
+        setSeenSignal(expandSignal);
+        if (expandSignal) setOpen(expandSignal.open);
+    }
 
     const selected = useSelectionStore((s) => s.selected);
     const toggle = useSelectionStore((s) => s.toggle);
     const toggleMany = useSelectionStore((s) => s.toggleMany);
     const activePath = useViewerStore((s) => s.activePath);
-    const setActivePath = useViewerStore((s) => s.setActivePath);
+    const previewPath = useViewerStore((s) => s.previewPath);
 
     const filePaths = node.filePaths;
 
@@ -54,13 +59,16 @@ export default function TreeNode({
     const checked = selectedCount === filePaths.length && filePaths.length > 0;
     const indeterminate = selectedCount > 0 && selectedCount < filePaths.length;
     const isOpen = searchActive ? true : open;
-    const isActiveFile = node.type === "file" && node.path === activePath;
-
-    const Icon = node.type === "file" ? getFileIcon(node.name) : Folder;
+    const isActiveFile = node.type === "file" && node.path === (previewPath ?? activePath);
 
     const handleFileClick = () => {
         if (node.type !== "file") return;
-        setActivePath(node.path);
+
+        if (selected.has(node.path)) {
+            useViewerStore.setState({ activePath: node.path, previewPath: null });
+        } else {
+            useViewerStore.setState({ previewPath: node.path });
+        }
     };
 
     const fileTokens = node.type === "file" ? (tokenMap[node.path] ?? 0) : 0;
@@ -76,7 +84,7 @@ export default function TreeNode({
             >
                 {node.type === "folder" ? (
                     <button
-                        aria-label="Toggle folder"
+                        aria-label={isOpen ? "Collapse folder" : "Expand folder"}
                         onClick={() => setOpen((value) => !value)}
                         className="flex w-4 items-center justify-center text-[var(--text-secondary)]"
                     >
@@ -89,6 +97,15 @@ export default function TreeNode({
                 <Checkbox
                     checked={checked}
                     indeterminate={indeterminate}
+                    label={
+                        node.type === "file"
+                            ? checked
+                                ? "Remove from prompt"
+                                : "Include in prompt"
+                            : checked
+                              ? "Remove folder from prompt"
+                              : "Include whole folder in prompt"
+                    }
                     onChange={() => {
                         if (node.type === "file") toggle(node.path);
                         else toggleMany(filePaths);
@@ -98,15 +115,25 @@ export default function TreeNode({
                 {node.type === "folder" ? (
                     <Folder size={18} color="#f59e0b" />
                 ) : (
-                    <Icon size={18} color={isActiveFile ? "#2563eb" : "#64748b"} />
+                    createElement(getFileIcon(node.name), {
+                        size: 18,
+                        color: isActiveFile ? "#2563eb" : "#64748b"
+                    })
                 )}
 
                 {node.type === "file" ? (
                     <button
                         onClick={handleFileClick}
+                        title={checked ? "Jump to this file in the prompt" : "Preview this file"}
                         className="flex min-w-0 flex-1 items-center justify-between gap-2 text-left transition hover:text-[var(--accent)]"
                     >
-                        <span className="truncate text-[14px] font-medium text-[var(--text-primary)]">
+                        <span
+                            className={`truncate text-[14px] font-medium ${
+                                checked
+                                    ? "text-[var(--text-primary)]"
+                                    : "text-[var(--text-secondary)]"
+                            }`}
+                        >
                             {node.name}
                         </span>
                         {displayTokens > 0 && (
@@ -141,7 +168,7 @@ export default function TreeNode({
                         depth={depth + 1}
                         searchActive={searchActive}
                         tokenMap={tokenMap}
-                        globalExpanded={globalExpanded}
+                        expandSignal={expandSignal}
                     />
                 ))}
         </div>

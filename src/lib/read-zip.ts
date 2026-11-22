@@ -10,7 +10,7 @@ function escapeRootName(name: string) {
     return name.replace(/\.zip$/i, "").trim() || "repository";
 }
 
-export async function readZipFile(file: File): Promise<RepoFile[]> {
+export async function readZipFile(file: File): Promise<{ files: RepoFile[]; total: number }> {
     const zip = await JSZip.loadAsync(file);
     const zipEntries = Object.values(zip.files).filter((entry) => !entry.dir);
     const normalizedPaths = zipEntries.map((entry) => normalizeZipPath(entry.name));
@@ -55,5 +55,5 @@ export async function readZipFile(file: File): Promise<RepoFile[]> {
         })
     );
 
-    return files;
+    return { files, total: zipEntries.length };
 }

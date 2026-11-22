@@ -99,20 +99,26 @@ export function shouldIncludeRepoPath(path: string, size: number) {
     return true;
 }
 
-export function preFilterFiles(files: Iterable<File>) {
+export function isIgnoredDirName(name: string) {
+    return IGNORE_DIRS.includes(name.toLowerCase());
+}
+
+export type FileEntry = {
+    file: File;
+    path: string;
+};
+
+export function preFilterFiles(entries: Iterable<FileEntry>) {
     const ig = ignore();
     ig.add(IGNORE_DIRS.map((dir) => `${dir}/`));
 
-    const filtered: File[] = [];
+    const filtered: FileEntry[] = [];
 
-    for (const file of files) {
-        const path =
-            (file as File & { webkitRelativePath?: string }).webkitRelativePath || file.name;
+    for (const entry of entries) {
+        if (!shouldIncludeRepoPath(entry.path, entry.file.size)) continue;
+        if (ig.ignores(entry.path)) continue;
 
-        if (!shouldIncludeRepoPath(path, file.size)) continue;
-        if (ig.ignores(path)) continue;
-
-        filtered.push(file);
+        filtered.push(entry);
     }
 
     return filtered;

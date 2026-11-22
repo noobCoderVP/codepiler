@@ -1,97 +1,48 @@
 import { motion } from "framer-motion";
-import {
-    Files,
-    FileJson2,
-    ShieldCheck,
-    Sparkles,
-    Filter,
-    BarChart2,
-    BookOpen,
-    Hash,
-    MessageSquarePlus,
-    Gauge,
-    ListChecks,
-    Eye
-} from "lucide-react";
+import { BookOpen, Eye, FileJson2, Hash, MessageSquarePlus, ShieldCheck } from "lucide-react";
 
 const features = [
     {
-        title: "Selective file control",
+        title: "Token count on every file",
         description:
-            "Browse the full repository tree and include exactly the files your prompt needs. Select All, Clear, Collapse, and Expand All controls let you manage even large repos in one click.",
-        icon: Files
-    },
-    {
-        title: "Expert prompt presets",
-        description:
-            "Choose from 12 language-specific system prompts (JavaScript, Python, Go, Rust, Java, C++, Swift, Kotlin, and more) and 10 task templates (code review, security audit, refactor, write tests, performance, and more). Each preset is hundreds of words of expert-level instruction.",
-        icon: MessageSquarePlus
-    },
-    {
-        title: "Model token budget",
-        description:
-            "Pick from 27 model presets — Claude Opus 4 (200K), GPT-4.1 (1M), Gemini 2.5 Pro (1M), Llama 3.1 (128K), and more — and watch a live color-coded bar fill as you add files. Stay green, hit amber, stop before red.",
-        icon: Gauge
-    },
-    {
-        title: "Selected files panel",
-        description:
-            "A pinned panel at the bottom of the file tree lists every selected file with its individual token cost and a one-click remove button. Audit your selection without scrolling through the full tree.",
-        icon: ListChecks
-    },
-    {
-        title: "Preview without selecting",
-        description:
-            "Click any filename to preview it in the editor. Use the checkbox to include it in the export. Previewing and selecting are separate actions — you can inspect a file before deciding whether it belongs in the prompt.",
-        icon: Eye
-    },
-    {
-        title: "4 export formats",
-        description:
-            "Switch between plain text, JSON, XML, and Markdown without rebuilding your context. Text is optimized for direct prompting, JSON and XML for tooling pipelines, Markdown for docs and sharing.",
-        icon: FileJson2
-    },
-    {
-        title: "Per-file token counts",
-        description:
-            "See token usage inline on every file and folder in the tree — before you select anything. No guesswork on which files are eating your context budget.",
+            "See what each file and folder costs before you select it, plus a running total against your model's context window.",
         icon: Hash
     },
     {
-        title: "File type filter",
+        title: "Preview before you pick",
         description:
-            "Narrow the tree to only .ts, .py, .go, or any combination of extensions in one click. Reduces noise when a repo contains a mix of source, config, documentation, and assets.",
-        icon: Filter
+            "Click a file to read it, tick it to include it. Check that a file is relevant before it goes into the prompt.",
+        icon: Eye
     },
     {
-        title: "Token & size manager",
+        title: "Question and task presets",
         description:
-            "Open the size manager to see all files sorted by token count or byte size. Bulk-select or deselect heavy files in one panel without touching the tree.",
-        icon: BarChart2
+            "18 task presets (find bugs, write tests, security review, refactor…) and 12 language-specific system prompts. Use them as-is or edit them.",
+        icon: MessageSquarePlus
+    },
+    {
+        title: "Text, Markdown, XML or JSON",
+        description:
+            "Copy or download in the format your AI tool or pipeline handles best. Each file is labelled with its path.",
+        icon: FileJson2
     },
     {
         title: "Saved sessions",
         description:
-            "Save your repository and file selection to localStorage and restore it in one click — no re-uploading, no re-filtering. Resume exactly where you left off in any future session.",
+            "Save the project and your selection, and pick up where you left off without importing again.",
         icon: BookOpen
     },
     {
-        title: "100% local-first",
+        title: "Your code stays on your machine",
         description:
-            "Repository files are processed entirely inside your browser. No files are sent to any server, no account required. Works offline after the page loads. Your code stays private by design.",
+            "No server, no account, no upload. Files are read by your browser, and the code is open source.",
         icon: ShieldCheck
-    },
-    {
-        title: "Live token awareness",
-        description:
-            "The token count updates in real time as you select files, edit the system prompt, or change the task. The count includes the full export — code context, system prompt, and task — so what you see is exactly what the model receives.",
-        icon: Sparkles
     }
 ];
 
 export default function FeatureSection() {
     return (
-        <section id="features" className="px-6 py-16">
+        <section id="features" className="scroll-mt-20 px-6 py-16">
             <div className="mx-auto max-w-6xl">
                 <motion.div
                     initial={{ opacity: 0, x: -24 }}
@@ -101,19 +52,18 @@ export default function FeatureSection() {
                     className="max-w-3xl"
                 >
                     <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--accent)]">
-                        12 core features
+                        Features
                     </p>
                     <h2 className="mt-4 text-3xl font-semibold tracking-tight text-[var(--text-primary)] md:text-4xl">
-                        Every tool you need to build precise AI prompt context from real code.
+                        Built for the step before you ask the AI.
                     </h2>
                     <p className="mt-4 text-base leading-7 text-[var(--text-secondary)]">
-                        CodePiler is not a chat wrapper or a code editor. It is a purpose-built
-                        workspace for the one step that happens before you talk to any AI:
-                        assembling the right context from your codebase.
+                        Not a chat app or an editor. Just the tools for choosing the right files and
+                        asking a clear question about them.
                     </p>
                 </motion.div>
 
-                <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+                <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
                     {features.map((feature, index) => {
                         const Icon = feature.icon;
 

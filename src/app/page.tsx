@@ -4,10 +4,9 @@ import { motion } from "framer-motion";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import HeroSection from "@/components/marketing/HeroSection";
-import FeatureSection from "@/components/marketing/FeatureSection";
-import ImpactSection from "@/components/marketing/ImpactSection";
 import WorkflowSection from "@/components/marketing/WorkflowSection";
-import UseCasesSection from "@/components/marketing/UseCasesSection";
+import FeatureSection from "@/components/marketing/FeatureSection";
+import FAQSection from "@/components/marketing/FAQSection";
 import CTASection from "@/components/marketing/CTASection";
 
 export default function LandingPage() {
@@ -18,10 +17,9 @@ export default function LandingPage() {
             <main className="flex-1">
                 <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
                     <HeroSection />
-                    <FeatureSection />
-                    <ImpactSection />
                     <WorkflowSection />
-                    <UseCasesSection />
+                    <FeatureSection />
+                    <FAQSection />
                     <CTASection />
                 </motion.div>
             </main>

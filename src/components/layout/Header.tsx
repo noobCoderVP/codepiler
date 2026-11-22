@@ -4,12 +4,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { BookOpenText, Home, Sparkles, Layers3 } from "lucide-react";
+import { BookOpenText, Github, Sparkles, Workflow } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
+
+export const GITHUB_URL = "https://github.com/noobcodervp/codepiler";
+
+const linkClass = "flex items-center gap-2 transition hover:text-[var(--text-primary)]";
 
 export default function Header() {
     const pathname = usePathname();
-    const isHome = pathname === "/";
     const isApp = pathname.startsWith("/app");
 
     const startTutorial = () => {
@@ -34,53 +37,34 @@ export default function Header() {
                     </span>
                 </Link>
 
-                {/* Nav — always the same structure */}
+                {/* Nav: marketing pages explain the product, the workspace only offers help */}
                 <nav className="hidden items-center gap-7 text-sm text-[var(--text-secondary)] md:flex">
-                    {!isHome && (
-                        <Link
-                            href="/"
-                            className="flex items-center gap-2 transition hover:text-[var(--text-primary)]"
-                        >
-                            <Home size={15} />
-                            Home
+                    {!isApp && (
+                        <Link href="/#how-it-works" className={linkClass}>
+                            <Workflow size={15} />
+                            How it works
                         </Link>
-                    )}
-
-                    {isHome && (
-                        <a
-                            href="#features"
-                            className="flex items-center gap-2 transition hover:text-[var(--text-primary)]"
-                        >
-                            <Layers3 size={15} />
-                            Features
-                        </a>
                     )}
 
                     <Link
                         href="/docs"
-                        className={`flex items-center gap-2 transition hover:text-[var(--text-primary)] ${pathname.startsWith("/docs") ? "font-semibold text-[var(--text-primary)]" : ""}`}
+                        className={`${linkClass} ${pathname.startsWith("/docs") ? "font-semibold text-[var(--text-primary)]" : ""}`}
                     >
                         <BookOpenText size={15} />
                         Docs
                     </Link>
 
-                    <Link
-                        href="/app"
-                        className={`flex items-center gap-2 transition hover:text-[var(--text-primary)] ${isApp ? "font-semibold text-[var(--text-primary)]" : ""}`}
-                    >
-                        <Layers3 size={15} />
-                        App
-                    </Link>
-
                     {isApp && (
-                        <button
-                            onClick={startTutorial}
-                            className="flex items-center gap-2 transition hover:text-[var(--text-primary)]"
-                        >
+                        <button onClick={startTutorial} className={linkClass}>
                             <Sparkles size={15} />
                             Tutorial
                         </button>
                     )}
+
+                    <a href={GITHUB_URL} target="_blank" rel="noreferrer" className={linkClass}>
+                        <Github size={15} />
+                        GitHub
+                    </a>
                 </nav>
 
                 {/* Right actions */}
@@ -90,7 +74,7 @@ export default function Header() {
                             href="/app"
                             className="rounded-md bg-[var(--accent)] px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:opacity-90"
                         >
-                            Launch App
+                            Open app
                         </Link>
                     )}
                     <ThemeToggle />

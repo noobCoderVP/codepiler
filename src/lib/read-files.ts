@@ -1,3 +1,6 @@
+import { RepoFile } from "@/types/repo";
+import { FileEntry } from "./pre-filter";
+
 const YIELD_EVERY = 20;
 
 async function yieldToBrowser() {
@@ -6,13 +9,11 @@ async function yieldToBrowser() {
     });
 }
 
-export async function readFiles(files: File[]) {
-    const result = [];
+export async function readFiles(entries: FileEntry[]): Promise<RepoFile[]> {
+    const result: RepoFile[] = [];
 
-    for (let index = 0; index < files.length; index += 1) {
-        const file = files[index];
-        const path =
-            (file as File & { webkitRelativePath?: string }).webkitRelativePath || file.name;
+    for (let index = 0; index < entries.length; index += 1) {
+        const { file, path } = entries[index];
         const content = await file.text();
 
         result.push({
@@ -27,4 +28,11 @@ export async function readFiles(files: File[]) {
     }
 
     return result;
+}
+
+export function entriesFromFileList(files: FileList | File[]): FileEntry[] {
+    return Array.from(files).map((file) => ({
+        file,
+        path: (file as File & { webkitRelativePath?: string }).webkitRelativePath || file.name
+    }));
 }

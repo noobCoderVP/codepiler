@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useState } from "react";
+import { useEffect } from "react";
 import { X, ChevronDown, Check } from "lucide-react";
 import {
     DropdownMenu,
@@ -1808,6 +1808,10 @@ type Props = {
     suffix: string;
     onPrefixChange: (v: string) => void;
     onSuffixChange: (v: string) => void;
+    selectedSystem: string | null;
+    selectedTask: string | null;
+    onSelectedSystemChange: (label: string | null) => void;
+    onSelectedTaskChange: (label: string | null) => void;
     onClose: () => void;
 };
 
@@ -1852,10 +1856,19 @@ export default function PromptEditor({
     suffix,
     onPrefixChange,
     onSuffixChange,
+    selectedSystem,
+    selectedTask,
+    onSelectedSystemChange: setSelectedSystem,
+    onSelectedTaskChange: setSelectedTask,
     onClose
 }: Props) {
-    const [selectedSystem, setSelectedSystem] = useState<string | null>(null);
-    const [selectedTask, setSelectedTask] = useState<string | null>(null);
+    useEffect(() => {
+        const handler = (e: KeyboardEvent) => {
+            if (e.key === "Escape") onClose();
+        };
+        window.addEventListener("keydown", handler);
+        return () => window.removeEventListener("keydown", handler);
+    }, [onClose]);
 
     const applySystem = (p: { label: string; prompt: string }) => {
         setSelectedSystem(p.label);
@@ -1888,11 +1901,11 @@ export default function PromptEditor({
                 <div className="flex items-center justify-between border-b border-[var(--border)] px-6 py-4">
                     <div>
                         <p className="text-sm font-semibold text-[var(--text-primary)]">
-                            Prompt Wrapper
+                            Instructions for the AI
                         </p>
                         <p className="mt-0.5 text-xs text-[var(--text-secondary)]">
-                            Prepend a system prompt and append a task — both are included in the
-                            exported output and token count.
+                            Pick a preset or write your own. The system prompt goes before your code
+                            and the task goes after it. Both count toward the token total.
                         </p>
                     </div>
                     <button
@@ -1905,7 +1918,7 @@ export default function PromptEditor({
                 </div>
 
                 {/* Body */}
-                <div className="grid flex-1 grid-cols-2 divide-x divide-[var(--border)] overflow-hidden">
+                <div className="grid flex-1 grid-cols-1 divide-y divide-[var(--border)] overflow-auto md:grid-cols-2 md:divide-x md:divide-y-0 md:overflow-hidden">
                     {/* System Prompt */}
                     <div className="flex flex-col gap-3 overflow-hidden p-5">
                         <div className="flex items-center justify-between gap-2">
@@ -2008,13 +2021,13 @@ export default function PromptEditor({
                 {/* Footer */}
                 <div className="flex items-center justify-between border-t border-[var(--border)] bg-[var(--surface-muted)] px-6 py-3">
                     <p className="text-[11px] text-[var(--text-secondary)]">
-                        {statusLine || "No wrapper set — content will be exported as-is"}
+                        {statusLine || "No instructions yet, so only the code will be exported"}
                     </p>
                     <button
                         onClick={onClose}
                         className="rounded-xl bg-[var(--accent)] px-4 py-2 text-xs font-semibold text-white transition hover:opacity-90"
                     >
-                        Apply & Close
+                        Done
                     </button>
                 </div>
             </div>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Save, BookOpen, MessageSquarePlus } from "lucide-react";
 import ViewerChips from "./ViewerChips";
 import ViewerActions from "./ViewerActions";
+import WorkflowSteps from "./WorkflowSteps";
 import SavedSessionsModal from "@/components/repo/SavedSessionsModal";
 import { ViewerFormat } from "@/lib/viewer-formatters";
 import { RepoFile } from "@/types/repo";
@@ -14,13 +15,18 @@ type Props = {
     tokens: number;
     content: string;
     format: ViewerFormat;
-    activePath: string | null;
     selectedFiles: RepoFile[];
     selectedPaths: string[];
     modelLimit: number | null;
     onModelLimitChange: (limit: number | null) => void;
+    instructionsLabel: string | null;
+    exported: boolean;
+    onExported: () => void;
     onTogglePromptEditor: () => void;
 };
+
+const secondaryButton =
+    "flex items-center gap-1.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text-secondary)] transition hover:bg-[var(--surface-muted)] hover:text-[var(--text-primary)] disabled:cursor-not-allowed disabled:opacity-40";
 
 export default function ViewerHeader({
     repoName,
@@ -28,11 +34,13 @@ export default function ViewerHeader({
     tokens,
     content,
     format,
-    activePath,
     selectedFiles,
     selectedPaths,
     modelLimit,
     onModelLimitChange,
+    instructionsLabel,
+    exported,
+    onExported,
     onTogglePromptEditor
 }: Props) {
     const [modal, setModal] = useState<"sessions" | "save" | null>(null);
@@ -42,32 +50,17 @@ export default function ViewerHeader({
     return (
         <>
             <div className="border-b border-[var(--border)] bg-[var(--surface)] px-6 py-3">
-                {/* Row 1: repo + file context, label on right */}
-                <div className="mb-2.5 flex items-center justify-between gap-3">
-                    <div className="flex min-w-0 flex-1 items-center gap-2">
-                        {repoName ? (
-                            <span className="shrink-0 rounded-full border border-[rgba(37,99,235,0.16)] bg-[rgba(37,99,235,0.12)] px-2.5 py-0.5 text-xs font-semibold text-[var(--text-primary)] dark:border-[rgba(59,130,246,0.3)] dark:bg-[rgba(59,130,246,0.18)]">
-                                {repoName}
-                            </span>
-                        ) : (
-                            <span className="text-xs text-[var(--text-secondary)]">
-                                Load a repository to begin
-                            </span>
-                        )}
-                        {activePath && (
-                            <span className="min-w-0 truncate rounded-full border border-[rgba(15,23,42,0.08)] bg-[var(--surface-subtle)] px-2.5 py-0.5 text-xs font-medium text-[var(--text-secondary)] dark:border-[var(--border)] dark:bg-[var(--surface-muted)]">
-                                {activePath}
-                            </span>
-                        )}
-                    </div>
-                    <span className="shrink-0 text-[10px] font-semibold uppercase tracking-widest text-[var(--text-secondary)]">
-                        One File Viewer
-                    </span>
+                <div className="mb-3">
+                    <WorkflowSteps
+                        selectedCount={files}
+                        hasInstructions={!!instructionsLabel}
+                        exported={exported}
+                        onOpenInstructions={onTogglePromptEditor}
+                    />
                 </div>
 
-                {/* Row 2: logically grouped action buttons */}
                 <div data-tour="viewer-actions" className="flex flex-wrap items-center gap-2">
-                    {/* Group 1: context window stats */}
+                    {/* Size of the prompt and the model budget */}
                     <ViewerChips
                         files={files}
                         tokens={tokens}
@@ -77,23 +70,28 @@ export default function ViewerHeader({
 
                     <div className="h-5 w-px bg-[var(--border)]" />
 
-                    {/* Group 2: prompt wrapper */}
                     <button
+                        data-tour="instructions"
                         onClick={onTogglePromptEditor}
-                        title="Add system prompt or task"
-                        className="flex items-center gap-1.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text-secondary)] transition hover:bg-[var(--surface-muted)] hover:text-[var(--text-primary)]"
+                        title="Add a system prompt and a task around your code"
+                        className={
+                            instructionsLabel
+                                ? "flex max-w-[16rem] items-center gap-1.5 rounded-xl border border-[var(--accent)] bg-[var(--accent-soft)] px-3 py-2 text-xs font-semibold text-[var(--accent)] transition hover:opacity-90"
+                                : secondaryButton
+                        }
                     >
-                        <MessageSquarePlus size={13} />
-                        Prompt
+                        <MessageSquarePlus size={13} className="shrink-0" />
+                        <span className="truncate">
+                            {instructionsLabel
+                                ? `Instructions: ${instructionsLabel}`
+                                : "Add instructions"}
+                        </span>
                     </button>
 
-                    <div className="h-5 w-px bg-[var(--border)]" />
-
-                    {/* Group 3: session management */}
                     <button
                         onClick={() => setModal("sessions")}
-                        title="View saved sessions"
-                        className="flex items-center gap-1.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text-secondary)] transition hover:bg-[var(--surface-muted)] hover:text-[var(--text-primary)]"
+                        title="Open a saved session"
+                        className={secondaryButton}
                     >
                         <BookOpen size={13} />
                         Sessions
@@ -101,17 +99,24 @@ export default function ViewerHeader({
                     <button
                         onClick={() => setModal("save")}
                         disabled={!canSave}
-                        title={canSave ? "Save current selection" : "Select files first"}
-                        className="flex items-center gap-1.5 rounded-xl border border-[var(--accent)] bg-[var(--accent)] px-3 py-2 text-xs font-semibold text-white transition hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-40"
+                        title={
+                            canSave ? "Save this file selection for later" : "Select files first"
+                        }
+                        className={secondaryButton}
                     >
                         <Save size={13} />
                         Save
                     </button>
 
-                    <div className="h-5 w-px bg-[var(--border)]" />
-
-                    {/* Group 4: export */}
-                    <ViewerActions content={content} format={format} repoName={repoName} />
+                    <div className="ml-auto">
+                        <ViewerActions
+                            content={content}
+                            format={format}
+                            repoName={repoName}
+                            disabled={files === 0}
+                            onExported={onExported}
+                        />
+                    </div>
                 </div>
             </div>
 

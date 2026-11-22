@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { useSessionsStore, SavedSession } from "@/store/sessions-store";
 import { useRepoStore } from "@/store/repo-store";
-import { useSelectionStore } from "@/store/selection-store";
+import { applyRepo } from "@/lib/repo-loader";
 import { formatTokenCount } from "@/lib/token-utils";
 
 type Props = {
@@ -95,13 +95,11 @@ export default function SavedSessionsModal({ onClose, pendingSave }: Props) {
     const saveSession = useSessionsStore((s) => s.saveSession);
     const deleteSession = useSessionsStore((s) => s.deleteSession);
 
-    const setFiles = useRepoStore((s) => s.setFiles);
-    const setInitialSelection = useSelectionStore((s) => s.setInitialSelection);
-
     const [tab, setTab] = useState<"list" | "save">(pendingSave ? "save" : "list");
     const [sessionName, setSessionName] = useState("");
     const [loadingId, setLoadingId] = useState<string | null>(null);
     const [savedFlash, setSavedFlash] = useState(false);
+    const [saveError, setSaveError] = useState<string | null>(null);
     const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [sortBy, setSortBy] = useState<"date" | "name" | "tokens">("date");
@@ -121,7 +119,7 @@ export default function SavedSessionsModal({ onClose, pendingSave }: Props) {
 
     const handleSave = () => {
         if (!pendingSave || !sessionName.trim()) return;
-        saveSession({
+        const ok = saveSession({
             name: sessionName.trim(),
             repoName: pendingSave.repoName,
             timestamp: Date.now(),
@@ -129,6 +127,13 @@ export default function SavedSessionsModal({ onClose, pendingSave }: Props) {
             selected: pendingSave.selected,
             totalTokens: pendingSave.totalTokens
         });
+        if (!ok) {
+            setSaveError(
+                "Browser storage is full. Delete an older session or select fewer files, then try again."
+            );
+            return;
+        }
+        setSaveError(null);
         setSavedFlash(true);
         setTimeout(() => {
             setSavedFlash(false);
@@ -139,8 +144,8 @@ export default function SavedSessionsModal({ onClose, pendingSave }: Props) {
 
     const handleLoad = (session: SavedSession) => {
         setLoadingId(session.id);
-        setFiles(session.files);
-        setInitialSelection(session.selected);
+        applyRepo(session.files, session.selected);
+        useRepoStore.getState().setLoadState({ error: null, summary: null });
         setTimeout(() => {
             setLoadingId(null);
             onClose();
@@ -290,6 +295,12 @@ export default function SavedSessionsModal({ onClose, pendingSave }: Props) {
                                 <Save size={15} />
                                 {savedFlash ? "Saved!" : "Save Session"}
                             </button>
+
+                            {saveError && (
+                                <p role="alert" className="text-sm text-[var(--danger)]">
+                                    {saveError}
+                                </p>
+                            )}
                         </div>
                     )}
 

@@ -28,6 +28,13 @@ export default function DocsArticle({ page }: { page: DocPage }) {
                             {section.body.map((paragraph) => (
                                 <p key={paragraph}>{paragraph}</p>
                             ))}
+                            {section.list && (
+                                <ul className="list-disc space-y-2 pl-6 marker:text-[var(--accent)]">
+                                    {section.list.map((item) => (
+                                        <li key={item}>{item}</li>
+                                    ))}
+                                </ul>
+                            )}
                         </div>
                     </section>
                 ))}

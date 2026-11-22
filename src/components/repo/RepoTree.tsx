@@ -11,20 +11,20 @@ import {
 } from "lucide-react";
 import { useRepoStore } from "@/store/repo-store";
 import { useSelectionStore } from "@/store/selection-store";
-import { countTokens } from "@/lib/viewer-formatters";
 import {
     filterTreeByQuery,
     filterTreeByExtensions,
     getAvailableExtensions
 } from "@/lib/filter-tree";
 import { Tooltip, TooltipProvider } from "@/components/ui/tooltip";
-import TreeNode from "./TreeNode";
+import TreeNode, { ExpandSignal } from "./TreeNode";
 import FileTypeFilterModal from "./FileTypeFilterModal";
 import TokenManagerModal from "./TokenManagerModal";
 
 export default function RepoTree() {
     const tree = useRepoStore((s) => s.tree);
     const files = useRepoStore((s) => s.files);
+    const tokenMap = useRepoStore((s) => s.tokenMap);
     const selectMany = useSelectionStore((s) => s.selectMany);
     const clear = useSelectionStore((s) => s.clear);
 
@@ -32,18 +32,9 @@ export default function RepoTree() {
     const [activeExtensions, setActiveExtensions] = useState<Set<string>>(new Set());
     const [showFilterModal, setShowFilterModal] = useState(false);
     const [showTokenModal, setShowTokenModal] = useState(false);
-    const [globalExpanded, setGlobalExpanded] = useState<boolean | null>(null);
+    const [expandSignal, setExpandSignal] = useState<ExpandSignal>(null);
 
     const allPaths = useMemo(() => files.map((f) => f.path), [files]);
-
-    // Pre-compute token count per file once (expensive but memoized on files)
-    const tokenMap = useMemo(() => {
-        const map: Record<string, number> = {};
-        for (const f of files) {
-            map[f.path] = countTokens(f.content);
-        }
-        return map;
-    }, [files]);
 
     const allExtensions = useMemo(() => getAvailableExtensions(tree), [tree]);
 
@@ -62,7 +53,7 @@ export default function RepoTree() {
                     No repository loaded
                 </p>
                 <p className="max-w-xs text-xs">
-                    Upload a repository folder or ZIP to explore files and build prompts.
+                    Import a folder or ZIP above, or try the sample project, to see its files here.
                 </p>
             </div>
         );
@@ -98,7 +89,7 @@ export default function RepoTree() {
                                 <span className="h-3 w-px bg-[var(--border)]" />
                                 <Tooltip content="Expand all folders">
                                     <button
-                                        onClick={() => setGlobalExpanded(true)}
+                                        onClick={() => setExpandSignal({ open: true })}
                                         className="flex h-6 w-6 items-center justify-center rounded-md border border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
                                     >
                                         <ChevronsUpDown size={12} />
@@ -106,7 +97,7 @@ export default function RepoTree() {
                                 </Tooltip>
                                 <Tooltip content="Collapse all folders">
                                     <button
-                                        onClick={() => setGlobalExpanded(false)}
+                                        onClick={() => setExpandSignal({ open: false })}
                                         className="flex h-6 w-6 items-center justify-center rounded-md border border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
                                     >
                                         <ChevronsDownUp size={12} />
@@ -157,6 +148,13 @@ export default function RepoTree() {
                             </Tooltip>
                         </div>
 
+                        <p className="text-[11px] text-[var(--text-secondary)]">
+                            <span className="font-semibold text-[var(--text-primary)]">Tick</span>{" "}
+                            files to include them in the prompt ·{" "}
+                            <span className="font-semibold text-[var(--text-primary)]">Click</span>{" "}
+                            a name to preview it
+                        </p>
+
                         {/* Active filter badge */}
                         {filterActive && (
                             <div className="flex flex-wrap items-center gap-1.5">
@@ -196,7 +194,7 @@ export default function RepoTree() {
                                     node={node}
                                     searchActive={query.trim().length > 0}
                                     tokenMap={tokenMap}
-                                    globalExpanded={globalExpanded}
+                                    expandSignal={expandSignal}
                                 />
                             ))
                         ) : (

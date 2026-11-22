@@ -6,14 +6,16 @@ type Props = {
     checked: boolean;
     indeterminate?: boolean;
     onChange: () => void;
+    label?: string;
 };
 
-export default function Checkbox({ checked, indeterminate, onChange }: Props) {
+export default function Checkbox({ checked, indeterminate, onChange, label }: Props) {
     return (
         <button
             role="checkbox"
             aria-checked={indeterminate ? "mixed" : checked}
-            aria-label="Select item"
+            aria-label={label ?? "Select item"}
+            title={label}
             onClick={(e) => {
                 e.stopPropagation();
                 onChange();

@@ -1,34 +1,45 @@
 import { create } from "zustand";
-import { RepoNode } from "@/types/repo";
+import { RepoFile, RepoNode } from "@/types/repo";
 import { buildRepoTree } from "@/lib/build-tree";
-import { filterGitignore } from "@/lib/gitignore-filter";
 
-type RepoFile = {
-    path: string;
-    content: string;
-    size: number;
+export type LoadSummary = {
+    loaded: number;
+    skipped: number;
+    preselected: number;
 };
 
 type RepoState = {
     files: RepoFile[];
     tree: RepoNode[];
+    repoName: string | null;
+    tokenMap: Record<string, number>;
 
-    setFiles: (files: RepoFile[]) => RepoFile[];
+    loading: boolean;
+    error: string | null;
+    summary: LoadSummary | null;
+
+    setRepo: (files: RepoFile[], tokenMap: Record<string, number>) => void;
+    setLoadState: (state: Partial<Pick<RepoState, "loading" | "error" | "summary">>) => void;
 };
 
 export const useRepoStore = create<RepoState>((set) => ({
     files: [],
     tree: [],
+    repoName: null,
+    tokenMap: {},
 
-    setFiles: (files) => {
-        const filtered = filterGitignore(files);
-        const tree = buildRepoTree(filtered.map((f) => f.path));
+    loading: false,
+    error: null,
+    summary: null,
 
+    setRepo: (files, tokenMap) => {
         set({
-            files: filtered,
-            tree
+            files,
+            tree: buildRepoTree(files.map((f) => f.path)),
+            repoName: files[0]?.path.split("/")[0] ?? null,
+            tokenMap
         });
+    },
 
-        return filtered; // ✅ now correctly typed
-    }
+    setLoadState: (state) => set(state)
 }));

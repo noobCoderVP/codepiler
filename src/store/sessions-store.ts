@@ -16,7 +16,8 @@ export type SavedSession = {
 type SessionsState = {
     sessions: SavedSession[];
     loadFromStorage: () => void;
-    saveSession: (session: Omit<SavedSession, "id">) => void;
+    /** Returns false when browser storage is full and the session could not be saved. */
+    saveSession: (session: Omit<SavedSession, "id">) => boolean;
     deleteSession: (id: string) => void;
 };
 
@@ -33,8 +34,10 @@ function readStorage(): SavedSession[] {
 function writeStorage(sessions: SavedSession[]) {
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
+        return true;
     } catch {
-        // localStorage quota exceeded — silently skip
+        // localStorage quota exceeded
+        return false;
     }
 }
 
@@ -51,8 +54,9 @@ export const useSessionsStore = create<SessionsState>((set, get) => ({
             id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
         };
         const next = [newSession, ...get().sessions];
-        writeStorage(next);
+        if (!writeStorage(next)) return false;
         set({ sessions: next });
+        return true;
     },
 
     deleteSession: (id) => {

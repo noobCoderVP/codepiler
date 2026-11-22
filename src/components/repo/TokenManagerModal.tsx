@@ -4,7 +4,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { X, BarChart2, Search } from "lucide-react";
 import { useRepoStore } from "@/store/repo-store";
 import { useSelectionStore } from "@/store/selection-store";
-import { countTokens } from "@/lib/viewer-formatters";
 import { formatTokenCount, formatBytes } from "@/lib/token-utils";
 
 type SortKey = "tokens" | "size";
@@ -38,7 +37,7 @@ export default function TokenManagerModal({ tokenMap, onClose }: Props) {
             path: f.path,
             name: f.path.split("/").pop() ?? f.path,
             size: f.size,
-            tokens: tokenMap[f.path] ?? countTokens(f.content)
+            tokens: tokenMap[f.path] ?? 0
         }));
     }, [files, tokenMap]);
 

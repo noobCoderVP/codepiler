@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpenText, CircleHelp, Eye, Upload } from "lucide-react";
+import { BookOpenText, Eye, MessageSquareText, Upload } from "lucide-react";
 import { docsPages } from "@/lib/docs-content";
 
 const iconMap = {
     "": BookOpenText,
     uploading: Upload,
     viewer: Eye,
-    examples: CircleHelp
+    examples: MessageSquareText
 } as const;
 
 export default function DocsSidebar() {

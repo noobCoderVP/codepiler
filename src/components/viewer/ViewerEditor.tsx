@@ -9,6 +9,8 @@ import { ViewerFormat } from "@/lib/viewer-formatters";
 type Props = {
     value: string;
     format: ViewerFormat;
+    /** Overrides the language derived from `format` (used for single-file previews). */
+    language?: string;
     fontSize: number;
     activeLine: number;
 };
@@ -26,7 +28,7 @@ function getLanguage(format: ViewerFormat) {
     }
 }
 
-export default function ViewerEditor({ value, format, fontSize, activeLine }: Props) {
+export default function ViewerEditor({ value, format, language, fontSize, activeLine }: Props) {
     const { resolvedTheme } = useTheme();
     const editorRef = useRef<Monaco.editor.IStandaloneCodeEditor | null>(null);
     const monacoRef = useRef<typeof Monaco | null>(null);
@@ -68,7 +70,7 @@ export default function ViewerEditor({ value, format, fontSize, activeLine }: Pr
         <Editor
             key={format}
             height="100%"
-            language={getLanguage(format)}
+            language={language ?? getLanguage(format)}
             value={value}
             theme={resolvedTheme === "dark" ? "vs-dark" : "light"}
             onMount={handleMount}

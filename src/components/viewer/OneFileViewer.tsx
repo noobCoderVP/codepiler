@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useDeferredValue, useMemo, useState } from "react";
+import { AlertTriangle, Eye, ListChecks } from "lucide-react";
 import { useRepoStore } from "@/store/repo-store";
 import { useSelectionStore } from "@/store/selection-store";
 import { useViewerStore } from "@/store/viewer-store";
@@ -9,6 +10,9 @@ import ViewerHeader from "./ViewerHeader";
 import ViewerTabs from "./ViewerTabs";
 import ViewerEditor from "./ViewerEditor";
 import PromptEditor from "./PromptEditor";
+import WorkspaceEmptyState from "./WorkspaceEmptyState";
+import TokenManagerModal from "@/components/repo/TokenManagerModal";
+import { formatTokenCount } from "@/lib/token-utils";
 
 import {
     ViewerFormat,
@@ -21,31 +25,40 @@ import {
 
 export default function OneFileViewer() {
     const files = useRepoStore((s) => s.files);
+    const repoName = useRepoStore((s) => s.repoName);
+    const tokenMap = useRepoStore((s) => s.tokenMap);
     const selected = useSelectionStore((s) => s.selected);
+    const selectMany = useSelectionStore((s) => s.selectMany);
     const activePath = useViewerStore((s) => s.activePath);
-    const setActivePath = useViewerStore((s) => s.setActivePath);
+    const previewPath = useViewerStore((s) => s.previewPath);
 
     const [format, setFormat] = useState<ViewerFormat>("text");
     const [fontSize, setFontSize] = useState(13);
     const [modelLimit, setModelLimit] = useState<number | null>(null);
     const [promptPrefix, setPromptPrefix] = useState("");
     const [promptSuffix, setPromptSuffix] = useState("");
+    const [systemLabel, setSystemLabel] = useState<string | null>(null);
+    const [taskLabel, setTaskLabel] = useState<string | null>(null);
     const [showPromptEditor, setShowPromptEditor] = useState(false);
+    const [showTokenModal, setShowTokenModal] = useState(false);
+    const [exportedContent, setExportedContent] = useState<string | null>(null);
 
     const selectedFiles = useMemo(() => {
         return files.filter((file) => selected.has(file.path));
     }, [files, selected]);
 
-    useEffect(() => {
-        if (selectedFiles.length === 0) {
-            setActivePath(null);
-            return;
-        }
+    // A file clicked in the tree that isn't part of the prompt is shown on its own.
+    const previewFile =
+        previewPath && !selected.has(previewPath)
+            ? (files.find((file) => file.path === previewPath) ?? null)
+            : null;
 
-        if (!activePath || !selectedFiles.some((file) => file.path === activePath)) {
-            setActivePath(selectedFiles[0].path);
-        }
-    }, [activePath, selectedFiles, setActivePath]);
+    const focusPath =
+        previewPath && selected.has(previewPath)
+            ? previewPath
+            : activePath && selected.has(activePath)
+              ? activePath
+              : (selectedFiles[0]?.path ?? null);
 
     const document = useMemo(() => {
         switch (format) {
@@ -60,18 +73,37 @@ export default function OneFileViewer() {
         }
     }, [selectedFiles, format]);
 
+    const prefix = promptPrefix.trim();
+    const suffix = promptSuffix.trim();
+
     const finalContent = useMemo(() => {
         const parts: string[] = [];
-        if (promptPrefix.trim()) parts.push(promptPrefix.trim());
+        if (prefix) parts.push(prefix);
         parts.push(document.content);
-        if (promptSuffix.trim()) parts.push(promptSuffix.trim());
+        if (suffix) parts.push(suffix);
         return parts.join("\n\n");
-    }, [document.content, promptPrefix, promptSuffix]);
+    }, [document.content, prefix, suffix]);
 
-    const tokens = useMemo(() => countTokens(finalContent), [finalContent]);
+    // Tokenizing and re-rendering Monaco on every keystroke in the instructions is costly,
+    // so both run on a deferred copy of the prompt.
+    const deferredContent = useDeferredValue(finalContent);
+    const tokens = useMemo(() => countTokens(deferredContent), [deferredContent]);
 
-    const repoName = files.length > 0 ? files[0].path.split("/")[0] : null;
-    const activeLine = activePath ? (document.lineMap[activePath] ?? 1) : 1;
+    // the line map is relative to the code block, which starts after the system prompt
+    const prefixLines = prefix ? prefix.split("\n").length + 1 : 0;
+    const activeLine = focusPath ? (document.lineMap[focusPath] ?? 1) + prefixLines : 1;
+
+    const instructionsLabel =
+        [prefix && (systemLabel ?? "custom system prompt"), suffix && (taskLabel ?? "custom task")]
+            .filter(Boolean)
+            .join(" + ") || null;
+
+    const exported = exportedContent !== null && exportedContent === finalContent;
+    const overBudget = modelLimit !== null && tokens > modelLimit;
+
+    if (files.length === 0) {
+        return <WorkspaceEmptyState />;
+    }
 
     return (
         <div className="flex h-full flex-col">
@@ -81,13 +113,35 @@ export default function OneFileViewer() {
                 tokens={tokens}
                 content={finalContent}
                 format={format}
-                activePath={activePath}
                 selectedFiles={selectedFiles}
                 selectedPaths={Array.from(selected)}
                 modelLimit={modelLimit}
                 onModelLimitChange={setModelLimit}
+                instructionsLabel={instructionsLabel}
+                exported={exported}
+                onExported={() => setExportedContent(finalContent)}
                 onTogglePromptEditor={() => setShowPromptEditor((v) => !v)}
             />
+
+            {overBudget && (
+                <div
+                    role="alert"
+                    className="flex flex-wrap items-center gap-2 border-b border-[var(--border)] bg-[rgba(239,68,68,0.08)] px-6 py-2 text-xs text-[var(--text-primary)]"
+                >
+                    <AlertTriangle size={14} className="shrink-0 text-[var(--danger)]" />
+                    <span>
+                        This prompt is{" "}
+                        <strong>{formatTokenCount(tokens - modelLimit!)} tokens over</strong> the
+                        selected model&apos;s context window. Untick some files to make it fit.
+                    </span>
+                    <button
+                        onClick={() => setShowTokenModal(true)}
+                        className="font-semibold text-[var(--accent)] hover:underline"
+                    >
+                        Find the largest files
+                    </button>
+                </div>
+            )}
 
             {showPromptEditor && (
                 <PromptEditor
@@ -95,6 +149,10 @@ export default function OneFileViewer() {
                     suffix={promptSuffix}
                     onPrefixChange={setPromptPrefix}
                     onSuffixChange={setPromptSuffix}
+                    selectedSystem={systemLabel}
+                    selectedTask={taskLabel}
+                    onSelectedSystemChange={setSystemLabel}
+                    onSelectedTaskChange={setTaskLabel}
                     onClose={() => setShowPromptEditor(false)}
                 />
             )}
@@ -106,14 +164,114 @@ export default function OneFileViewer() {
                 setFontSize={setFontSize}
             />
 
+            {previewFile && (
+                <div className="flex flex-wrap items-center gap-2 border-b border-[var(--border)] bg-[var(--accent-soft)] px-6 py-2 text-xs text-[var(--text-primary)]">
+                    <Eye size={14} className="shrink-0 text-[var(--accent)]" />
+                    <span className="min-w-0 truncate">
+                        Previewing <strong>{previewFile.path}</strong>. It is not in your prompt.
+                    </span>
+                    <div className="ml-auto flex gap-2">
+                        <button
+                            onClick={() => {
+                                selectMany([previewFile.path]);
+                                useViewerStore.setState({
+                                    activePath: previewFile.path,
+                                    previewPath: null
+                                });
+                            }}
+                            className="rounded-lg bg-[var(--accent)] px-2.5 py-1 font-semibold text-white hover:opacity-90"
+                        >
+                            Add to prompt
+                        </button>
+                        <button
+                            onClick={() => useViewerStore.setState({ previewPath: null })}
+                            className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                        >
+                            Back to prompt
+                        </button>
+                    </div>
+                </div>
+            )}
+
             <div className="flex-1 overflow-hidden">
-                <ViewerEditor
-                    value={finalContent}
-                    format={format}
-                    fontSize={fontSize}
-                    activeLine={activeLine}
-                />
+                {previewFile ? (
+                    <ViewerEditor
+                        value={previewFile.content}
+                        format="text"
+                        language={getLanguageForPath(previewFile.path)}
+                        fontSize={fontSize}
+                        activeLine={1}
+                    />
+                ) : selectedFiles.length === 0 ? (
+                    <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center">
+                        <ListChecks className="h-8 w-8 text-[var(--text-secondary)] opacity-70" />
+                        <p className="text-sm font-semibold text-[var(--text-primary)]">
+                            No files in your prompt yet
+                        </p>
+                        <p className="max-w-sm text-xs text-[var(--text-secondary)]">
+                            Tick files or folders in the left panel. Each one shows its token cost,
+                            so you can keep the prompt small.
+                        </p>
+                        <button
+                            onClick={() => selectMany(files.map((f) => f.path))}
+                            className="rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text-primary)] hover:bg-[var(--surface-muted)]"
+                        >
+                            Select all {files.length} files (
+                            {formatTokenCount(
+                                files.reduce((sum, f) => sum + (tokenMap[f.path] ?? 0), 0)
+                            )}{" "}
+                            tokens)
+                        </button>
+                    </div>
+                ) : (
+                    <ViewerEditor
+                        value={deferredContent}
+                        format={format}
+                        fontSize={fontSize}
+                        activeLine={activeLine}
+                    />
+                )}
             </div>
+
+            {showTokenModal && (
+                <TokenManagerModal tokenMap={tokenMap} onClose={() => setShowTokenModal(false)} />
+            )}
         </div>
     );
+}
+
+const LANGUAGE_BY_EXT: Record<string, string> = {
+    ts: "typescript",
+    tsx: "typescript",
+    js: "javascript",
+    jsx: "javascript",
+    mjs: "javascript",
+    cjs: "javascript",
+    json: "json",
+    md: "markdown",
+    css: "css",
+    scss: "scss",
+    html: "html",
+    xml: "xml",
+    py: "python",
+    go: "go",
+    rs: "rust",
+    java: "java",
+    kt: "kotlin",
+    swift: "swift",
+    rb: "ruby",
+    php: "php",
+    c: "c",
+    h: "c",
+    cpp: "cpp",
+    cs: "csharp",
+    sql: "sql",
+    sh: "shell",
+    yml: "yaml",
+    yaml: "yaml"
+};
+
+function getLanguageForPath(path: string) {
+    const ext = path.split(".").pop()?.toLowerCase() ?? "";
+    return LANGUAGE_BY_EXT[ext] ?? "plaintext";
 }
