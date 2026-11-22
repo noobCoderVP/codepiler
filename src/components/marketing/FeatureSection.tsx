@@ -1,3 +1,5 @@
+"use client";
+
 import { motion } from "framer-motion";
 import { BookOpen, Eye, FileJson2, Hash, MessageSquarePlus, ShieldCheck } from "lucide-react";
 

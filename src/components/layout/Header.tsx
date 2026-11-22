@@ -4,10 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { BookOpenText, Github, Sparkles, Workflow } from "lucide-react";
+import { BookOpenText, Github, Library, Sparkles, Workflow } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
+import { GITHUB_URL } from "@/lib/seo";
 
-export const GITHUB_URL = "https://github.com/noobcodervp/codepiler";
+export { GITHUB_URL };
 
 const linkClass = "flex items-center gap-2 transition hover:text-[var(--text-primary)]";
 
@@ -53,6 +54,16 @@ export default function Header() {
                         <BookOpenText size={15} />
                         Docs
                     </Link>
+
+                    {!isApp && (
+                        <Link
+                            href="/prompts"
+                            className={`${linkClass} ${pathname.startsWith("/prompts") ? "font-semibold text-[var(--text-primary)]" : ""}`}
+                        >
+                            <Library size={15} />
+                            Prompts
+                        </Link>
+                    )}
 
                     {isApp && (
                         <button onClick={startTutorial} className={linkClass}>

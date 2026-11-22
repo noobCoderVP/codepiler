@@ -1,44 +1,21 @@
 import { MetadataRoute } from "next";
+import { docsPages } from "@/lib/docs-content";
+import { guides } from "@/lib/guides-content";
+import { SYSTEM_PRESETS, TASK_PRESETS } from "@/lib/prompt-presets";
+import { absoluteUrl } from "@/lib/seo";
 
+// No lastModified: a date that changes on every build is ignored by search engines,
+// and none of these pages track a real edit date.
 export default function sitemap(): MetadataRoute.Sitemap {
-    const baseUrl = "https://codepiler.in";
-
-    return [
-        {
-            url: baseUrl,
-            lastModified: new Date(),
-            changeFrequency: "weekly",
-            priority: 1
-        },
-        {
-            url: `${baseUrl}/app`,
-            lastModified: new Date(),
-            changeFrequency: "weekly",
-            priority: 0.9
-        },
-        {
-            url: `${baseUrl}/docs`,
-            lastModified: new Date(),
-            changeFrequency: "monthly",
-            priority: 0.7
-        },
-        {
-            url: `${baseUrl}/docs/uploading`,
-            lastModified: new Date(),
-            changeFrequency: "monthly",
-            priority: 0.65
-        },
-        {
-            url: `${baseUrl}/docs/viewer`,
-            lastModified: new Date(),
-            changeFrequency: "monthly",
-            priority: 0.65
-        },
-        {
-            url: `${baseUrl}/docs/examples`,
-            lastModified: new Date(),
-            changeFrequency: "monthly",
-            priority: 0.6
-        }
+    const paths = [
+        "/",
+        "/app",
+        ...docsPages.map((page) => (page.slug ? `/docs/${page.slug}` : "/docs")),
+        "/guides",
+        ...guides.map((guide) => `/guides/${guide.slug}`),
+        "/prompts",
+        ...[...TASK_PRESETS, ...SYSTEM_PRESETS].map((preset) => `/prompts/${preset.slug}`)
     ];
+
+    return paths.map((path) => ({ url: absoluteUrl(path) }));
 }

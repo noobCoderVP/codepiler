@@ -1,4 +1,4 @@
-const faqs = [
+export const faqs = [
     {
         q: "Are my files uploaded anywhere?",
         a: "No. CodePiler reads your folder or ZIP in the browser. There is no backend, and nothing leaves your machine until you paste the prompt into an AI yourself."

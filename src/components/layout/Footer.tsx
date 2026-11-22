@@ -10,7 +10,9 @@ const columns = [
             { label: "Open app", href: "/app" },
             { label: "How it works", href: "/#how-it-works" },
             { label: "Features", href: "/#features" },
-            { label: "FAQ", href: "/#faq" }
+            { label: "FAQ", href: "/#faq" },
+            { label: "Guides", href: "/guides" },
+            { label: "Prompt library", href: "/prompts" }
         ]
     },
     {

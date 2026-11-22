@@ -1,18 +1,15 @@
-"use client";
-
-import { motion } from "framer-motion";
+import type { Metadata } from "next";
 import { FileQuestion, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+    title: "Page not found"
+};
 
 export default function NotFound() {
     return (
         <div className="flex h-screen items-center justify-center px-6">
-            <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.25 }}
-                className="flex flex-col items-center text-center max-w-md"
-            >
+            <div className="flex flex-col items-center text-center max-w-md">
                 {/* Icon */}
                 <div
                     className="flex items-center justify-center w-16 h-16 rounded-xl mb-6"
@@ -50,7 +47,7 @@ export default function NotFound() {
                     <ArrowLeft size={16} />
                     Back to Home
                 </Link>
-            </motion.div>
+            </div>
         </div>
     );
 }

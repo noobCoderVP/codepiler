@@ -16,6 +16,9 @@ export type DocPage = {
     examples?: {
         title: string;
         summary: string;
+        /** Optional link to a longer guide or prompt page. */
+        href?: string;
+        linkLabel?: string;
     }[];
 };
 
@@ -260,32 +263,40 @@ export const docsPages: DocPage[] = [
             {
                 title: "Debug a multi-file bug",
                 summary:
-                    "Select the failing route, the service it calls and the shared types. Paste the error into the Task box with what you expected to happen, or start from the Find and fix bugs preset."
+                    "Select the failing route, the service it calls and the shared types. Paste the error into the Task box with what you expected to happen, or start from the Find and fix bugs preset.",
+                href: "/guides/debug-multi-file-bug-with-ai"
             },
             {
                 title: "Review a change before you merge",
                 summary:
-                    "Select only the files you changed plus the interfaces they touch. Use the Code review preset and add one line on what the change is meant to do."
+                    "Select only the files you changed plus the interfaces they touch. Use the Code review preset and add one line on what the change is meant to do.",
+                href: "/guides/ai-code-review-before-merge"
             },
             {
                 title: "Write tests for existing code",
                 summary:
-                    "Select the module and one existing test file so the AI copies your test style and framework. Use the Write unit tests preset."
+                    "Select the module and one existing test file so the AI copies your test style and framework. Use the Write unit tests preset.",
+                href: "/guides/write-unit-tests-with-ai"
             },
             {
                 title: "Understand an unfamiliar codebase",
                 summary:
-                    "Select the README, entry points, routing and main config. Ask for an architecture walkthrough and which files to read first, then ask follow-ups with narrower selections."
+                    "Select the README, entry points, routing and main config. Ask for an architecture walkthrough and which files to read first, then ask follow-ups with narrower selections.",
+                href: "/guides/understand-unfamiliar-codebase-with-ai"
             },
             {
                 title: "Security pass on auth",
                 summary:
-                    "Search for auth, session and middleware files and select them with any input validation code. Use the Security review preset with the system prompt for your language."
+                    "Search for auth, session and middleware files and select them with any input validation code. Use the Security review preset with the system prompt for your language.",
+                href: "/prompts/security-review",
+                linkLabel: "See the Security review prompt"
             },
             {
                 title: "Plan a refactor",
                 summary:
-                    "Select one feature folder and its types. Use Refactor for readability or Modularize the codebase, and ask for a step-by-step plan before asking for code."
+                    "Select one feature folder and its types. Use Refactor for readability or Modularize the codebase, and ask for a step-by-step plan before asking for code.",
+                href: "/prompts/refactor-for-readability",
+                linkLabel: "See the Refactor for readability prompt"
             }
         ],
         faq: [

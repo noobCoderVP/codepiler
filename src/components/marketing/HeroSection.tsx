@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -24,11 +26,8 @@ export default function HeroSection() {
             <div className="absolute inset-x-0 top-0 -z-10 h-[34rem] bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.2),_transparent_58%)]" />
 
             <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
-                <motion.div
-                    initial={{ opacity: 0, y: 24 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.45 }}
-                >
+                {/* no entrance animation here: the headline is the LCP element and must paint immediately */}
+                <div>
                     <div className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)]/85 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--text-secondary)] shadow-sm">
                         Free &amp; open source · Runs in your browser
                     </div>
@@ -49,7 +48,7 @@ export default function HeroSection() {
                     >
                         See how it works ↓
                     </a>
-                </motion.div>
+                </div>
 
                 <motion.div
                     initial={{ opacity: 0, x: 36 }}

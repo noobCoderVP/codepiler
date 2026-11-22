@@ -1,12 +1,19 @@
+import Link from "next/link";
 import { DocPage } from "@/lib/docs-content";
 import { BookOpenText, CircleHelp, FolderOpen } from "lucide-react";
 
-export default function DocsArticle({ page }: { page: DocPage }) {
+export default function DocsArticle({
+    page,
+    eyebrow = "CodePiler Docs"
+}: {
+    page: DocPage;
+    eyebrow?: string;
+}) {
     return (
         <article className="rounded-[2rem] border border-[var(--border)] bg-[var(--surface)] p-8 shadow-sm md:p-10">
             <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-[var(--accent)]">
                 <BookOpenText size={15} />
-                CodePiler Docs
+                {eyebrow}
             </p>
 
             <h1 className="mt-4 text-4xl font-semibold tracking-tight text-[var(--text-primary)]">
@@ -60,6 +67,14 @@ export default function DocsArticle({ page }: { page: DocPage }) {
                                 <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
                                     {example.summary}
                                 </p>
+                                {example.href && (
+                                    <Link
+                                        href={example.href}
+                                        className="mt-3 inline-block text-sm font-semibold text-[var(--accent)] hover:underline"
+                                    >
+                                        {example.linkLabel ?? "Read the full guide"} →
+                                    </Link>
+                                )}
                             </div>
                         ))}
                     </div>
