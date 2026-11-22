@@ -3,7 +3,7 @@
 import { createElement, useMemo, useState } from "react";
 import { ChevronRight, ChevronDown, Folder } from "lucide-react";
 import { useSelectionStore } from "@/store/selection-store";
-import { useViewerStore } from "@/store/viewer-store";
+import { showFile, useViewerStore } from "@/store/viewer-store";
 import Checkbox from "@/components/ui/checkbox";
 import { getFileIcon } from "@/lib/file-icons";
 import { formatTokenCount } from "@/lib/token-utils";
@@ -62,13 +62,7 @@ export default function TreeNode({
     const isActiveFile = node.type === "file" && node.path === (previewPath ?? activePath);
 
     const handleFileClick = () => {
-        if (node.type !== "file") return;
-
-        if (selected.has(node.path)) {
-            useViewerStore.setState({ activePath: node.path, previewPath: null });
-        } else {
-            useViewerStore.setState({ previewPath: node.path });
-        }
+        if (node.type === "file") showFile(node.path, selected.has(node.path));
     };
 
     const fileTokens = node.type === "file" ? (tokenMap[node.path] ?? 0) : 0;

@@ -19,7 +19,7 @@ const steps: Step[] = [
     {
         title: "Pick the files the AI should see",
         description:
-            "Tick files or whole folders to include them. Click a name to preview it. Each row shows its token cost.",
+            "Tick files or whole folders to include them, and click a name to preview it. Switch to “By size” to see which files use the most tokens, and use the type chips or token range to narrow the list.",
         selector: '[data-tour="tree"]'
     },
     {

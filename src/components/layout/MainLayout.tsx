@@ -47,7 +47,7 @@ export default function MainLayout() {
                         className="flex h-full"
                     >
                         <Panel
-                            defaultSize={narrow ? "40%" : "29%"}
+                            defaultSize={narrow ? "60%" : "29%"}
                             minSize={narrow ? "20%" : "22%"}
                             maxSize={narrow ? "70%" : "45%"}
                         >
@@ -68,8 +68,8 @@ export default function MainLayout() {
                         )}
 
                         <Panel
-                            defaultSize={narrow ? "60%" : "71%"}
-                            minSize={narrow ? "30%" : "40%"}
+                            defaultSize={narrow ? "40%" : "71%"}
+                            minSize={narrow ? "20%" : "40%"}
                         >
                             <div className="h-full flex flex-col bg-[var(--surface)]">
                                 <OneFileViewer />

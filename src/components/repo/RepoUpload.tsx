@@ -1,6 +1,7 @@
 "use client";
 
-import { AlertCircle, CheckCircle, FolderUp, Loader2, UploadCloud } from "lucide-react";
+import { useState } from "react";
+import { AlertCircle, CheckCircle, FolderUp, Loader2, UploadCloud, X } from "lucide-react";
 import { motion } from "framer-motion";
 
 import { useRepoStore } from "@/store/repo-store";
@@ -10,6 +11,8 @@ export default function RepoUpload() {
     const files = useRepoStore((s) => s.files);
     const repoName = useRepoStore((s) => s.repoName);
     const summary = useRepoStore((s) => s.summary);
+    // each new import produces a new summary object, so it shows again after the next import
+    const [dismissedSummary, setDismissedSummary] = useState<typeof summary>(null);
     const error = useRepoStore((s) => s.error);
     const { loading, dragActive, dropHandlers, inputs, openFolder, openZip } = useRepoImport();
 
@@ -76,15 +79,25 @@ export default function RepoUpload() {
                 </div>
             </div>
 
-            {loaded && summary && !error && (
-                <p className="mt-2 text-[11px] leading-4 text-[var(--text-secondary)]">
-                    <span className="font-semibold text-[var(--text-primary)]">
-                        {summary.preselected} key files pre-selected.
-                    </span>{" "}
-                    {summary.skipped > 0 &&
-                        `${summary.skipped} skipped (dependencies, binaries, build output, .gitignore, >200 KB). `}
-                    Adjust the selection in the tree below.
-                </p>
+            {loaded && summary && summary !== dismissedSummary && !error && (
+                <div className="mt-2 flex items-start gap-2">
+                    <p className="flex-1 text-[11px] leading-4 text-[var(--text-secondary)]">
+                        <span className="font-semibold text-[var(--text-primary)]">
+                            {summary.preselected} key files pre-selected.
+                        </span>{" "}
+                        {summary.skipped > 0 &&
+                            `${summary.skipped} skipped (dependencies, binaries, build output, .gitignore, >200 KB). `}
+                        Adjust the selection below.
+                    </p>
+                    <button
+                        onClick={() => setDismissedSummary(summary)}
+                        aria-label="Dismiss import summary"
+                        title="Dismiss"
+                        className="shrink-0 rounded p-0.5 text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
+                    >
+                        <X size={13} />
+                    </button>
+                </div>
             )}
 
             {error && (

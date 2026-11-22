@@ -11,8 +11,8 @@ import ViewerTabs from "./ViewerTabs";
 import ViewerEditor from "./ViewerEditor";
 import PromptEditor from "./PromptEditor";
 import WorkspaceEmptyState from "./WorkspaceEmptyState";
-import TokenManagerModal from "@/components/repo/TokenManagerModal";
 import { formatTokenCount } from "@/lib/token-utils";
+import { SHOW_LARGEST_EVENT } from "@/components/repo/RepoTree";
 
 import {
     ViewerFormat,
@@ -40,7 +40,6 @@ export default function OneFileViewer() {
     const [systemLabel, setSystemLabel] = useState<string | null>(null);
     const [taskLabel, setTaskLabel] = useState<string | null>(null);
     const [showPromptEditor, setShowPromptEditor] = useState(false);
-    const [showTokenModal, setShowTokenModal] = useState(false);
     const [exportedContent, setExportedContent] = useState<string | null>(null);
 
     const selectedFiles = useMemo(() => {
@@ -135,7 +134,7 @@ export default function OneFileViewer() {
                         selected model&apos;s context window. Untick some files to make it fit.
                     </span>
                     <button
-                        onClick={() => setShowTokenModal(true)}
+                        onClick={() => window.dispatchEvent(new Event(SHOW_LARGEST_EVENT))}
                         className="font-semibold text-[var(--accent)] hover:underline"
                     >
                         Find the largest files
@@ -232,10 +231,6 @@ export default function OneFileViewer() {
                     />
                 )}
             </div>
-
-            {showTokenModal && (
-                <TokenManagerModal tokenMap={tokenMap} onClose={() => setShowTokenModal(false)} />
-            )}
         </div>
     );
 }

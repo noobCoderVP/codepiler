@@ -13,7 +13,7 @@ export default function SelectedFilesPanel() {
     const selected = useSelectionStore((s) => s.selected);
     const deselect = useSelectionStore((s) => s.deselect);
 
-    const [collapsed, setCollapsed] = useState(false);
+    const [collapsed, setCollapsed] = useState(true);
 
     const selectedFiles = useMemo(() => {
         return files
@@ -44,11 +44,10 @@ export default function SelectedFilesPanel() {
                         · {formatTokenCount(totalTokens)} tokens
                     </span>
                 </span>
-                {collapsed ? (
-                    <ChevronUp size={14} className="text-[var(--text-secondary)]" />
-                ) : (
-                    <ChevronDown size={14} className="text-[var(--text-secondary)]" />
-                )}
+                <span className="flex items-center gap-1 text-xs font-medium text-[var(--accent)]">
+                    {collapsed ? "Show" : "Hide"}
+                    {collapsed ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                </span>
             </button>
 
             {!collapsed && (
@@ -57,7 +56,7 @@ export default function SelectedFilesPanel() {
                         {selectedFiles.map((f) => (
                             <div
                                 key={f.path}
-                                className="flex items-center gap-2 rounded-md px-2 py-1 text-xs hover:bg-[var(--surface-muted)] group"
+                                className="flex items-center gap-2 rounded-md px-2 py-1 text-xs hover:bg-[var(--surface-muted)]"
                             >
                                 <button
                                     onClick={() =>
@@ -77,7 +76,7 @@ export default function SelectedFilesPanel() {
                                 <button
                                     onClick={() => deselect(f.path)}
                                     title={`Deselect ${f.name}`}
-                                    className="shrink-0 rounded p-0.5 text-[var(--text-secondary)] opacity-0 transition hover:text-red-500 focus:opacity-100 group-hover:opacity-100"
+                                    className="shrink-0 rounded p-0.5 text-[var(--text-secondary)] transition hover:text-red-500"
                                 >
                                     <X size={11} />
                                 </button>

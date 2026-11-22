@@ -1,44 +1,43 @@
 # CodePiler
 
-**Turn any repository into focused AI prompt context — in seconds, entirely in your browser.**
+**Ask AI about your code with only the files that matter.**
 
-CodePiler is a free, open-source developer tool for building precise AI prompt context from real codebases. Upload a repository, select the exact files that matter, wrap them with an expert system prompt and task, set a model token budget, and export directly to ChatGPT, Claude, Gemini, or any other LLM.
+CodePiler is a free, open-source tool for developers who work with AI. Drop in a project, pick the files your question is about, write the question, and copy one clean prompt into ChatGPT, Claude, Gemini or any other model. Every file is labelled with its path, and you can see the token cost of each one before you include it.
 
-No backend. No file uploads. No account required. Everything runs client-side.
+No backend. No uploads. No account. Everything runs in your browser.
 
-**[codepiler.in](https://codepiler.in) · [Launch App](https://codepiler.in/app) · [Docs](https://codepiler.in/docs)**
+**[codepiler.in](https://codepiler.in) · [Open the app](https://codepiler.in/app) · [Docs](https://codepiler.in/docs)**
 
 ---
 
 ## Why CodePiler
 
-When you ask an AI to review, debug, or refactor your code, the quality of the output depends entirely on what context you give it. Most developers either:
+The answer you get from an AI is only as good as the code you give it. Most of the time you either:
 
-- Paste a few files manually and hope they didn't miss anything important
-- Dump an entire repository into the prompt and pay 10× the API cost for noise
+- paste a few files by hand and miss the one that matters, or
+- paste the whole repository, so your question is buried in unrelated code, hits context limits, and costs more.
 
-CodePiler fixes this. It gives you a controlled workspace to select only the files relevant to the task, see token counts inline on every file, wrap the output with expert-level instructions, and export a structured prompt that gives your model exactly what it needs.
-
-**A 300-file TypeScript project is ~500K tokens — roughly $2.50 per GPT-4o call.** A focused 20-file selection is ~40K tokens — $0.20 per call. That is a 12× cost reduction that compounds across every AI session.
+CodePiler sits in between. You see the whole project with a token count on every file, tick only what's relevant, add your question, and copy a single, structured prompt.
 
 ---
 
 ## Features
 
-### File Selection and Tree Navigation
+### Choosing files
 
-- **Interactive repository tree** — browse folders, collapse and expand, search by filename
-- **Per-file and per-folder token counts** — inline on every node before you select anything
-- **Checkbox selection** — select individual files, use Select All / Clear All for the whole repo
-- **Expand All / Collapse All** — manage large repository trees with one click
-- **Preview without selecting** — click a filename to preview it in the editor; check the box to include it in the export. Separate actions, deliberate control
-- **Selected files panel** — a pinned panel at the bottom of the tree lists every selected file with its individual token cost and a one-click remove button
+- **Tree view**: browse folders, tick files or whole folders, expand or collapse everything at once
+- **By size view**: a flat list sorted by tokens (largest first) with a bar per file, sortable by name, size or tokens. The fastest way to find and drop the files that bloat a prompt
+- **Token counts everywhere**: on every file and folder, before you select anything
+- **Preview without selecting**: click a name to read the file; tick the box to include it
+- **Selected files bar**: a collapsible bar at the bottom showing your selection and its total tokens
 
-### Filtering and Scope Management
+### Search and filters
 
-- **File type filter** — narrow the tree to specific extensions (.ts, .py, .go, or any combination) with one click
-- **Token and size manager** — view all files sorted by token count or byte size; bulk-select or deselect the heavy ones from one panel
-- **Automatic exclusions** — node_modules, .git, dist, build, binaries, and files over 200 KB are filtered out automatically
+- **Search** by file or folder name
+- **Type chips**: show only `.ts`, `.py`, `.md`… with a file count on each chip
+- **Token range** (By size view): type a min and/or max to show only files in that range
+- **Select shown / Deselect shown**: act on exactly the files you can see, e.g. "all `.ts` files" or "everything over 5,000 tokens"
+- **Automatic exclusions**: `node_modules`, `.git`, `dist`, `build` and similar folders, binaries, files over 200 KB, and anything in the root `.gitignore`
 
 ### Prompt Wrapper
 
@@ -97,8 +96,7 @@ CodePiler fixes this. It gives you a controlled workspace to select only the fil
 
 - **100% local-first** — repository files are processed entirely in your browser using standard file input and drag-and-drop APIs. No files are sent to any server
 - **No account required** — open the app and start working immediately
-- **Works offline** after the initial page load
-- **Fast tokenization** — uses `gpt-tokenizer` (tiktoken cl100k_base) in the browser for instant, accurate token estimates
+- **Fast tokenization**: uses `gpt-tokenizer` (o200k_base) in the browser. Other model families tokenize differently, so treat counts as a close estimate
 
 ---
 
@@ -112,7 +110,7 @@ CodePiler fixes this. It gives you a controlled workspace to select only the fil
 | **Refactoring**    | Pick the feature folder; apply Modularize, OOP, or Refactor for readability task with matching language preset    |
 | **Writing tests**  | Select the module under test; apply Write unit tests task for table-driven tests, mocks, and edge cases           |
 | **Onboarding**     | Gather entrypoints, schema, and config; export a full architecture overview prompt for a new team member          |
-| **Cost reduction** | Stop sending 500K-token repos; select 30 relevant files for a 10–15× reduction in API cost per call               |
+| **Cost reduction** | Send the 20 files that matter instead of the whole repo; see the token total before you paste                     |
 | **AI agent prep**  | Pre-package structured context so agents like Cursor skip repeated `read_file` calls and start useful immediately |
 | **RAG pipeline**   | Export structured JSON or XML snapshots of selected repository slices for embedding and semantic search           |
 | **Documentation**  | Select a feature slice; apply the Document the code task to generate structured documentation drafts              |
@@ -157,7 +155,7 @@ npm start
 | Animations       | Framer Motion                                    |
 | Code editor      | Monaco Editor (read-only viewer)                 |
 | Split layout     | react-resizable-panels                           |
-| Tokenization     | gpt-tokenizer (tiktoken cl100k_base)             |
+| Tokenization     | gpt-tokenizer (o200k_base)                       |
 | ZIP extraction   | JSZip                                            |
 | Persistence      | localStorage                                     |
 
@@ -175,7 +173,7 @@ src/
 ├── components/
 │   ├── layout/             # Header, Footer, ThemeToggle
 │   ├── marketing/          # Landing page sections
-│   ├── repo/               # Repository tree, upload, session, filter modals
+│   ├── repo/               # File tree, By size list, import, sessions
 │   ├── ui/                 # Radix UI primitives (Select, DropdownMenu, Tooltip, Dialog)
 │   └── viewer/             # Prompt viewer, tabs, header, chips, prompt editor
 ├── lib/                    # Utilities, formatters, docs content, token utils
@@ -204,4 +202,4 @@ MIT — see [LICENSE](LICENSE) for details.
 
 ---
 
-_CodePiler is built for developers who believe the quality of an AI response starts with the quality of the context you give it._
+_CodePiler is built for developers who want sharper answers from AI by giving it the right code._

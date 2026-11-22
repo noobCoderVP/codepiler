@@ -15,3 +15,9 @@ export const useViewerStore = create<ViewerState>((set) => ({
     setActivePath: (path) => set({ activePath: path }),
     setPreviewPath: (path) => set({ previewPath: path })
 }));
+
+/** Show a file from the explorer: jump to it in the prompt if selected, otherwise preview it alone. */
+export function showFile(path: string, selected: boolean) {
+    if (selected) useViewerStore.setState({ activePath: path, previewPath: null });
+    else useViewerStore.setState({ previewPath: path });
+}

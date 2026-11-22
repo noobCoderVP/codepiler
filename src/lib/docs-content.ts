@@ -131,24 +131,35 @@ export const docsPages: DocPage[] = [
         sections: [
             {
                 id: "file-tree",
-                heading: "File tree",
+                heading: "Choosing files",
                 body: [
-                    "The left panel lists every imported file, with a token count on each file and folder so you can see what something costs before you include it."
+                    "The left panel lists every imported file, with a token count on each file and folder so you can see what something costs before you include it. Switch between two views at the top:"
                 ],
                 list: [
-                    "Tick a checkbox to include a file (or a whole folder) in the prompt.",
-                    "Click a file name to read it. If the file is selected, the prompt scrolls to it. If not, it opens on its own as a preview, and your selection doesn't change.",
-                    "Search folders or files: type part of a name or path to narrow the tree.",
-                    "Filter by file type (funnel icon): show only certain extensions, such as .ts and .py. Active filters appear as chips. Remove them one at a time or with Clear all.",
-                    "Manage files by token size (chart icon): list files by token count or size and select or deselect the heaviest ones in one place.",
-                    "Select all, Clear, Expand all folders and Collapse all folders work on the whole tree."
+                    "Tree: your project's folders. Tick a checkbox to include a file or a whole folder. Use the arrow buttons next to the switch to expand or collapse every folder.",
+                    "By size: a flat list sorted by tokens, largest first, with a bar showing how heavy each file is. Click the File, Size or Tokens header to sort by that column. This is the quickest way to find and untick the files that bloat your prompt.",
+                    "In either view, click a file name to read it. If the file is selected, the prompt scrolls to it. If not, it opens on its own as a preview, and your selection doesn't change."
+                ]
+            },
+            {
+                id: "filters",
+                heading: "Search and filters",
+                body: [
+                    "Filters change which files are shown, not which are selected. Search and type apply to both views; the token range is part of the By size view."
+                ],
+                list: [
+                    "Search: type part of a file or folder name.",
+                    "Type: click one or more extension chips, such as .ts or .py, to show only those files. The number on each chip is how many files have that type. Click All to clear it.",
+                    "Tokens (By size view): enter a min and/or max to show only files in that range. For example, set min to 5000 to see just the big files.",
+                    "Select shown / Deselect shown: while a filter is on, these act on exactly the files you can see. For example, choose .ts and then Select shown, or set min to 5000 and then Deselect shown. With no filter they read Select all and Clear.",
+                    "Reset clears every filter at once. After any bulk select or deselect, Undo appears for a few seconds in case you change your mind."
                 ]
             },
             {
                 id: "selected-files",
                 heading: "Selected files panel",
                 body: [
-                    "The panel at the bottom of the tree lists everything you've selected, with each file's token cost. Click a file to jump to it in the prompt, or click × to deselect it. Click the panel header to collapse it. It's the quickest way to check your selection before you copy."
+                    "The bar at the bottom of the panel shows how many files are selected and their total tokens. Click Show to list them, then click a file to jump to it in the prompt or × to deselect it. The list starts collapsed so the file tree gets the space."
                 ]
             },
             {
